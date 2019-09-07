@@ -1,0 +1,9 @@
+# files to be excluded:
+
+package-lock.json
+cert/*
+public/img/*
+public/tmp/*
+public/users/*
+node_modules/
+app.env
