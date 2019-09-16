@@ -8,7 +8,7 @@ exports.home = (req, res) => {
 	
 	if(req.session.verified){
 		data.title = 'Dashboard';
-		data.nav = nav;
+		//data.nav = nav;
 		data.user = req.session.user;
 		res.render('dashboard', data);
 		visit.page = "dashboard";
@@ -118,7 +118,7 @@ exports.dashboard = (req, res) =>{
 	if(req.session.verified){
 		data.title = 'Dashboard';
 		data.user = req.session.user;
-		data.nav = nav;
+		//data.nav = nav;
 		res.render('dashboard', data);
 		visit.page = "dashboard";
 	}else if(req.session.user){
@@ -165,9 +165,9 @@ exports.notes = (req, res) =>{
 	let data = {};
 	let date = new Date();
 	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user, page: "notes"};
-	data.title = 'Notes',	data.nav = nav, data.user = req.session.user;
-	mongo.takeNotes(req.session.user, (err, docs) => {
-		if(err!=null){res.render('notes', data);}else{
+	data.title = 'Notes', data.user = req.session.user; //data.nav = nav,
+	mongo.takeNotes(req.session.user, docs => {
+		if(!docs){res.render('notes', data);}else{
 			if(docs){
 				data.notes = docs;
 				res.render('notes', data);

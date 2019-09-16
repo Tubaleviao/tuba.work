@@ -26,102 +26,75 @@ module.exports = {
 			if(err) console.log(err);
 		});
 	},
-	existUser: function(user, callback){
-		users = db.collection('users');
-		users.findOne({username: user}, function(err, record){
+  findOneRecord: (col, query, callback) => {
+		let collection = db.collection(col);
+		collection.findOne(query, (err, record) => {
 			if(err){ console.log(err); callback(false);}
-			else{
-				if(record==null){
-					callback(false);
-				}else{
-					callback(record);
-				}
-			}
+			else{ record==null ? callback(false): callback(record); }
 		});
 	},
-	existId: function(id, callback){
-		id = ObjectID.createFromHexString(id);
-		users = db.collection('users');
-		users.findOne({_id: id}, function(err, record){
-			if(err){ console.log(err); callback(false);}
-			else{
-				if(record==null){
-					callback(false);
-				}else{
-					callback(record);
-				}
-			}
-		});
-	},
-	auth: function(user, pass, callback){
-		users = db.collection('users');
-		users.findOne({username: user}, function(err, record){
-			if(err){console.log(err); callback(false);}
-			if(record){
-				bcrypt.compare(pass, record.password, function(err, success){
-					if(err){ console.log(err); callback(false);}
-					if(success) { callback(true); }
-					else{ callback(false); }
-				});
-			}else{ callback(false); }
-		});
-	},
-	setEmail: function(data, callback){
-		users = db.collection('users');
-		users.update({username: data.user}, {$set: {email: data.email}}, function(err, resp){
+  updateRecord: (col, query, update, callback) => {
+    collection = db.collection(col);
+		collection.update(query, update,{upsert: true}, (err, resp) => {
 			if(err){ console.log(err); callback(false);
-			}else{ callback(resp); }
+			}else callback(resp);
 		});
+  },
+  findRecords: (col, query, callback) => {
+    let collection = db.collection(col);
+		notes.find(query).toArray((err, docs) => {
+			if(err){console.log(err); callback(err, null);}
+			else callback(null, docs);
+		});
+  },
+	auth: (user, pass, callback) => {
+    let c = record => {
+      if(record){
+        bcrypt.compare(pass, record.password, (err, success) => {
+          if(err){ console.log(err); callback(false);}
+          success ? callback(true) : callback(false);
+        });
+      }else{ callback(false); }
+    }
+    this.findOneRecord('users', {username: user}, c)
 	},
-	addUser: function(user, pass, email, callback){
+	addUser: (user, pass, email, callback) => {
 		users = db.collection('users');
-		bcrypt.hash(pass, 8, function(err, hash) {
+		bcrypt.hash(pass, 8, (err, hash) => {
 			if (err){ console.log(err); callback(false);
 			}else{
-				var d = new Date();
-				users.insert({username: user, password: hash, email: email, date: d.getTime()}, {w: 1}, function(err, result){
+				let d = new Date();
+				users.insert({username: user, password: hash, email: email, date: d.getTime()}, {w: 1}, (err, result) => {
 					if(err){ console.log(err); callback(false);
 					}else{ callback(result.insertedIds[0]); }
 				});
 			}
 		});
 	},
+  existId: (id, callback) => {
+    id = ObjectID.createFromHexString(id);
+    this.findOneRecord('users', {_id: id}, callback)
+	},
+	existUser: (user, callback) => {
+    this.findOneRecord('users', {username: user}, callback)
+	},
+	setEmail: function(data, callback){
+    this.updateRecord('users', {username: data.user}, {$set: {email: data.email}}, callback);
+	},
 	saveNote: function(data, callback){
-		var notes = db.collection('notes');
-		notes.update({user: data.user, id: data.id}, {$set: {note: data.note}}, {upsert: true}, function(err, resp){
-			if(err){ console.log(err); callback(false);
-			}else{ callback(true); }
-		});
+    this.updateRecord('notes', {user: data.user, id: data.id}, {$set: {note: data.note}}, callback)
 	},
 	saveChat: function(data, callback){
-		var chats = db.collection('chats');
-		chats.insertOne(data, function(err, resp){
-			if(err){ console.log(err); callback(false);
-			}else{ callback(true); }
-		});
+    this.saveRecordCallback('chats', data, callback)
 	},
-	getChat: function(data, callback){
-		var chats = db.collection('chats');
-		chats.find( {room: data} ).toArray(function(err, docs){
-			if(err){console.log(err); callback(false);
-			}else{callback(docs);}
-		});
+	getChat: (data, callback) => {
+    this.findRecords('chats', {room: data}, callback)
 	},
-	saveNoteSize: function(data, callback){
-		var notes = db.collection('notes');
-		notes.update({user: data.user, id: data.id}, {$set: {x: data.x, y: data.y}}, {upsert: true}, function(err, resp){
-			if(err){ console.log(err); callback(false);
-			}else{ callback(true); }
-		});
+	saveNoteSize: (data, callback) => {
+    this.updateRecord('notes', {user: data.user, id: data.id}, {$set: {x: data.x, y: data.y}}, callback)
 	},
-	takeNotes: function(user, callback){
-		var notes = db.collection('notes');
-		notes.find({user: user}).toArray(function(err, docs){
-			if(err){console.log(err); callback(err, null);}
-			else{
-				callback(null, docs);
-			}
-		});
+	takeNotes: (user, callback) => {
+    this.findRecords('notes', {user: user}, callback)
 	},
 }
 
