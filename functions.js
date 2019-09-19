@@ -1,5 +1,6 @@
 const moment = require('moment')
 const mongo = require('./mongo')
+const fs = require('fs')
 
 let nav = ["chat", "player", "shooter", "notes"]
 
@@ -36,23 +37,23 @@ exports.login = (req, res) =>{
 		if(exist){
 			mongo.auth(req.body.username, req.body.password, (success) => {
 				if(success){
-					req.session.user = req.body.username;
-					req.session.email = exist.email;
-					req.session.verified = true;
+					req.session.user = req.body.username
+					req.session.email = exist.email
+					req.session.verified = true
           if(req.body.url == "login"){
-            res.redirect("home");
+            res.redirect("home")
           }else{
             res.redirect(req.body.url);
           }
 				}else{
-					res.render('home', {title: 'Home', msg: 'Wrong password'});
+					res.render('home', {title: 'Home', msg: 'Wrong password'})
 				}
 			});	
 		}else{
-			res.render('home', {title: 'Home', msg: 'User don\'t exists'});
+			res.render('home', {title: 'Home', msg: 'User don\'t exists'})
 		}
 	});	
-	mongo.saveRecord('visits', visit);
+	mongo.saveRecord('visits', visit)
 }
 
 exports.logout = (req, res) =>{
@@ -70,11 +71,12 @@ exports.signup = (req, res) =>{
 		if(exist){
 			res.render('home', {title: 'home', msg: 'User already exists'});
 		}else{
+      console.log(req.body.username)
 			mongo.addUser(req.body.username, req.body.password, req.body.email, (success) => {
 				if(success){
 					req.session.user = req.body.username;
 					req.session.email = req.body.email;
-          res.redirect('/auth?id='+success);
+          res.redirect('/auth?id='+success.ops[0]._id);
 				}else{
 					res.render('home', {title: 'home', msg: 'User not registred'});
 				}
@@ -90,7 +92,7 @@ exports.auth = (req, res) =>{
 			if(record){
 				req.session.verified = true;
 				record.verified = true;
-				mongo.saveRecordCallback('users', record, resp => {
+				mongo.updateRecord('users', {_id: record._id}, record, resp => {
 					if(resp){
 						let dir = __dirname+'/public/users/'+record.username;
 						if (!fs.existsSync(dir)){fs.mkdirSync(dir);}

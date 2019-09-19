@@ -39,7 +39,7 @@ exports.saveRecord = (col, record) => {
 
 exports.updateRecord = (col, query, update, callback) => {
     collection = db.collection(col);
-		collection.update(query, update,{upsert: true}, (err, resp) => {
+		collection.updateOne(query, update,{upsert: true}, (err, resp) => {
 			if(err){ console.log(err); callback(false);
 			}else callback(resp);
 		});
@@ -47,7 +47,7 @@ exports.updateRecord = (col, query, update, callback) => {
 
 exports.findRecords = (col, query, callback) => {
     let collection = db.collection(col);
-		collection.find(query).toArray((err, docs) => {
+		collection.findMany(query).toArray((err, docs) => {
 			if(err){console.log(err); callback(err, null);}
 			else callback(null, docs);
 		});
@@ -71,9 +71,9 @@ exports.addUser = (user, pass, email, callback) => {
     if (err){ console.log(err); callback(false);
     }else{
       let d = new Date();
-      users.insert({username: user, password: hash, email: email, date: d.getTime()}, {w: 1}, (err, result) => {
+      users.insertOne({username: user, password: hash, email: email, date: d.getTime()}, {w: 1}, (err, result) => {
         if(err){ console.log(err); callback(false);
-        }else{ callback(result.insertedIds[0]); }
+        }else{ callback(result); }
       });
     }
   });
