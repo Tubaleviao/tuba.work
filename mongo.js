@@ -47,7 +47,7 @@ exports.updateRecord = (col, query, update, callback) => {
 
 exports.findRecords = (col, query, callback) => {
     let collection = db.collection(col);
-		collection.findMany(query).toArray((err, docs) => {
+		collection.find(query).toArray((err, docs) => {
 			if(err){console.log(err); callback(err, null);}
 			else callback(null, docs);
 		});
