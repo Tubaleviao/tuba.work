@@ -6,4 +6,4 @@ public/img/*
 public/tmp/*
 public/users/*
 node_modules/
-app.env
+*.env

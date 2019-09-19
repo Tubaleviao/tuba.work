@@ -1,6 +1,8 @@
 const moment = require('moment')
 const mongo = require('./mongo')
 
+let nav = ["chat", "player", "shooter", "notes"]
+
 exports.home = (req, res) => {
   let date = new Date();
 	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user};
@@ -8,7 +10,7 @@ exports.home = (req, res) => {
 	
 	if(req.session.verified){
 		data.title = 'Dashboard';
-		//data.nav = nav;
+		data.nav = nav;
 		data.user = req.session.user;
 		res.render('dashboard', data);
 		visit.page = "dashboard";
@@ -36,7 +38,7 @@ exports.login = (req, res) =>{
 				if(success){
 					req.session.user = req.body.username;
 					req.session.email = exist.email;
-					req.session.verified = (login_without_verified_email ? true : exist.verified);
+					req.session.verified = true;
           if(req.body.url == "login"){
             res.redirect("home");
           }else{
@@ -118,7 +120,7 @@ exports.dashboard = (req, res) =>{
 	if(req.session.verified){
 		data.title = 'Dashboard';
 		data.user = req.session.user;
-		//data.nav = nav;
+		data.nav = nav;
 		res.render('dashboard', data);
 		visit.page = "dashboard";
 	}else if(req.session.user){
@@ -165,7 +167,7 @@ exports.notes = (req, res) =>{
 	let data = {};
 	let date = new Date();
 	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user, page: "notes"};
-	data.title = 'Notes', data.user = req.session.user; //data.nav = nav,
+	data.title = 'Notes', data.user = req.session.user, data.nav = nav
 	mongo.takeNotes(req.session.user, docs => {
 		if(!docs){res.render('notes', data);}else{
 			if(docs){

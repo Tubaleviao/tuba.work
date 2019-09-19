@@ -1,4 +1,6 @@
+let usernames =[]
 const fs = require('fs')
+const mongo = require('./mongo')
 
 exports.home = function(socket){
 	setInterval(() => { socket.emit('attBTC', {}) }, 5000);
