@@ -5,6 +5,7 @@ const functions = require('./functions')
 let userAuth = (req, res, next) => (req.session && req.session.user) ? next() : res.redirect('/home')
 //let verified = (req, res, next) => (req.session.verified) ? next(): res.redirect('/home')
 
+router.get('/profile', functions.profile);
 router.get('/home', functions.home);
 router.post('/login', functions.login);
 router.get('/logout', functions.logout);

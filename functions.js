@@ -30,6 +30,20 @@ exports.home = (req, res) => {
 	mongo.saveRecord('visits', visit);
 }
 
+exports.profile = (req, res) => {
+  let date = new Date();
+	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user, page: "profile"};
+	let data = {};
+	data.title = 'Profile', data.user = req.session.user
+	mongo.getUserInfo(req.session.user, (err, resp)=>{
+		if(err){console.log(err)}else{
+			data.userinfo = resp;
+			res.render("profile", data);
+			mongo.saveVisit(visit);
+		}
+	});
+}
+
 exports.login = (req, res) =>{
   let date = new Date();
 	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user};

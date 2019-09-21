@@ -78,6 +78,29 @@ exports.addUser = (user, pass, email, callback) => {
     }
   });
 }
+exports.getUserInfo = (user, callback) => {
+  let users = db.collection('users');
+		
+  users.findOne( {username: user}, {verified: 0}, (err, record) => {
+    if(err){ console.log(err); callback(false)}
+    else{
+      let info = record;
+      let createdDate = new Date(record.date);
+      let visits = db.collection('visits');
+      info.date = createdDate.getDate()+'/'+createdDate.getMonth()+'/'+createdDate.getFullYear()+' ';
+      info.date += createdDate.getHours()+':'+createdDate.getMinutes()+':'+createdDate.getSeconds();
+      visits.aggregate([{$match: {user: user}}, {$group: {_id: "$page", count: {$sum: 1}}}, {$sort: {count: -1}}], (err2, results)=>{
+        if(err2){console.log(err2); callback(false)}else{
+          let visitedPages = {};
+          results.forEach(page => {visitedPages[page._id] = page.count})
+          info.visitedPages = visitedPages;
+          callback(null, info);
+        }
+      });
+    }
+  });
+  
+}
 exports.existId = (id, callback) => {
   id = ObjectID.createFromHexString(id);
   this.findOneRecord('users', {_id: id}, callback)
@@ -102,6 +125,9 @@ exports.saveNoteSize = (data, callback) => {
 }
 exports.takeNotes = (user, callback) => {
   this.findRecords('notes', {user: user}, callback)
+}
+exports.saveVisit = (visit) => {
+  this.saveRecord('visits', visit);
 }
 
 //if(record._id) record._id = ObjectID.createFromHexString(record._id);
