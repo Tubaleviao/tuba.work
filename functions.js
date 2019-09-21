@@ -1,6 +1,7 @@
 const moment = require('moment')
 const mongo = require('./mongo')
 const fs = require('fs')
+const getSize = require('get-folder-size')
 
 let nav = ["chat", "player", "shooter", "notes"]
 
@@ -44,6 +45,7 @@ exports.login = (req, res) =>{
             res.redirect("home")
           }else{
             res.redirect(req.body.url);
+            console.log(req.body.url)
           }
 				}else{
 					res.render('home', {title: 'Home', msg: 'Wrong password'})
@@ -149,6 +151,10 @@ exports.player = (req, res) =>{
 	let data = {};
 	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user, page: "player"};
 	
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
+  
 	getSize(dir, (err, folder_size) => {
 		if (err) { console.log(err);
 		}else{
@@ -170,7 +176,7 @@ exports.notes = (req, res) =>{
 	let date = new Date();
 	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user, page: "notes"};
 	data.title = 'Notes', data.user = req.session.user, data.nav = nav
-	mongo.takeNotes(req.session.user, docs => {
+	mongo.takeNotes(req.session.user, (err, docs) => {
 		if(!docs){res.render('notes', data);}else{
 			if(docs){
 				data.notes = docs;

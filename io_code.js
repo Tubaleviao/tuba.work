@@ -1,6 +1,8 @@
 let usernames =[]
 const fs = require('fs')
 const mongo = require('./mongo')
+const moment = require('moment')
+const upio = require("up.io")
 
 exports.home = function(socket){
 	setInterval(() => { socket.emit('attBTC', {}) }, 5000);
@@ -12,7 +14,7 @@ exports.player = socket => {
 	uploader.dir = "/public/tmp";
 	uploader.listen(socket);
 	
-	setInterval(() => { socket.emit('attBTC', cur3)	}, 5000);
+	//setInterval(() => { socket.emit('attBTC', cur3)	}, 5000);
 	
 	socket.on('setUser', username => { user = username });
 
@@ -116,15 +118,15 @@ exports.chat = socket => {
 		
 		for (let i = 0; i < usernames.length; i++){
 			if (usernames[i].room == user_room){
-				existe_room = true;
-				room_json = usernames[i];
+				existe_room = true
+				room_json = usernames[i]
 			}
 		}
 		// [ {room: "tubaroom", users: ["tuba", "joão" , ...]}, {...} ]
 		
 		if(!existe_room){
-			usernames.push({room: user_room, users: []});
-			room_json = {room: user_room, users: []};
+      room_json = {room: user_room, users: []}
+			usernames.push(room_json)
 		}
 		
 		if(room_json.users.indexOf(data.user) >= 0){
@@ -132,8 +134,8 @@ exports.chat = socket => {
 		}
 		
 		if(!existe_user){
+      socket.username = data.user;
 			console.log(socket.username+" "+client_ip_address);
-			socket.username = data.user;
 			socket.room = user_room;
 			room_json.users.push(data.user);
 			for (let i = 0; i < usernames.length; i++){
@@ -142,16 +144,15 @@ exports.chat = socket => {
 				}
 			}
 			addedUser = true;
-			mongo.getChat(data.room, chat => {
-				if(!chat){ console.log('ERROR while getting chat')}
-				else{
-					room_json.chats = chat;
-					socket.emit('login', {});
-					socket.emit('refresh users', room_json);
-				}
-				delete room_json.chats;
-				socket.broadcast.emit('refresh users', room_json);
-			});
+        mongo.getChat(data.room, chat => {
+          if(!chat){ 
+            console.log('No records for the room '+data.room)
+          }else room_json.chats = chat;
+          socket.emit('login', {})
+          socket.emit('refresh users', room_json)
+          delete room_json.chats
+          socket.broadcast.emit('refresh users', room_json)
+        });
 		} else {
 			socket.emit('login failed', {});
 		}
@@ -177,6 +178,7 @@ exports.chat = socket => {
 }
 
 exports.shooter = socket => {
+  players =[];
 	socket.on('turn', data => { socket.broadcast.emit('turn', data) });
 
 	socket.on('addPlayer', data => {

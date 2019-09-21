@@ -12,7 +12,9 @@ const io_code = require('./io_code')
 const session = require('express-session')
 const bodyParser = require('body-parser')
 const io = require('socket.io')(server)
+const upio = require('up.io');
 
+app.use(upio.router);
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(session({secret: process.env.SESSION_SECRET ,cookie: {}, resave: true, saveUninitialized: false}))
