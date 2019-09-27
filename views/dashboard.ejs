@@ -1,0 +1,28 @@
+<% include header.ejs %><br/><br/><br/><br/>
+
+<style>.p{
+  display: none;
+}</style>
+
+		<div  class="p" id="p1">Enjoy</div>
+		<div class="p">our</div>
+		<div class="p">apps</div>
+		<div class="p">,</div>
+		<div  class="p" id="p5">we</div>
+		<div class="p">hope</div><div class="p">it</div><div class="p">can</div><div class="p">be</div><div class="p">useful.</div>
+
+    <script>
+    $( "#p1" ).first().show( 200, function showNext() {
+        $( this ).next( ".p" ).show( 200, function(){
+          $( this ).next( ".p" ).show( 200, function(){
+            $( this ).next( ".p" ).fadeIn(500, function(){
+              $( "#p5" ).first().show( 100, function showHup() {
+                $( this ).next( ".p" ).show( 100, showHup );
+              });
+            });
+          });
+        });
+      });
+    </script>
+
+<% include footer.ejs %>

@@ -1,0 +1,57 @@
+<html>
+<head>
+	<title>Shooting Guys</title>
+	<link rel="stylesheet" href="css/shooter.css"/>
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	<script src="js/shooter.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+	<div id="score"></div>
+	<div>
+		<img src="img/life.ico"/>
+		<img src="img/life.ico"/>
+		<img src="img/life.ico"/>
+		<img src="img/life.ico"/>
+		<img src="img/life.ico"/>
+	</div>
+
+	<div class="login">
+		<p>Insert your nick</p>
+		<input type="text" id="player" maxlength="14"/>
+	</div>
+
+	<div class="logout">
+		<p>GAME OVER</p>
+		<a href="/">Try again</a>
+	</div>
+  
+  <script> // https://github.com/yckart/jquery.overlaps.js
+    (function($){ // https://raw.githubusercontent.com/yckart/jquery.overlaps.js/master/jquery.overlaps.js
+      $.fn.overlaps = function(obj) {
+          var elems = {targets: [], hits:[]};
+          this.each(function() {
+              var bounds = $(this).offset();
+              bounds.right = bounds.left + $(this).outerWidth();
+              bounds.bottom = bounds.top + $(this).outerHeight();
+
+              var compare = $(obj).offset();
+              compare.right = compare.left + $(obj).outerWidth();
+              compare.bottom = compare.top + $(obj).outerHeight(); 
+
+              if (!(compare.right < bounds.left ||
+                    compare.left > bounds.right ||
+                    compare.bottom < bounds.top ||
+                    compare.top > bounds.bottom)
+                 ) {
+                  elems.targets.push(this);
+                  elems.hits.push(obj);
+              }
+          });
+          return elems;
+      };
+    }(jQuery));
+  </script>
+	
+</body>
+</html>

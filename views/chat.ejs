@@ -1,0 +1,62 @@
+<html>
+	<head>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	<% if(locals.room){ %>
+		<link rel="stylesheet" href="../css/base.css"/>
+		<link rel="shortcut icon" href="../img/icon.ico"/>
+		<script src="../js/chat.js"></script>
+		<link rel="stylesheet" href="../css/chat.css"/>
+		<title class="title"><%=room%></title>
+	<% }else{ %>
+		<link rel="stylesheet" href="css/base.css"/>
+		<link rel="shortcut icon" href="img/icon.ico"/>
+		<script src="js/chat.js"></script>
+		<link rel="stylesheet" href="css/chat.css"/>
+		<title class="title">Chat</title>
+	<% } %>
+	
+</head>
+<body>
+	<div class='body'>
+		<ul class="pages">
+			<li class="chat page">
+				<ul class="users"></ul>
+        <textarea class="inputMessage" placeholder="Type here..."></textarea>
+				<div class="chatArea">
+				<ul class="messages"></ul>
+				</div>
+			</li>
+			<li class="login page">
+				<div class="form">
+				<h3>What's your nick?</h3>
+				<input class="usernameInput" type="text" maxlength="14" /> 
+				</div>
+			</li>
+		</ul>
+    <script src="/socket.io/socket.io.js"></script>
+		<!-- <script src="/socket.io/socket.io.js"></script> -->
+	</div>
+
+<script>
+	
+	
+	function getUser(){
+		var user;
+		<% if(locals.user){ %>
+			user = <%-JSON.stringify(user)%>;
+		<% }else{ %>
+			user = prompt("Please enter your nick");
+		<% } %>
+		return(user);
+	}
+	
+	function getRoom(){
+		<% if(locals.room){ %>
+			return('<%=room%>');
+		<% }else{ %>
+			return(false);
+		<% } %>
+	}
+</script>
+
+<% include footer.ejs %>

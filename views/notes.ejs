@@ -1,0 +1,23 @@
+<% include header.ejs %>
+
+<p class="msg" style="display: none;"></p>
+
+<!-- <div class="save">	<input id="save" type="submit" value="Save"/></div> -->
+
+<input id="add" type="submit" value="+"/>
+
+<% if(locals.notes) { 
+	notes.forEach((note) => { %>
+<textarea id="note<%=note.id%>" class="note" <% if(note.x){ %> style="width:<%=note.x%>px; height:<%=note.y%>px" <% } %> ><%=note.note%></textarea>
+<% }); } %>
+
+<script>
+	function getUser(){
+		var user = <%-JSON.stringify(user)%>;
+		return(user);
+	}
+</script>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<% include footer.ejs %>

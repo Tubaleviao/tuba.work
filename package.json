@@ -1,0 +1,38 @@
+{
+  "name": "tuba.work",
+  "version": "1.0.0",
+  "description": "My personal website to practice some code",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tubaleviao/tuba.work.git"
+  },
+  "keywords": [
+    "tubaleviao",
+    "tuba",
+    "nodejs",
+    "socket.io"
+  ],
+  "author": "Tubaleviao",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Tubaleviao/tuba.work/issues"
+  },
+  "homepage": "https://github.com/Tubaleviao/tuba.work#readme",
+  "dependencies": {
+    "bcrypt": "^3.0.6",
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.1.0",
+    "ejs": "^2.7.1",
+    "express": "^4.17.1",
+    "express-session": "^1.16.2",
+    "get-folder-size": "^2.0.1",
+    "moment": "^2.24.0",
+    "mongodb": "^3.3.2",
+    "socket.io": "^2.2.0",
+    "up.io": "^1.0.17"
+  }
+}
