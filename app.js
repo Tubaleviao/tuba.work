@@ -1,4 +1,5 @@
 require('dotenv').config() // just for testing
+//console.log(process.env.PORT)
 const express = require('express')
 const app = express()
 const prod = process.env.PROD
@@ -6,7 +7,8 @@ const protocol = prod ? require('https'): require('http')
 const port = process.env.PORT
 const fs = require('fs')
 const cert = prod? () => ({key: fs.readFileSync(process.env.CERT_KEY), cert: fs.readFileSync(process.env.CERT_CERT)}) : false
-const server = prod ? protocol.createServer(cert, app) : protocol.createServer(app)
+//console.log(cert())
+const server = prod ? protocol.createServer(cert(), app) : protocol.createServer(app)
 const router = require('./routes')
 const io_code = require('./io_code')
 const session = require('express-session')

@@ -19,14 +19,14 @@ exports.player = socket => {
 	socket.on('setUser', username => { user = username });
 
 	socket.on('delete', music => {
-		fs.unlink(__dirname+'/public/'+user+'/'+music, (err, resp) => {
+		fs.unlink(`${__dirname}/public/${user}/${music}`, (err, resp) => {
 			if(err) console.log(err);
 		});
 	});
 
 	socket.on('up_started', event => {
 		let data = {};
-		if(fs.existsSync(__dirname+'/public/'+user+'/'+event.music)){
+		if(fs.existsSync(`${__dirname}/public/${user}/${event.music}`)){
 			socket.emit('up_abortOne', event.id); 
 		}else{
 			data.exists = false;
@@ -51,7 +51,7 @@ exports.player = socket => {
     event.id = event.file_id;
 		event.music = event.file_name;
     if(event.success){
-      fs.rename( __dirname+'/public/tmp/'+event.music, __dirname+'/public/'+user+'/'+event.music, err => {
+      fs.rename( `${__dirname}/public/tmp/${event.music}`, `${__dirname}/public/${user}/${event.music}`, err => {
         if(err) console.log(err);
       });
     }
@@ -60,7 +60,7 @@ exports.player = socket => {
 
   socket.on("error", event => {
 		console.log(event.file.name+" - "+event.memo);
-		fs.unlink('./public/tmp/'+event.file.name, (err, resp) => {
+		fs.unlink(`./public/tmp/${event.file.name}`, (err, resp) => {
 			if(err) console.log(err);
 		});
 	});
