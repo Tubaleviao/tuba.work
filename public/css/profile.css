@@ -1,0 +1,61 @@
+.fcolored{
+	display: none;
+	cursor: pointer;
+}
+.gcolored{
+  display: none;
+  cursor: pointer;
+}
+.ggray{
+	display: inline;
+  cursor: pointer;
+}
+.fgray{
+	display: inline;
+  cursor: pointer;
+}
+#googledefault{
+	display: none;
+}
+.messages{
+  float: right;
+}
+.accounts{
+  float: right;
+}
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+table{
+  table-layout: fixed; 
+  width: 400px;
+  float: left;
+}
+tr{
+  width: 200px;
+}
+td{
+  word-break:break-all;
+  border-bottom-color: #005500;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-left-color: #005500;
+  border-left-style: solid;
+  border-left-width: 1px;
+}
+td:first-child{
+  word-wrap: break-word;
+  text-align: center;
+  border-left-color: #000000;
+  border-left-style: solid;
+  border-left-width: 1px;
+}
+textarea{
+  background-color: black;
+  color: lime;
+  margin-top: 15px;
+  margin-left: 15px;
+  resize: both;
+  overflow: hidden;
+}

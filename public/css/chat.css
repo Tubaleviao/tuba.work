@@ -1,0 +1,106 @@
+@media only screen and (min-device-width:500px){
+
+	ul{
+	  margin: 0px;
+	  padding-left: 0px;
+	  list-style-type: none;
+	  text-align: left;
+	}
+
+	.login.page{
+	  text-align:center;
+    display: none;
+	}
+
+	.username {
+	  float: left;
+	  font-weight: 700;
+	  overflow: hidden;
+	  padding-right: 15px;
+	  text-align: right;
+	}
+
+	.inputMessage{
+	  font-family: "Courier New";
+	  margin-left: 20px;
+	  width: 50%;
+    background-color: black;
+    color: lime;
+    resize: none;
+	}
+
+	.usernameInput{
+	  font-family: "Courier New";
+	}
+
+	.users{
+	  float: left;
+	  margin-bottom:10px;
+	  
+	}
+	@media (max-width: 400px) {
+	  .users{
+	    font-size:11px;
+	  }
+	}
+	.chatArea{
+	  margin-top: 20px;
+	  overflow: hidden;
+	  padding-left: 20px;
+	  word-wrap: break-word;
+	}
+}
+
+@media only screen and (max-device-width:500px){	
+	ul{
+		margin: 0px;
+		padding-left: 0px;
+		list-style-type: none;
+	}
+
+	.login.page{
+	  font-size: 100px;
+	}
+	.chat.page {
+	  display: none;
+	  font-size:50px;
+	}
+
+	.username {
+	  float: left;
+	  font-weight: 700;
+	  overflow: hidden;
+	  padding-right: 15px;
+	  text-align: right;
+	}
+
+	.inputMessage{
+	  font-family: "Courier New";
+	  margin-left: 20px;
+	  width: 70%;
+	  font-size:50px;
+	}
+
+	.usernameInput{
+	  font-family: "Courier New";
+	  font-size:100px;
+	  width:90%;
+	}
+
+	.users{
+	  float: left;
+	  margin-bottom:10px;
+	  font-size:25px;
+	}
+
+	.chatArea{
+	  margin-top: 20px;
+	  overflow: hidden;
+	  padding-left: 20px;
+	  word-wrap: break-word;
+	}
+}
+
+.messageBody{
+  white-space: pre-wrap;
+}

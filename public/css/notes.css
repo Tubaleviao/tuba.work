@@ -1,0 +1,15 @@
+textarea{
+  float: left;
+  background-color: black;
+  color: lime;
+  margin-top: 15px;
+  margin-left: 15px;
+  resize: both;
+  overflow: hidden;
+}
+#add{
+  margin: 15px;
+}
+.msg{
+  display: none;
+}

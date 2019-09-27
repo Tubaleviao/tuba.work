@@ -1,0 +1,21 @@
+@media only screen and (orientation: portrait) {
+  .nav-body{
+    text-align: center;
+    display: inline-block;
+    float:left;
+    margin: 5px;
+    font-size: 25px;
+    height: 28%;
+  }
+  .nav-body input{
+    font-size: 25px;
+    margin: 5px;
+    border:1px;
+    border-color: #009900;
+    border-style: solid;
+    width: 90%;
+  }
+  #btn-signup{
+    float:right;
+  }
+}
