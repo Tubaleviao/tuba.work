@@ -1,5 +1,4 @@
-require('dotenv').config() // just for testing
-//console.log(process.env.PORT)
+require('dotenv').config() // load environment variables
 const express = require('express')
 const app = express()
 const prod = process.env.PROD
@@ -7,7 +6,6 @@ const protocol = prod ? require('https'): require('http')
 const port = process.env.PORT
 const fs = require('fs')
 const cert = prod? () => ({key: fs.readFileSync(process.env.CERT_KEY), cert: fs.readFileSync(process.env.CERT_CERT)}) : false
-//console.log(cert())
 const server = prod ? protocol.createServer(cert(), app) : protocol.createServer(app)
 const router = require('./routes')
 const io_code = require('./io_code')
@@ -24,6 +22,7 @@ app.use(express.static('public'))
 app.set('view engine', 'ejs')
 app.use('/', router)
 
+io.of('/').on('connection', io_code.chat)
 io.of('/home').on('connection', io_code.home)
 io.of('/player').on('connection', io_code.player)
 io.of('/notes').on('connection', io_code.notes)

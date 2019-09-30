@@ -4,7 +4,27 @@
   display: none;
 }</style>
 
-		<div  class="p" id="p1">Enjoy</div>
+	<div class='body'>
+		<ul class="pages">
+			<li class="chat page">
+				<ul class="users"></ul>
+        <textarea class="inputMessage" placeholder="Type here..."></textarea>
+				<div class="chatArea">
+				<ul class="messages"></ul>
+				</div>
+			</li>
+			<li class="login page">
+				<div class="form">
+				<h3>What's your nick?</h3>
+				<input class="usernameInput" type="text" maxlength="14" /> 
+				</div>
+			</li>
+		</ul>
+    <script src="/socket.io/socket.io.js"></script>
+		<!-- <script src="/socket.io/socket.io.js"></script> -->
+	</div>
+
+<div  class="p" id="p1">Enjoy</div>
 		<div class="p">our</div>
 		<div class="p">apps</div>
 		<div class="p">,</div>
@@ -24,5 +44,27 @@
         });
       });
     </script>
+
+<script>
+	
+	
+	function getUser(){
+		var user;
+		<% if(locals.user){ %>
+			user = <%-JSON.stringify(user)%>;
+		<% }else{ %>
+			user = prompt("Please enter your nick");
+		<% } %>
+		return(user);
+	}
+	
+	function getRoom(){
+		<% if(locals.room){ %>
+			return('<%=room%>');
+		<% }else{ %>
+			return(false);
+		<% } %>
+	}
+</script>
 
 <% include footer.ejs %>

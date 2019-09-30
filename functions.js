@@ -10,19 +10,19 @@ exports.home = (req, res) => {
 	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user};
 	let data = {};
 	
-	if(req.session.verified){
+	if(req.session.verified || req.session.user){
 		data.title = 'Dashboard';
 		data.nav = nav;
 		data.user = req.session.user;
 		res.render('dashboard', data);
 		visit.page = "dashboard";
-	}else if(req.session.user){
+	}/*else if(req.session.user){
 		data.title = 'Verify';
 		data.user = req.session.user;
 		data.email = req.session.email;
 		res.render('verify', data);
 		visit.page = "verify";
-	}else{
+	}*/else{
 		data.title = 'Home';
 		res.render('home', data);
 		visit.page = "home";
@@ -135,13 +135,13 @@ exports.dashboard = (req, res) =>{
 	let date = new Date();
 	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user};
 	
-	if(req.session.verified){
+	if(req.session.verified || req.session.user){
 		data.title = 'Dashboard';
 		data.user = req.session.user;
 		data.nav = nav;
 		res.render('dashboard', data);
 		visit.page = "dashboard";
-	}else if(req.session.user){
+	}/*else if(req.session.user){
 		data.title = 'Verify';
 		data.user = req.session.user;
 		data.email = req.session.email;
@@ -151,7 +151,7 @@ exports.dashboard = (req, res) =>{
 		}
 		res.render('verify', data);
 		visit.page = "verify";
-	}else{
+	}*/else{
 		data.title = 'Home';
 		res.render('home', data);
 		visit.page = "home";

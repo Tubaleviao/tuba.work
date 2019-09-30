@@ -38,8 +38,8 @@ exports.saveRecord = (col, record) => {
 	}
 
 exports.updateRecord = (col, query, update, callback) => {
-    collection = db.collection(col);
-		collection.updateOne(query, update,{upsert: true}, (err, resp) => {
+    let collection = db.collection(col);
+		collection.updateOne(query, {$set: update },{upsert: true}, (err, resp) => {
 			if(err){ console.log(err); callback(false);
 			}else callback(resp);
 		});
