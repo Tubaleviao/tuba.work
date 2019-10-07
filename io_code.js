@@ -1,17 +1,17 @@
 let usernames =[]
-const fs = require('fs')
-const mongo = require('./mongo')
-const moment = require('moment')
-const upio = require("up.io")
+import fs from 'fs';
+import mongo from './mongo';
+import moment from 'moment';
+import upio from "up.io";
 
-exports.home = function(socket){
+export function home(socket) {
   // get user and room (users will need to signup to hide their ips)
   let addedUser = false;
   
   socket.on('new message', data => {
     let hora = moment().format('h:mm:ss a');
     let resp = {
-      hora: hora,
+      hora,
       username: socket.username,
       room: socket.room,
       message: data
@@ -25,149 +25,58 @@ exports.home = function(socket){
 
   });
 
-  socket.on('add user', data => {
-    let client_ip_address = socket.request.connection.remoteAddress;
-		let existe_user = false;
-		let existe_room = false;
-		let user_room, room_json;
-		if(data.room){
-			user_room = data.room;
-		}else{
-			user_room = "";
-		}
-		
-		for (let i = 0; i < usernames.length; i++){
-			if (usernames[i].room == user_room){
-				existe_room = true
-				room_json = usernames[i]
-			}
-		}
-		// [ {room: "tubaroom", users: ["tuba", "joão" , ...]}, {...} ]
-		
-		if(!existe_room){
-      room_json = {room: user_room, users: []}
-			usernames.push(room_json)
-		}
-		
-		if(room_json.users.indexOf(data.user) >= 0){
-			existe_user = true;
-		}
-		
-		if(!existe_user){
-      socket.username = data.user;
-			console.log(socket.username+" "+client_ip_address);
-			socket.room = user_room;
-			room_json.users.push(data.user);
-			for (let i = 0; i < usernames.length; i++){
-				if (usernames[i].room == data.room){
-					usernames[i].users = room_json.users;
-				}
-			}
-			addedUser = true;
-        mongo.getChat(data.room, chat => {
-          if(!chat){ 
-            console.log('No records for the room '+data.room)
-          }else room_json.chats = chat;
-          socket.emit('login', {})
-          socket.emit('refresh users', room_json)
-          delete room_json.chats
-          socket.broadcast.emit('refresh users', room_json)
-        });
-		} else {
-			socket.emit('login failed', {});
-		}
-  });
-  
-  socket.on('disconnect', () => {
-		let room_json;
-    if (addedUser) {
-			for (let i = 0; i < usernames.length; i++){ 
-				if (usernames[i].room == socket.room){
-					room_json = usernames[i];
-					usernames[i].users.splice(usernames[i].users.indexOf(socket.username), 1);
-				}
-			}
-			socket.broadcast.emit('refresh users', room_json);
-			socket.emit('log', "You become disconnected. Please refresh the page");
-    }
-  });
-  
-  socket.on('blink', data => {
-	  socket.broadcast.emit('blink', data);
-  });
-};
+  socket.on('add user', ({room, user}) => {
+      let client_ip_address = socket.request.connection.remoteAddress;
+      let existe_user = false;
+      let existe_room = false;
+      let user_room;
+      let room_json;
+      if(room){
+          user_room = room;
+      }else{
+          user_room = "";
+      }
 
-exports.chat = socket => {
-	let addedUser = false;
-  
-  socket.on('new message', data => {
-    let hora = moment().format('h:mm:ss a');
-    let resp = {
-      hora: hora,
-      username: socket.username,
-      room: socket.room,
-      message: data
-    }
-    socket.broadcast.emit('new message', resp);
-    socket.emit('new message', resp);
-    resp.hora = moment().format('x');
-    if(socket.room != ''){
-      mongo.saveChat(resp, done => done ? true : console.log('ERROR while saving chat'));
-    }
+      for (let i = 0; i < usernames.length; i++){
+          if (usernames[i].room == user_room){
+              existe_room = true
+              room_json = usernames[i]
+          }
+      }
+      // [ {room: "tubaroom", users: ["tuba", "joão" , ...]}, {...} ]
 
-  });
+      if(!existe_room){
+    room_json = {room: user_room, users: []}
+          usernames.push(room_json)
+      }
 
-  socket.on('add user', data => {
-    let client_ip_address = socket.request.connection.remoteAddress;
-		let existe_user = false;
-		let existe_room = false;
-		let user_room, room_json;
-		if(data.room){
-			user_room = data.room;
-		}else{
-			user_room = "";
-		}
-		
-		for (let i = 0; i < usernames.length; i++){
-			if (usernames[i].room == user_room){
-				existe_room = true
-				room_json = usernames[i]
-			}
-		}
-		// [ {room: "tubaroom", users: ["tuba", "joão" , ...]}, {...} ]
-		
-		if(!existe_room){
-      room_json = {room: user_room, users: []}
-			usernames.push(room_json)
-		}
-		
-		if(room_json.users.indexOf(data.user) >= 0){
-			existe_user = true;
-		}
-		
-		if(!existe_user){
-      socket.username = data.user;
-			console.log(socket.username+" "+client_ip_address);
-			socket.room = user_room;
-			room_json.users.push(data.user);
-			for (let i = 0; i < usernames.length; i++){
-				if (usernames[i].room == data.room){
-					usernames[i].users = room_json.users;
-				}
-			}
-			addedUser = true;
-        mongo.getChat(data.room, chat => {
-          if(!chat){ 
-            console.log('No records for the room '+data.room)
-          }else room_json.chats = chat;
-          socket.emit('login', {})
-          socket.emit('refresh users', room_json)
-          delete room_json.chats
-          socket.broadcast.emit('refresh users', room_json)
-        });
-		} else {
-			socket.emit('login failed', {});
-		}
+      if(room_json.users.includes(user)){
+          existe_user = true;
+      }
+
+      if(!existe_user){
+    socket.username = user;
+          console.log(`${socket.username} ${client_ip_address}`);
+          socket.room = user_room;
+          room_json.users.push(user);
+          for (let i = 0; i < usernames.length; i++){
+              if (usernames[i].room == room){
+                  usernames[i].users = room_json.users;
+              }
+          }
+          addedUser = true;
+      mongo.getChat(room, chat => {
+        if(!chat){ 
+          console.log(`No records for the room ${room}`)
+        }else room_json.chats = chat;
+        socket.emit('login', {})
+        socket.emit('refresh users', room_json)
+        delete room_json.chats
+        socket.broadcast.emit('refresh users', room_json)
+      });
+      } else {
+          socket.emit('login failed', {});
+      }
   });
   
   socket.on('disconnect', () => {
@@ -189,7 +98,100 @@ exports.chat = socket => {
   });
 }
 
-exports.player = socket => {
+export function chat(socket) {
+	let addedUser = false;
+  
+  socket.on('new message', data => {
+    let hora = moment().format('h:mm:ss a');
+    let resp = {
+      hora,
+      username: socket.username,
+      room: socket.room,
+      message: data
+    }
+    socket.broadcast.emit('new message', resp);
+    socket.emit('new message', resp);
+    resp.hora = moment().format('x');
+    if(socket.room != ''){
+      mongo.saveChat(resp, done => done ? true : console.log('ERROR while saving chat'));
+    }
+
+  });
+
+  socket.on('add user', ({room, user}) => {
+      let client_ip_address = socket.request.connection.remoteAddress;
+      let existe_user = false;
+      let existe_room = false;
+      let user_room;
+      let room_json;
+      if(room){
+          user_room = room;
+      }else{
+          user_room = "";
+      }
+
+      for (let i = 0; i < usernames.length; i++){
+          if (usernames[i].room == user_room){
+              existe_room = true
+              room_json = usernames[i]
+          }
+      }
+      // [ {room: "tubaroom", users: ["tuba", "joão" , ...]}, {...} ]
+
+      if(!existe_room){
+    room_json = {room: user_room, users: []}
+          usernames.push(room_json)
+      }
+
+      if(room_json.users.includes(user)){
+          existe_user = true;
+      }
+
+      if(!existe_user){
+    socket.username = user;
+          console.log(`${socket.username} ${client_ip_address}`);
+          socket.room = user_room;
+          room_json.users.push(user);
+          for (let i = 0; i < usernames.length; i++){
+              if (usernames[i].room == room){
+                  usernames[i].users = room_json.users;
+              }
+          }
+          addedUser = true;
+      mongo.getChat(room, chat => {
+        if(!chat){ 
+          console.log(`No records for the room ${room}`)
+        }else room_json.chats = chat;
+        socket.emit('login', {})
+        socket.emit('refresh users', room_json)
+        delete room_json.chats
+        socket.broadcast.emit('refresh users', room_json)
+      });
+      } else {
+          socket.emit('login failed', {});
+      }
+  });
+  
+  socket.on('disconnect', () => {
+		let room_json;
+    if (addedUser) {
+			for (let i = 0; i < usernames.length; i++){ 
+				if (usernames[i].room == socket.room){
+					room_json = usernames[i];
+					usernames[i].users.splice(usernames[i].users.indexOf(socket.username), 1);
+				}
+			}
+			socket.broadcast.emit('refresh users', room_json);
+			socket.emit('log', "You become disconnected. Please refresh the page");
+    }
+  });
+  
+  socket.on('blink', data => {
+	  socket.broadcast.emit('blink', data);
+  });
+}
+
+export function player(socket) {
 	let uploader = new upio();
 	let user; 
 	uploader.dir = "/public/tmp";
@@ -205,26 +207,26 @@ exports.player = socket => {
 		});
 	});
 
-	socket.on('up_started', event => {
+	socket.on('up_started', ({music, id, size}) => {
 		let data = {};
-		if(fs.existsSync(`${__dirname}/public/${user}/${event.music}`)){
-			socket.emit('up_abortOne', event.id); 
+		if(fs.existsSync(`${__dirname}/public/${user}/${music}`)){
+			socket.emit('up_abortOne', id); 
 		}else{
 			data.exists = false;
-			data.id = event.id;
-			data.music = event.music;
-			data.size = (event.size/1024/1024).toFixed(2);
+			data.id = id;
+			data.music = music;
+			data.size = (size/1024/1024).toFixed(2);
 			data.loaded = 0;
 			socket.emit('addMusicProgress', data);
 		}
 	});
 
-  socket.on('up_progress', event => {
+  socket.on('up_progress', ({id, music, size, loaded}) => {
 		let data = {};
-		data.id = event.id;
-		data.music = event.music;
-		data.size = (event.size/1024/1024).toFixed(2);
-		data.loaded = (event.loaded/1024/1024).toFixed(2);
+		data.id = id;
+		data.music = music;
+		data.size = (size/1024/1024).toFixed(2);
+		data.loaded = (loaded/1024/1024).toFixed(2);
 		socket.emit("attMusicProgress", data);
 	});
 
@@ -239,15 +241,15 @@ exports.player = socket => {
 		socket.emit('deleteMusicProgress', event);
 	});
 
-  socket.on("error", event => {
-		console.log(event.file.name+" - "+event.memo);
-		fs.unlink(`./public/tmp/${event.file.name}`, (err, resp) => {
+  socket.on("error", ({file, memo}) => {
+		console.log(`${file.name} - ${memo}`);
+		fs.unlink(`./public/tmp/${file.name}`, (err, resp) => {
 			if(err) console.log(err);
 		});
 	});
 }
 
-exports.notes = socket => {
+export function notes(socket) {
 	
 	setInterval(() => {socket.emit('attBTC', {}) }, 5000);
 	
@@ -264,7 +266,7 @@ exports.notes = socket => {
   });
 }
 
-exports.shooter = socket => {
+export function shooter(socket) {
   players =[];
 	socket.on('turn', data => { socket.broadcast.emit('turn', data) });
 

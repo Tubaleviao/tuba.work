@@ -1,19 +1,19 @@
-const moment = require('moment')
-const mongo = require('./mongo')
-const fs = require('fs')
-const getSize = require('get-folder-size')
+import moment from 'moment';
+import mongo from './mongo';
+import fs from 'fs';
+import getSize from 'get-folder-size';
 
 let nav = ["chat", "player", "shooter", "notes"]
 
-exports.home = (req, res) => {
+export function home({ip, session}, res) {
   let date = new Date();
-	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user};
+	let visit = {ip: ip, date: date.getTime(), user: session.user};
 	let data = {};
 	
-	if(req.session.verified || req.session.user){
+	if(session.verified || session.user){
 		data.title = 'Dashboard';
 		data.nav = nav;
-		data.user = req.session.user;
+		data.user = session.user;
 		res.render('dashboard', data);
 		visit.page = "dashboard";
 	}/*else if(req.session.user){
@@ -30,12 +30,12 @@ exports.home = (req, res) => {
 	mongo.saveRecord('visits', visit);
 }
 
-exports.profile = (req, res) => {
+export function profile({ip, session}, res) {
   let date = new Date();
-	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user, page: "profile"};
+	let visit = {ip: ip, date: date.getTime(), user: session.user, page: "profile"};
 	let data = {};
-	data.title = 'Profile', data.user = req.session.user
-	mongo.getUserInfo(req.session.user, (err, resp)=>{
+	data.title = 'Profile', data.user = session.user
+	mongo.getUserInfo(session.user, (err, resp)=>{
 		if(err){console.log(err)}else{
 			data.userinfo = resp;
 			res.render("profile", data);
@@ -44,22 +44,22 @@ exports.profile = (req, res) => {
 	});
 }
 
-exports.login = (req, res) =>{
+export function login({ip, session, body}, res) {
   let date = new Date();
-	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user};
+	let visit = {ip: ip, date: date.getTime(), user: session.user};
 	
-	mongo.existUser(req.body.username, (exist) => {
+	mongo.existUser(body.username, (exist) => {
 		if(exist){
-			mongo.auth(req.body.username, req.body.password, (success) => {
+			mongo.auth(body.username, body.password, (success) => {
 				if(success){
-					req.session.user = req.body.username
-					req.session.email = exist.email
-					req.session.verified = true
-          if(req.body.url == "login"){
+					session.user = body.username
+					session.email = exist.email
+					session.verified = true
+          if(body.url == "login"){
             res.redirect("home")
           }else{
-            res.redirect(req.body.url);
-            console.log(req.body.url)
+            res.redirect(body.url);
+            console.log(body.url)
           }
 				}else{
 					res.render('home', {title: 'Home', msg: 'Wrong password'})
@@ -72,45 +72,45 @@ exports.login = (req, res) =>{
 	mongo.saveRecord('visits', visit)
 }
 
-exports.logout = (req, res) =>{
+export function logout({ip, session}, res) {
   let date = new Date();
-	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user, page: "about"};
-	req.session.destroy();
+	let visit = {ip: ip, date: date.getTime(), user: session.user, page: "about"};
+	session.destroy();
 	res.redirect('/home');
 	mongo.saveRecord('visits', visit);
 }
 
-exports.signup = (req, res) =>{
+export function signup({body, session, ip}, res) {
   let now = moment();
 
-	mongo.existUser(req.body.username, (exist) => {
+	mongo.existUser(body.username, (exist) => {
 		if(exist){
 			res.render('home', {title: 'home', msg: 'User already exists'});
 		}else{
-      console.log(req.body.username)
-			mongo.addUser(req.body.username, req.body.password, req.body.email, (success) => {
+      console.log(body.username)
+			mongo.addUser(body.username, body.password, body.email, (success) => {
 				if(success){
-					req.session.user = req.body.username;
-					req.session.email = req.body.email;
-          res.redirect('/auth?id='+success.ops[0]._id);
+					session.user = body.username;
+					session.email = body.email;
+          res.redirect(`/auth?id=${success.ops[0]._id}`);
 				}else{
 					res.render('home', {title: 'home', msg: 'User not registred'});
 				}
 			});
 		}
 	});
-	console.log(req.ip+" "+now.format('DD/MM/YYYY HH:mm:ss')+' sigup');
+	console.log(`${ip} ${now.format('DD/MM/YYYY HH:mm:ss')} sigup`);
 }
 
-exports.auth = (req, res) =>{
-  if(req.query.id){
-		mongo.existId(req.query.id, record => {
+export function auth({query, session}, res) {
+  if(query.id){
+		mongo.existId(query.id, record => {
 			if(record){
-				req.session.verified = true;
+				session.verified = true;
 				record.verified = true;
 				mongo.updateRecord('users', {_id: record._id}, record, resp => {
 					if(resp){
-						let dir = __dirname+'/public/users/'+record.username;
+						let dir = `${__dirname}/public/users/${record.username}`;
 						if (!fs.existsSync(dir)){fs.mkdirSync(dir);}
 						res.redirect('/');
 					}
@@ -118,26 +118,26 @@ exports.auth = (req, res) =>{
 			}
 		});
 	}else{
-		mongo.setEmail({user: req.session.user, email: req.query.email}, resp => {
+		mongo.setEmail({user: session.user, email: query.email}, resp => {
 			if(resp){
 				otherEmail = true;
-				req.session.email = req.query.email;
-				mongo.existUser(req.session.user, exist => {
-					if(exist) res.redirect('/auth?id='+exist._id);
+				session.email = query.email;
+				mongo.existUser(session.user, exist => {
+					if(exist) res.redirect(`/auth?id=${exist._id}`);
 				});
 			}
 		});
 	}
 }
 
-exports.dashboard = (req, res) =>{
+export function dashboard({ip, session}, res) {
 	let data = {};
 	let date = new Date();
-	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user};
+	let visit = {ip: ip, date: date.getTime(), user: session.user};
 	
-	if(req.session.verified || req.session.user){
+	if(session.verified || session.user){
 		data.title = 'Dashboard';
-		data.user = req.session.user;
+		data.user = session.user;
 		data.nav = nav;
 		res.render('dashboard', data);
 		visit.page = "dashboard";
@@ -159,11 +159,11 @@ exports.dashboard = (req, res) =>{
 	mongo.saveRecord('visits', visit);
 }
 
-exports.player = (req, res) =>{
-  let dir = __dirname+'/public/users/'+req.session.user;
+export function player({session, ip}, res) {
+  let dir = `${__dirname}/public/users/${session.user}`;
 	let date = new Date();
 	let data = {};
-	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user, page: "player"};
+	let visit = {ip: ip, date: date.getTime(), user: session.user, page: "player"};
 	
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
@@ -176,7 +176,7 @@ exports.player = (req, res) =>{
 				if(err) throw err;
 				data.musics = files
         data.size = (folder_size/1024/1024).toFixed(2)
-				data.user = req.session.user
+				data.user = session.user
         data.title = 'Player'
 				res.render('player', data);
 				mongo.saveRecord('visits' , visit);
@@ -185,12 +185,12 @@ exports.player = (req, res) =>{
 	});
 }
 
-exports.notes = (req, res) =>{
+export function notes({ip, session}, res) {
 	let data = {};
 	let date = new Date();
-	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user, page: "notes"};
-	data.title = 'Notes', data.user = req.session.user, data.nav = nav
-	mongo.takeNotes(req.session.user, (err, docs) => {
+	let visit = {ip: ip, date: date.getTime(), user: session.user, page: "notes"};
+	data.title = 'Notes', data.user = session.user, data.nav = nav
+	mongo.takeNotes(session.user, (err, docs) => {
 		if(!docs){res.render('notes', data);}else{
 			if(docs){
 				data.notes = docs;
@@ -203,23 +203,23 @@ exports.notes = (req, res) =>{
 	mongo.saveRecord('visits', visit);
 }
 
-exports.chat = (req, res) =>{
+export function chat({ip, session, params}, res) {
 	let now = moment();
 	let date = new Date();
-	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user, page: "chat"};
+	let visit = {ip: ip, date: date.getTime(), user: session.user, page: "chat"};
 	let data = {title: 'Chat'};
-	if(req.session.user != null){
-		data.user = req.session.user;
+	if(session.user != null){
+		data.user = session.user;
 	}
-	if(req.params.room){
-		data.room = req.params.room;
+	if(params.room){
+		data.room = params.room;
 	}
 	res.render('chat', data);
 	mongo.saveRecord('visits', visit);
 }
 
-exports.shooter = (req, res) =>{
+export function shooter({session, ip}, res) {
   let now = moment();
-	res.render('shooter', {title: 'Shooter', user: req.session.user});
-	console.log(req.ip+" "+now.format('DD/MM/YYYY HH:mm:ss')+' shooter');
+	res.render('shooter', {title: 'Shooter', user: session.user});
+	console.log(`${ip} ${now.format('DD/MM/YYYY HH:mm:ss')} shooter`);
 }

@@ -7,33 +7,34 @@ $(function() {
   ];
 
   const $window = $(window);
-  const $usernameInput = $('.usernameInput'); 
-  const $messages = $('.messages'); 
+  const $usernameInput = $('.usernameInput');
+  const $messages = $('.messages');
   const $users = $('.users');
-  const $inputMessage = $('.inputMessage'); 
-  const $title = $('.title'); 
+  const $inputMessage = $('.inputMessage');
+  const $title = $('.title');
 
-  const $loginPage = $('.login.page'); 
-  const $chatPage = $('.chat.page'); 
-  const $footer = $('.footer'); 
+  const $loginPage = $('.login.page');
+  const $chatPage = $('.chat.page');
+  const $footer = $('.footer');
 
-  let username, room = getRoom();
+  let username;
+  let room = getRoom();
   let connected = false;
   let $currentInput = $usernameInput.focus();
   let manolos = {};
   let bluered;
   let num_mens = 0;
-	
+
   let socket = io('/');
 
   let setUsername = user => {
     username = user
     if (username) {
-			socket.emit('add user', {user: user, room: room})
+			socket.emit('add user', {user, room})
     }
   }
-	
-	setUsername(getUser())
+
+  setUsername(getUser())
 
   let sendMessage = () => {
     let message = $inputMessage.val()
@@ -59,7 +60,7 @@ $(function() {
 	if(bluered){
 		num_mens += 1
 		$title.empty()
-		$title.prepend('('+num_mens+') '+((room) ? room : 'Chat'))
+		$title.prepend(`(${num_mens}) ${(room) ? room : 'Chat'}`)
 		//var aaah = new Audio('aaah.mp3');
 		//aaah.play();
 	}
@@ -72,7 +73,7 @@ $(function() {
       .css('color', getUsernameColor(data.username))
     let $messageBodyDiv = $('<span class="messageBody">')
       .text(data.message)
-    let $messageDiv = $('<li class="message" title="'+data.hora+'"/>')
+    let $messageDiv = $(`<li class="message" title="${data.hora}"/>`)
       .data('username', data.username)
       .append($usernameDiv, $messageBodyDiv)
 
@@ -103,11 +104,7 @@ $(function() {
     $messages[0].scrollTop = $messages[0].scrollHeight
   }
 
-  let getTypingMessages = data => {
-    return $('.typing.message').filter( i => {
-      return $(this).data('username') === data.username
-    });
-  }
+  let getTypingMessages = data => $('.typing.message').filter( i => $(this).data('username') === data.username)
 
   let getUsernameColor = username => {
     let hash = 7
@@ -117,18 +114,18 @@ $(function() {
     let index = Math.abs(hash % COLORS.length)
     return COLORS[index]
   }
-  
+
   let addUserElement = el => {
     let $el = $(el)
     $users.prepend($el)
     $users[0].scrollTop = $users[0].scrollHeight
   }
-  
-  $window.on("blur focus", e => {
+
+  $window.on("blur focus", ({type}) => {
 		
     let prevType = $(this).data("prevType"); 
-    if (prevType != e.type) {   
-        switch (e.type) {
+    if (prevType != type) {   
+        switch (type) {
             case "blur":
                 bluered = true;
                 break;
@@ -140,7 +137,7 @@ $(function() {
                 break;
         }
     }
-    $(this).data("prevType", e.type);
+    $(this).data("prevType", type);
   })
 
   $window.keydown( event => {
@@ -176,10 +173,10 @@ $(function() {
     $currentInput = $inputMessage.focus();
     connected = true;
     let message = "Welcome";
-	  $footer.prepend(screen.width+"x"+screen.height);
+	  $footer.prepend(`${screen.width}x${screen.height}`);
     log(message, {prepend: true});
   });
-  
+
   socket.on('login failed', data => {
     alert("User already exists");
 		username = "";
@@ -191,7 +188,7 @@ $(function() {
     	addChatMessage(data);
 		}
   });
-  
+
   socket.on('refresh users', data => {
     let x;
 		
@@ -215,13 +212,13 @@ $(function() {
 			}
 		}
   });
-  
+
   socket.on('log', data => {
     log(data);
   });
-  
+
   socket.on('blink', data => {
-	  $('.'+data).css("opacity","0");
-	  setTimeout(() => {$('.'+data).css("opacity","1");}, 50);
+	  $(`.${data}`).css("opacity","0");
+	  setTimeout(() => {$(`.${data}`).css("opacity","1");}, 50);
   })
 });

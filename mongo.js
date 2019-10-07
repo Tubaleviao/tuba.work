@@ -1,6 +1,6 @@
-const mc = require('mongodb').MongoClient;
-const ObjectID = require('mongodb').ObjectID;
-const bcrypt = require('bcrypt');
+import {MongoClient as mc} from 'mongodb';
+import {ObjectID} from 'mongodb';
+import bcrypt from 'bcrypt';
 let db;
 const mdb_user = process.env.MONGO_USER;
 const mdb_pass = process.env.MONGO_PASS;
@@ -14,7 +14,7 @@ client.connect(err => {
   client.close()
 });
 
-exports.findOneRecord = (col, query, callback) => {
+export function findOneRecord(col, query, callback) {
 		let collection = db.collection(col);
 		collection.findOne(query, (err, record) => {
 			if(err){ console.log(err); callback(false);}
@@ -22,7 +22,7 @@ exports.findOneRecord = (col, query, callback) => {
 		});
 	}
 
-exports.saveRecordCallback = (col, record, callback) => {
+export function saveRecordCallback(col, record, callback) {
 		let collection = db.collection(col);
 		collection.updateOne({bada: "boom"}, {$set: record}, {w:1, upsert:true}, (err, inserted) => {
 			if(err){ console.log(err); callback(false);
@@ -30,14 +30,14 @@ exports.saveRecordCallback = (col, record, callback) => {
 		});
 	}
 
-exports.saveRecord = (col, record) => {
+export function saveRecord(col, record) {
 		let collection = db.collection(col);
 		collection.updateOne({bada: "boom"}, {$set: record}, {w:1, upsert: true}, (err, inserted) => {
 			if(err) console.log(err);
 		});
 	}
 
-exports.updateRecord = (col, query, update, callback) => {
+export function updateRecord(col, query, update, callback) {
     let collection = db.collection(col);
 		collection.updateOne(query, {$set: update },{upsert: true}, (err, resp) => {
 			if(err){ console.log(err); callback(false);
@@ -45,7 +45,7 @@ exports.updateRecord = (col, query, update, callback) => {
 		});
   }
 
-exports.findRecords = (col, query, callback) => {
+export function findRecords(col, query, callback) {
     let collection = db.collection(col);
 		collection.find(query).toArray((err, docs) => {
 			if(err){console.log(err); callback(err, null);}
@@ -53,7 +53,7 @@ exports.findRecords = (col, query, callback) => {
 		});
   }
 
-exports.auth = (user, pass, callback) => {
+export function auth(user, pass, callback) {
   let c = record => {
     if(record){
       bcrypt.compare(pass, record.password, (err, success) => {
@@ -65,20 +65,21 @@ exports.auth = (user, pass, callback) => {
   this.findOneRecord('users', {username: user}, c)
 }
 
-exports.addUser = (user, pass, email, callback) => {
+export function addUser(user, pass, email, callback) {
   users = db.collection('users');
   bcrypt.hash(pass, 8, (err, hash) => {
     if (err){ console.log(err); callback(false);
     }else{
       let d = new Date();
-      users.insertOne({username: user, password: hash, email: email, date: d.getTime()}, {w: 1}, (err, result) => {
+      users.insertOne({username: user, password: hash, email, date: d.getTime()}, {w: 1}, (err, result) => {
         if(err){ console.log(err); callback(false);
         }else{ callback(result); }
       });
     }
   });
 }
-exports.getUserInfo = (user, callback) => {
+
+export function getUserInfo(user, callback) {
   let users = db.collection('users');
 		
   users.findOne( {username: user}, {verified: 0}, (err, record) => {
@@ -87,12 +88,12 @@ exports.getUserInfo = (user, callback) => {
       let info = record;
       let createdDate = new Date(record.date);
       let visits = db.collection('visits');
-      info.date = createdDate.getDate()+'/'+createdDate.getMonth()+'/'+createdDate.getFullYear()+' ';
-      info.date += createdDate.getHours()+':'+createdDate.getMinutes()+':'+createdDate.getSeconds();
-      visits.aggregate([{$match: {user: user}}, {$group: {_id: "$page", count: {$sum: 1}}}, {$sort: {count: -1}}], (err2, results)=>{
+      info.date = `${createdDate.getDate()}/${createdDate.getMonth()}/${createdDate.getFullYear()} `;
+      info.date += `${createdDate.getHours()}:${createdDate.getMinutes()}:${createdDate.getSeconds()}`;
+      visits.aggregate([{$match: {user}}, {$group: {_id: "$page", count: {$sum: 1}}}, {$sort: {count: -1}}], (err2, results)=>{
         if(err2){console.log(err2); callback(false)}else{
           let visitedPages = {};
-          results.forEach(page => {visitedPages[page._id] = page.count})
+          results.forEach(({_id, count}) => {visitedPages[_id] = count})
           info.visitedPages = visitedPages;
           callback(null, info);
         }
@@ -101,32 +102,41 @@ exports.getUserInfo = (user, callback) => {
   });
   
 }
-exports.existId = (id, callback) => {
+
+export function existId(id, callback) {
   id = ObjectID.createFromHexString(id);
   this.findOneRecord('users', {_id: id}, callback)
 }
-exports.existUser = (user, callback) => {
+
+export function existUser(user, callback) {
   this.findOneRecord('users', {username: user}, callback)
 }
-exports.setEmail = (data, callback) => {
-  this.updateRecord('users', {username: data.user}, {$set: {email: data.email}}, callback);
+
+export function setEmail({user, email}, callback) {
+  this.updateRecord('users', {username: user}, {$set: {email: email}}, callback);
 }
-exports.saveNote = (data, callback) => {
-  this.updateRecord('notes', {user: data.user, id: data.id}, {$set: {note: data.note}}, callback)
+
+export function saveNote({user, id, note}, callback) {
+  this.updateRecord('notes', {user: user, id: id}, {$set: {note: note}}, callback)
 }
-exports.saveChat = (data, callback) => {
+
+export function saveChat(data, callback) {
   this.saveRecordCallback('chats', data, callback)
 }
-exports.getChat = (data, callback) => {
+
+export function getChat(data, callback) {
   this.findRecords('chats', {room: data}, callback)
 }
-exports.saveNoteSize = (data, callback) => {
-  this.updateRecord('notes', {user: data.user, id: data.id}, {$set: {x: data.x, y: data.y}}, callback)
+
+export function saveNoteSize({user, id, x, y}, callback) {
+  this.updateRecord('notes', {user: user, id: id}, {$set: {x: x, y: y}}, callback)
 }
-exports.takeNotes = (user, callback) => {
-  this.findRecords('notes', {user: user}, callback)
+
+export function takeNotes(user, callback) {
+  this.findRecords('notes', {user}, callback)
 }
-exports.saveVisit = (visit) => {
+
+export function saveVisit(visit) {
   this.saveRecord('visits', visit);
 }
 

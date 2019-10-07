@@ -1,8 +1,8 @@
-const express = require('express')
+import express from 'express';
 const router = express.Router()
-const functions = require('./functions')
+import functions from './functions';
 
-let userAuth = (req, res, next) => (req.session && req.session.user) ? next() : res.redirect('/home')
+let userAuth = ({session}, res, next) => (session && session.user) ? next() : res.redirect('/home')
 //let verified = (req, res, next) => (req.session.verified) ? next(): res.redirect('/home')
 
 router.get('/profile', functions.profile);
@@ -19,4 +19,4 @@ router.get('/chat/:room', functions.chat);
 router.get('/shooter', functions.shooter); // verified
 router.get('*', (req, res) => res.sendStatus(404))
 
-module.exports = router
+export default router;

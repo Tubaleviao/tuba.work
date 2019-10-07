@@ -1,18 +1,18 @@
 require('dotenv').config() // load environment variables
-const express = require('express')
-const app = express()
+import express from 'express';
+const app = express() 
 const prod = process.env.PROD
 const protocol = prod ? require('https'): require('http')
 const port = process.env.PORT
-const fs = require('fs')
+import fs from 'fs';
 const cert = prod? () => ({key: fs.readFileSync(process.env.CERT_KEY), cert: fs.readFileSync(process.env.CERT_CERT)}) : false
 const server = prod ? protocol.createServer(cert(), app) : protocol.createServer(app)
-const router = require('./routes')
-const io_code = require('./io_code')
-const session = require('express-session')
-const bodyParser = require('body-parser')
+import router from './routes';
+import io_code from './io_code';
+import session from 'express-session';
+import bodyParser from 'body-parser';
 const io = require('socket.io')(server)
-const upio = require('up.io');
+import upio from 'up.io';
 
 app.use(upio.router);
 app.use(bodyParser.urlencoded({ extended: false }))
