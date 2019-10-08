@@ -74,6 +74,7 @@ exports.home = function(socket){
           socket.broadcast.emit('refresh users', room_json)
         });
 		} else {
+      // block login for non-logged users
 			socket.emit('login failed', {});
 		}
   });
