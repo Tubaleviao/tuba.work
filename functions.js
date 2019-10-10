@@ -111,7 +111,7 @@ exports.auth = (req, res) =>{
 				mongo.updateRecord('users', {_id: record._id}, record, resp => {
 					if(resp){
 						let dir = __dirname+'/public/users/'+record.username;
-						if (!fs.existsSync(dir)){fs.mkdirSync(dir);}
+						if (!fs.existsSync(dir)){fs.mkdirSync(dir, { recursive: true });}
 						res.redirect('/');
 					}
 				});
