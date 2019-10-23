@@ -1,5 +1,5 @@
 # tuba.work
-My personal website to develop personal projects which you can also use
+This is an open website to develop useful (or not useful) tools
 
 ## how to use
 Go to https://tuba.work
@@ -31,3 +31,5 @@ sudo node app.js
 ## how to change the original website
 
 Just make a pull request
+
+:beer: are also welcome
