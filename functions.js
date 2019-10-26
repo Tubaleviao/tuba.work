@@ -64,13 +64,13 @@ exports.login = (req, res) =>{
 				}else{
 					res.render('home', {title: 'Home', msg: 'Wrong password'})
 				}
-			});	
-			visit.page = "login"
-			mongo.saveRecord('visits', visit)
+			});
 		}else{
 			res.render('home', {title: 'Home', msg: 'User don\'t exists'})
 		}
-	});	
+	});
+	visit.page = "login"
+	mongo.saveRecord('visits', visit)
 }
 
 exports.logout = (req, res) =>{
