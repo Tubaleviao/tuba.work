@@ -37,10 +37,10 @@ function renderNavBar(navbarId, exampleUri) {
   header.innerHTML = examples.find(ex => ex.uri === exampleUri).name
   pageContainer.insertBefore(header, pageContainer.children[0])
 
-  const menuContent = document.createElement('ul')
-  menuContent.id = 'slide-out'
-  menuContent.classList.add('side-nav', 'fixed')
-  navbar.appendChild(menuContent)
+  //const menuContent = document.createElement('ul')
+  //menuContent.id = 'slide-out'
+  //menuContent.classList.add('side-nav', 'fixed')
+  //navbar.appendChild(menuContent)
 
   //const menuButton = document.createElement('a')
   //menuButton.href='#'
@@ -79,7 +79,7 @@ function renderNavBar(navbarId, exampleUri) {
       span.style.whiteSpace = 'nowrap'
       a.appendChild(span)
       li.appendChild(a)
-      menuContent.appendChild(li)
+      //menuContent.appendChild(li)
     })
 
   $('.button-collapse').sideNav({
