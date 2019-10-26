@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const functions = require('./functions')
 
-let userAuth = (req, res, next) => (req.session && req.session.user) ? next() : res.redirect('/home')
+const userAuth = (req, res, next) => (req.session && req.session.user) ? next() : res.redirect('/home')
 //let verified = (req, res, next) => (req.session.verified) ? next(): res.redirect('/home')
 
 router.get('/webcam_face_detection', (req, res) => res.render('face'));
