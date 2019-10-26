@@ -1,4 +1,4 @@
-let usernames =[]
+const usernames = []
 const fs = require('fs')
 const mongo = require('./mongo')
 const moment = require('moment')
@@ -26,7 +26,7 @@ exports.home = function(socket){
   });
 
   socket.on('add user', data => {
-    let client_ip_address = socket.request.connection.remoteAddress;
+    const client_ip_address = socket.request.connection.remoteAddress;
 		let existe_user = false;
 		let existe_room = false;
 		let user_room, room_json;
@@ -102,9 +102,9 @@ exports.chat = socket => {
 	let addedUser = false;
   
   socket.on('new message', data => {
-    let hora = moment().format('h:mm:ss a');
-    let resp = {
-      hora: hora,
+    const hora = moment().format('h:mm:ss a');
+    const resp = {
+      hora,
       username: socket.username,
       room: socket.room,
       message: data
@@ -119,7 +119,7 @@ exports.chat = socket => {
   });
 
   socket.on('add user', data => {
-    let client_ip_address = socket.request.connection.remoteAddress;
+    const client_ip_address = socket.request.connection.remoteAddress;
 		let existe_user = false;
 		let existe_room = false;
 		let user_room, room_json;
@@ -148,7 +148,7 @@ exports.chat = socket => {
 		
 		if(!existe_user){
       socket.username = data.user;
-			console.log(socket.username+" "+client_ip_address);
+			console.log(`${socket.username} ${client_ip_address}`);
 			socket.room = user_room;
 			room_json.users.push(data.user);
 			for (let i = 0; i < usernames.length; i++){
@@ -191,7 +191,7 @@ exports.chat = socket => {
 }
 
 exports.player = socket => {
-	let uploader = new upio();
+	const uploader = new upio();
 	let user; 
 	uploader.dir = "/public/tmp";
 	uploader.listen(socket);
@@ -207,26 +207,26 @@ exports.player = socket => {
 	});
 
 	socket.on('up_started', event => {
-		let data = {};
 		if(fs.existsSync(`${__dirname}/public/${user}/${event.music}`)){
 			socket.emit('up_abortOne', event.id); 
 		}else{
-			data.exists = false;
-			data.id = event.id;
-			data.music = event.music;
-			data.size = (event.size/1024/1024).toFixed(2);
-			data.loaded = 0;
-			socket.emit('addMusicProgress', data);
+			socket.emit('addMusicProgress', {
+				exists: false,
+				id: event.id,
+				music: event.music,
+				size: (event.size/1024/1024).toFixed(2),
+				loaded: 0
+			});
 		}
 	});
 
   socket.on('up_progress', event => {
-		let data = {};
-		data.id = event.id;
-		data.music = event.music;
-		data.size = (event.size/1024/1024).toFixed(2);
-		data.loaded = (event.loaded/1024/1024).toFixed(2);
-		socket.emit("attMusicProgress", data);
+		socket.emit("attMusicProgress", {
+			id: event.id,
+			music: event.music,
+			size: (event.size/1024/1024).toFixed(2),
+			loaded: (event.loaded/1024/1024).toFixed(2)
+		});
 	});
 
   socket.on('up_completed', event => {
