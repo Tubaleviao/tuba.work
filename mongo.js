@@ -112,7 +112,7 @@ exports.setEmail = (data, callback) => {
   this.updateRecord('users', {username: data.user}, {$set: {email: data.email}}, callback);
 }
 exports.saveNote = (data, callback) => {
-  this.updateRecord('notes', {user: data.user, id: data.id}, {$set: {note: data.note}}, callback)
+  this.updateRecord('notes', {user: data.user, _id: data.id}, {note: data.note}, callback)
 }
 exports.saveChat = (data, callback) => {
   this.saveRecordCallback('chats', data, callback)
@@ -121,7 +121,7 @@ exports.getChat = (data, callback) => {
   this.findRecords('chats', {room: data}, callback)
 }
 exports.saveNoteSize = (data, callback) => {
-  this.updateRecord('notes', {user: data.user, id: data.id}, {$set: {x: data.x, y: data.y}}, callback)
+  this.updateRecord('notes', {user: data.user, id: data.id}, {x: data.x, y: data.y}, callback)
 }
 exports.takeNotes = (user, callback) => {
   this.findRecords('notes', {user: user}, callback)
