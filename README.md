@@ -32,4 +32,4 @@ sudo node app.js
 
 Just make a pull request
 
-:beer: are also welcome
+:beer:
