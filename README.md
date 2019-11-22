@@ -1,5 +1,5 @@
 # tuba.work
-This is an open website to develop useful (or not useful) tools
+This is an open website for you to develop useful (or not useful) tools
 
 ## how to use
 Go to https://tuba.work
