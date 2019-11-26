@@ -37,20 +37,6 @@ function renderNavBar(navbarId, exampleUri) {
   header.innerHTML = examples.find(ex => ex.uri === exampleUri).name
   pageContainer.insertBefore(header, pageContainer.children[0])
 
-  //const menuContent = document.createElement('ul')
-  //menuContent.id = 'slide-out'
-  //menuContent.classList.add('side-nav', 'fixed')
-  //navbar.appendChild(menuContent)
-
-  //const menuButton = document.createElement('a')
-  //menuButton.href='#'
-  //menuButton.classList.add('button-collapse', 'show-on-large')
-  //menuButton.setAttribute('data-activates', 'slide-out')
-  //const menuButtonIcon = document.createElement('img')
-  //menuButtonIcon.src = 'menu_icon.png'
-  //menuButton.appendChild(menuButtonIcon)
-  //navbar.appendChild(menuButton)
-
   const li = document.createElement('li')
   const githubLink = document.createElement('a')
   githubLink.classList.add('waves-effect', 'waves-light', 'side-by-side')
@@ -59,11 +45,6 @@ function renderNavBar(navbarId, exampleUri) {
   const h5 = document.createElement('h5')
   h5.innerHTML = 'face-api.js'
   githubLink.appendChild(h5)
-  //const githubLinkIcon = document.createElement('img')
-  //githubLinkIcon.src = 'github_link_icon.png'
-  //githubLink.appendChild(githubLinkIcon)
-  //li.appendChild(githubLink)
-  //menuContent.appendChild(li)
 
   examples
     .forEach(ex => {
@@ -79,12 +60,7 @@ function renderNavBar(navbarId, exampleUri) {
       span.style.whiteSpace = 'nowrap'
       a.appendChild(span)
       li.appendChild(a)
-      //menuContent.appendChild(li)
     })
-
-  //$('.button-collapse').sideNav({
-    //menuWidth: 260
-  //})
 }
 
 function renderSelectList(selectListId, onChange, initialValue, renderChildren) {
