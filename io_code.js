@@ -257,6 +257,12 @@ exports.notes = socket => {
       socket.emit('saved', success);
     });
   });
+  
+  socket.on('delete', data => {
+    mongo.deleteNote(data, success => {
+      socket.emit('deleted', success);
+    });
+  });
 	
 	socket.on('saveSize', data => {
     mongo.saveNoteSize(data, success => {

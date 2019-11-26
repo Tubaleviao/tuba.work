@@ -8,13 +8,17 @@
 
 <% if(locals.notes) { 
 	notes.forEach((note) => { %>
-<textarea id="note<%=note.id%>" class="note" <% if(note.x){ %> style="width:<%=note.x%>px; height:<%=note.y%>px" <% } %> ><%=note.note%></textarea>
+<textarea id="<%=note.id%>" class="note" <% if(note.x){ %> style="width:<%=note.x%>px; height:<%=note.y%>px" <% } %> ><%=note.note%></textarea>
 <% }); } %>
 
 <script>
 	function getUser(){
 		var user = <%-JSON.stringify(user)%>;
 		return(user);
+	}
+  function getNotes(){
+		var n = <%-JSON.stringify(notes)%>;
+		return(n);
 	}
 </script>
 

@@ -5,21 +5,21 @@ $(function(){
   /*$('#save').on('click', function(){
     socket.emit('save', {user: getUser(), note: $('#note1').val() });
   });*/
-	
+  
 	$('#add').on('click', function(){
-		var ta = $('<textarea/>').addClass('note');
-		var id0 = $('.note').last().attr('id');
+		let ta = $('<textarea/>').addClass('note');
+		let id0 = $('.note').last().attr('id');
 		if(id0){
-      var id = Number(id0.substring(4, id0.length)); 
-      for(var i=0; i<$("body textarea").length; i++){
-        var note_id = $("textarea:eq("+i+")").attr("id");
-        note_id = Number(note_id.substring(4, note_id.length));
+      let id = Number($('.note').length);
+      for(let i=0; i<$("body textarea").length; i++){
+        let note_id = $("textarea:eq("+i+")").attr("id");
+        note_id = Number(note_id);
         if( note_id >= id){
           id = note_id+1;
         }
       }
-			console.log(id);
-			ta.attr('id', 'note'+(id));
+      console.log(id);
+			ta.attr('id', id);
 			$('.note').last().after(ta);
 		}else{
 			ta.attr('id', 'note1');
@@ -45,10 +45,10 @@ $(function(){
 	
 	
 	$(document).on('change', ".note", function(){
-		var id = $(this).attr('id');
-		var id_n = Number(id.substring(4, id.length));
-		console.log(' '+id_n);
-		socket.emit('save', {user: getUser(), note: $('#note'+id_n).val(), id: id_n });
+		let id = $(this).attr('id');
+    let values = {user: getUser(), note: id ? $('#'+id).val() : "", id: id!="" ? Number(id) : null}
+    console.log(values);
+		socket.emit(values.note == '' ? 'delete' : 'save', values);
 	});
   
   socket.on('saved', function(saved){

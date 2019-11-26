@@ -99,7 +99,10 @@ exports.getUserInfo = (user, callback) => {
       });
     }
   });
-  
+}
+exports.delete = (col, query) => {
+  let collection = db.collection(col);
+  collection.deleteOne(query, (err, obj) => err ? console.log(err) : true)
 }
 exports.existId = (id, callback) => {
   id = ObjectID.createFromHexString(id);
@@ -112,19 +115,23 @@ exports.setEmail = (data, callback) => {
   this.updateRecord('users', {username: data.user}, {$set: {email: data.email}}, callback);
 }
 exports.saveNote = (data, callback) => {
-  this.updateRecord('notes', {user: data.user, _id: data.id}, {note: data.note}, callback)
-}
-exports.saveChat = (data, callback) => {
-  this.saveRecordCallback('chats', data, callback)
-}
-exports.getChat = (data, callback) => {
-  this.findRecords('chats', {room: data}, callback)
+  this.updateRecord('notes', {user: data.user, id: data.id}, {note: data.note}, callback) // query, update
 }
 exports.saveNoteSize = (data, callback) => {
   this.updateRecord('notes', {user: data.user, id: data.id}, {x: data.x, y: data.y}, callback)
 }
 exports.takeNotes = (user, callback) => {
   this.findRecords('notes', {user: user}, callback)
+}
+exports.deleteNote = (data, callback) => {
+  this.delete('notes', {user: data.user, id: data.id})
+  callback(true)
+}
+exports.saveChat = (data, callback) => {
+  this.saveRecordCallback('chats', data, callback)
+}
+exports.getChat = (data, callback) => {
+  this.findRecords('chats', {room: data}, callback) 
 }
 exports.saveVisit = (visit) => {
   this.saveRecord('visits', visit);

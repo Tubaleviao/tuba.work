@@ -3,7 +3,7 @@ const mongo = require('./mongo')
 const fs = require('fs')
 const getSize = require('get-folder-size')
 
-let nav = ["chat", "player", "shooter", "notes"]
+let nav = ["chat", "player", "shooter", "notes", "webcam_face_detection"]
 
 exports.home = (req, res) => {
   let date = new Date();
