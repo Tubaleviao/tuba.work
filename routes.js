@@ -6,7 +6,7 @@ const userAuth = (req, res, next) => (req.session && req.session.user) ? next() 
 //let verified = (req, res, next) => (req.session.verified) ? next(): res.redirect('/home')
 
 router.get('/webcam_face_detection', (req, res) => res.render('face'));
-router.get('/profile', functions.profile);
+router.get('/profile', userAuth, functions.profile);
 router.get('/home', functions.home);
 router.post('/login', functions.login);
 router.get('/logout', functions.logout);
