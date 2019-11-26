@@ -89,16 +89,16 @@ exports.getUserInfo = (user, callback) => {
       let visits = db.collection('visits');
       info.date = createdDate.getDate()+'/'+createdDate.getMonth()+'/'+createdDate.getFullYear()+' ';
       info.date += createdDate.getHours()+':'+createdDate.getMinutes()+':'+createdDate.getSeconds();
-      visits.aggregate([{$match: {user: user}}, {$group: {_id: "$page", count: {$sum: 1}}}, {$sort: {count: -1}}], (err2, results)=>{
+      visits.aggregate([{$match: {user: user}}, {$group: {_id: "$page", count: {$sum: 1}}}, {$sort: {count: -1}}]).toArray((err2, results)=>{
         if(err2){console.log(err2); callback(false)}else{
           let visitedPages = {};
           results.forEach(page => {visitedPages[page._id] = page.count})
           info.visitedPages = visitedPages;
           callback(null, info);
         }
-      });
+      })
     }
-  });
+  })
 }
 exports.delete = (col, query) => {
   let collection = db.collection(col);
