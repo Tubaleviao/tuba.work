@@ -47,7 +47,7 @@ function changeInputSize(size) {
 
   const inputSizeSelect = $('#inputSize')
   inputSizeSelect.val(inputSize)
-  inputSizeSelect.material_select()
+  //inputSizeSelect.material_select()
 }
 
 function onIncreaseScoreThreshold() {
@@ -95,7 +95,7 @@ async function changeFaceDetector(detector) {
   selectedFaceDetector = detector
   const faceDetectorSelect = $('#selectFaceDetector')
   faceDetectorSelect.val(detector)
-  faceDetectorSelect.material_select()
+  //faceDetectorSelect.material_select()
 
   $('#loader').show()
   if (!isFaceDetectionModelLoaded()) {
@@ -117,10 +117,10 @@ function initFaceDetectionControls() {
   const faceDetectorSelect = $('#selectFaceDetector')
   faceDetectorSelect.val(selectedFaceDetector)
   faceDetectorSelect.on('change', onSelectedFaceDetectorChanged)
-  faceDetectorSelect.material_select()
+  //faceDetectorSelect.material_select()
 
   const inputSizeSelect = $('#inputSize')
   inputSizeSelect.val(inputSize)
   inputSizeSelect.on('change', onInputSizeChanged)
-  inputSizeSelect.material_select()
+  //inputSizeSelect.material_select()
 }

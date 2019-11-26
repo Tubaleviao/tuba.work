@@ -82,9 +82,9 @@ function renderNavBar(navbarId, exampleUri) {
       //menuContent.appendChild(li)
     })
 
-  $('.button-collapse').sideNav({
-    menuWidth: 260
-  })
+  //$('.button-collapse').sideNav({
+    //menuWidth: 260
+  //})
 }
 
 function renderSelectList(selectListId, onChange, initialValue, renderChildren) {
