@@ -25,14 +25,40 @@ $(function() {
   let num_mens = 0;
 	
   let socket = io('/');
-
+  
   let setUsername = user => {
     username = user
     if (username) {
 			socket.emit('add user', {user: user, room: room})
     }
   }
-	
+  
+  let getIps = () => {
+    //compatibility for Firefox and chrome
+    window.RTCPeerConnection = window.RTCPeerConnection 
+                || window.mozRTCPeerConnection 
+                || window.webkitRTCPeerConnection;
+    var pc = new RTCPeerConnection({iceServers:[]})
+    var noop = () => {}
+    var ips;
+    pc.createDataChannel('')
+    pc.createOffer(pc.setLocalDescription.bind(pc), noop)
+    pc.onicecandidate = ice => {
+      if (ice && ice.candidate && ice.candidate.candidate){
+        let reg = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/
+        let global = getGlobalIp().split(':')[3];
+        let local = reg.exec(ice.candidate.candidate)[1]
+        ips = global+" "+local
+        pc.onicecandidate = noop
+      }
+    }
+    //return Promise.resolve(ips);
+    setUsername(ips)
+  }
+  
+ 
+  
+	//getIps(res => console.log(res))
 	setUsername(getUser())
 
   let sendMessage = () => {

@@ -37,8 +37,8 @@ $(function(){
 			x = $(this).width();
 			y = $(this).height();
 			var id = $(this).attr('id');
-			var id_n = Number(id.substring(4, id.length));
-			console.log(+$(this).width()+" + "+$(this).height());
+			var id_n = Number(id ); // id.substring(4, id.length)
+			console.log(getUser()+$(this).width()+" + "+$(this).height() + id_n);
 			socket.emit('saveSize', {user: getUser(), id: id_n, x: x, y: y });
 		}
 	});

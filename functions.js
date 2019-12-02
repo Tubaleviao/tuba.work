@@ -208,7 +208,7 @@ exports.chat = (req, res) =>{
 	let now = moment();
 	let date = new Date();
 	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user, page: "chat"};
-	let data = {title: 'Chat'};
+	let data = {ip: req.ip, title: 'Chat'};
 	if(req.session.user != null){
 		data.user = req.session.user;
 	}
