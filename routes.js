@@ -1,10 +1,20 @@
 const express = require('express')
 const router = express.Router()
 const functions = require('./functions')
+const multer  = require('multer')
+const upload = multer(); 
+const fs = require('fs');
 
 const userAuth = (req, res, next) => (req.session && req.session.user) ? next() : res.redirect('/home')
 //let verified = (req, res, next) => (req.session.verified) ? next(): res.redirect('/home')
 
+router.post('/upload', upload.single('soundBlob'), function (req, res, next) {
+  console.log(req.file);
+  let uploadLocation = __dirname + `/public/mp3/${new Date().getTime()}.mp3`
+  fs.writeFileSync(uploadLocation, Buffer.from(new Uint8Array(req.file.buffer)));
+  res.sendStatus(200);
+})
+router.get('/hibo', (req, res) => res.render('rec'));
 router.get('/webcam_face_detection', (req, res) => res.render('face'));
 router.get('/profile', userAuth, functions.profile);
 router.get('/home', functions.home);

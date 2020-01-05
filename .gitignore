@@ -4,5 +4,6 @@ package-lock.json
 public/img/*
 public/tmp/*
 public/users/*
+public/mp3/*
 node_modules/
 *.env

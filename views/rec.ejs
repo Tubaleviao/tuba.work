@@ -1,0 +1,67 @@
+<h1>Audio Recorder for recording stuff</h1>
+<h2>testing</h2>
+<button id="start" style="width:100%;border: none;font-size: 50px;margin:5px;background-color: #4CAF50;">Start</button>
+<button id="stop" style="width:100%;border: none;font-size: 50px;margin:5px;background-color: #4CAF50;" disabled>Stop</button>
+<div id="audio-container"></div>
+
+<script>
+  let bstart = document.querySelector('#start');
+  let bstop = document.querySelector('#stop');
+  let container = document.querySelector('#audio-container');
+  let format = {'type': 'audio/mp3'} // output audio format
+  let permissions = { audio: true } // microfone access permission
+  let recording_time = 3000 // 3000 = 3 seconds
+  
+  bstart.addEventListener('click', function() {
+    bstart.disabled = true;
+    bstart.innerHTML = "Speak..."
+    bstop.disabled = false;
+    start()
+  }, false);
+
+  let start = () => {
+    if (navigator.mediaDevices) {
+      console.log('getUserMedia supported.');
+
+      navigator.mediaDevices.getUserMedia(permissions).then(stream => { 
+        // permission conceded
+        const mediaRecorder = new MediaRecorder(stream);
+        let chunks = []
+
+        mediaRecorder.ondataavailable = e => chunks.push(e.data)
+
+        mediaRecorder.onstop = e => {
+          var player = document.createElement("audio")
+          var blob = new Blob(chunks, format);
+          var audioURL = URL.createObjectURL(blob);
+          player.src = audioURL;
+          player.controls = true
+          document.body.appendChild(player);
+          chunks = [];
+          // ???
+          let formdata = new FormData() ;
+          formdata.append('soundBlob', blob, 'whatever.wav')
+          var xhr = new XMLHttpRequest();
+          xhr.open("POST", "upload", true);
+          xhr.setRequestHeader('enctype', 'multipart/form-data');
+          xhr.send(formdata);
+        }
+
+        mediaRecorder.start()
+
+        //let stop = () => mediaRecorder.stop()
+        //setTimeout(stop, recording_time)
+        bstop.onclick = () => {
+          mediaRecorder.stop()
+          bstop.disabled = true;
+          bstart.disabled = false;
+          bstart.innerHTML = "Start"
+        }
+      });
+
+    } else console.log("Not supported: may need HTTPS connection.");
+  }
+  
+  
+  
+</script>
