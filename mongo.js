@@ -2,16 +2,20 @@ const mc = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
 const bcrypt = require('bcrypt');
 let db;
+const mdb_host = process.env.MONGO_HOST;
 const mdb_user = process.env.MONGO_USER;
 const mdb_pass = process.env.MONGO_PASS;
 const mdb_port = process.env.MONGO_PORT;
-const url = `mongodb://${mdb_user}:${mdb_pass}@localhost:${mdb_port}/wonder`;
-const client = new mc(url, {useNewUrlParser: true, useUnifiedTopology: true});
+const mdb_protocol = process.env.MONGO_PROTOCOL;
+const mdb_db = process.env.MONGO_DB;
+const mdb_options = process.env.MONGO_OPTIONS;
+const url = `${mdb_protocol}://${mdb_user}:${mdb_pass}@${mdb_host}/${mdb_db}?${mdb_options}`;
+const client = new mc(url, {useNewUrlParser: true, useUnifiedTopology: true,});
 
 client.connect(err => {
 	if(err) throw err;
-	db = client.db('wonder')
-  client.close()
+	db = client.db('test')
+  //client.close()
 });
 
 exports.findOneRecord = (col, query, callback) => {
@@ -24,7 +28,7 @@ exports.findOneRecord = (col, query, callback) => {
 
 exports.saveRecordCallback = (col, record, callback) => {
 		let collection = db.collection(col);
-		collection.updateOne({bada: "boom"}, {$set: record}, {w:1, upsert:true}, (err, inserted) => {
+		collection.insertOne(record, {w:1}, (err, inserted) => {
 			if(err){ console.log(err); callback(false);
 			}else callback(inserted);
 		});
@@ -32,7 +36,7 @@ exports.saveRecordCallback = (col, record, callback) => {
 
 exports.saveRecord = (col, record) => {
 		let collection = db.collection(col);
-		collection.updateOne({bada: "boom"}, {$set: record}, {w:1, upsert: true}, (err, inserted) => {
+		collection.insertOne(record, {w:1}, (err, inserted) => {
 			if(err) console.log(err);
 		});
 	}
@@ -131,7 +135,7 @@ exports.saveChat = (data, callback) => {
   this.saveRecordCallback('chats', data, callback)
 }
 exports.getChat = (data, callback) => {
-  this.findRecords('chats', {room: data}, callback) 
+  this.findRecords('chats', {"room": data}, callback)
 }
 exports.saveVisit = (visit) => {
   this.saveRecord('visits', visit);

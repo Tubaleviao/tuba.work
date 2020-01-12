@@ -64,7 +64,7 @@ exports.home = function(socket){
 				}
 			}
 			addedUser = true;
-        mongo.getChat(data.room, chat => {
+        mongo.getChat(data.room, (err, chat) => {
           if(!chat){ 
             console.log('No records for the room '+data.room)
           }else room_json.chats = chat;
@@ -157,7 +157,7 @@ exports.chat = socket => {
 				}
 			}
 			addedUser = true;
-        mongo.getChat(data.room, chat => {
+        mongo.getChat(data.room, (err, chat) => {
           if(!chat){ 
             console.log('No records for the room '+data.room)
           }else room_json.chats = chat;
