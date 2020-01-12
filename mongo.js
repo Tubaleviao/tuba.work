@@ -9,12 +9,12 @@ const mdb_port = process.env.MONGO_PORT;
 const mdb_protocol = process.env.MONGO_PROTOCOL;
 const mdb_db = process.env.MONGO_DB;
 const mdb_options = process.env.MONGO_OPTIONS;
-const url = `${mdb_protocol}://${mdb_user}:${mdb_pass}@${mdb_host}/${mdb_db}?${mdb_options}`;
+const url = `${mdb_protocol}://${mdb_user}:${mdb_pass}@${mdb_host}/${mdb_db}${mdb_options}`;
 const client = new mc(url, {useNewUrlParser: true, useUnifiedTopology: true,});
 
 client.connect(err => {
 	if(err) throw err;
-	db = client.db('test')
+	db = client.db(mdb_db)
   //client.close()
 });
 
