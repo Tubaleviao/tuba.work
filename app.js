@@ -23,6 +23,11 @@ app.use(express.static('public/face-stuff/weights'))
 app.set('view engine', 'ejs')
 app.use('/', router)
 
+app.use((err, req, res, next)=>{
+  if(err) res.send(err);
+  else next();
+})
+
 io.of('/').on('connection', io_code.chat)
 io.of('/home').on('connection', io_code.home)
 io.of('/player').on('connection', io_code.player)
