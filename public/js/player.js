@@ -74,7 +74,8 @@ $(document).ready(() => {
 	
 	let socket = io('/player');
 	let uploader = new UpIoFileUpload(socket);
-	let next = musics[Math.floor(Math.random()*musics.length)];
+	let current = musics[Math.floor(Math.random()*musics.length)];
+  let next = musics[Math.floor(Math.random()*musics.length)];
 	let user = "users/"+getUser();
 	let audioTag = $('#audio');
 	let dom = document.getElementById("audio");
@@ -217,23 +218,24 @@ $(document).ready(() => {
 	    if($('.repeat').hasClass('checked')){
 	    	audioTag.currentTime = 0;
 	    } else if($('.random').hasClass('checked')){
-	    	next = musics[Math.floor(Math.random()*musics.length)];
 	    	audioTag.attr('src', user+'/'+next);
 	    	$('#np').text(next);
+        next = musics[Math.floor(Math.random()*musics.length)];
+        $('body').append($('<link>').attr('rel','prefetch').attr('href', user+'/'+next))
 		}
 	});
 
 	$('#next').click(() => {
-		next = musics[Math.floor(Math.random()*musics.length)];
-    	audioTag.attr('src', user+'/'+next);
-    	$('#np').text(next);
+    audioTag.attr('src', user+'/'+next);
+    $('#np').text(next);
+    next = musics[Math.floor(Math.random()*musics.length)];
+    $('body').append($('<link>').attr('rel','prefetch').attr('href', user+'/'+next))
 	});
 
-	audioTag.attr('src', user+'/'+next);
-	$('#np').text(next);
-	
+	audioTag.attr('src', user+'/'+current);
+	$('#np').text(current);
+  $('body').append($('<link>').attr('rel','prefetch').attr('href', user+'/'+next))
 });
-
 
 // drag code
 
