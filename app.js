@@ -11,7 +11,7 @@ const router = require('./routes')
 const io_code = require('./io_code')
 
 const app = express()
-const cert = prod? () => ({key: fs.readFileSync(process.env.CERT_KEY), cert: fs.readFileSync(process.env.CERT_CERT)}) : false
+const cert = prod? () => ({key: fs.readFileSync(process.env.CERT_KEY), cert: fs.readFileSync(process.env.CERT_CERT), allowHTTP1: true}) : false
 const server = prod ? protocol.createServer(cert(), app) : protocol.createServer(app)
 const io = socketio(server)
 const port = process.env.PORT
