@@ -1,26 +1,28 @@
 require('dotenv').config() // load environment variables
 const express = require('express')
-const app = express()
 const prod = process.env.PROD
-const protocol = prod ? require('https'): require('http')
-const port = process.env.PORT
+const protocol = prod ? require('spdy'): require('http')
 const fs = require('fs')
-const cert = prod? () => ({key: fs.readFileSync(process.env.CERT_KEY), cert: fs.readFileSync(process.env.CERT_CERT)}) : false
-const server = prod ? protocol.createServer(cert(), app) : protocol.createServer(app)
-const router = require('./routes')
-const io_code = require('./io_code')
 const session = require('express-session')
-const bodyParser = require('body-parser')
-const io = require('socket.io')(server)
+const socketio = require('socket.io')
 const upio = require('up.io');
 
+const router = require('./routes')
+const io_code = require('./io_code')
+
+const app = express()
+const cert = prod? () => ({key: fs.readFileSync(process.env.CERT_KEY), cert: fs.readFileSync(process.env.CERT_CERT)}) : false
+const server = prod ? protocol.createServer(cert(), app) : protocol.createServer(app)
+const io = socketio(server)
+const port = process.env.PORT
+app.set('view engine', 'ejs')
+
 app.use(upio.router);
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+app.use(express.urlencoded({ extended: false }))
+app.use(express.json())
 app.use(session({secret: process.env.SESSION_SECRET ,cookie: {}, resave: true, saveUninitialized: false}))
 app.use(express.static('public'))
 app.use(express.static('public/face-stuff/weights'))
-app.set('view engine', 'ejs')
 app.use('/', router)
 
 app.use((err, req, res, next)=>{
