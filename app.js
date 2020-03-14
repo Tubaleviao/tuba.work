@@ -1,7 +1,7 @@
 require('dotenv').config() // load environment variables
 const express = require('express')
 const prod = process.env.PROD
-const protocol = prod ? require('spdy'): require('http')
+const protocol = prod ? require('https'): require('http') // spdy
 const fs = require('fs')
 const session = require('express-session')
 const socketio = require('socket.io')

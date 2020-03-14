@@ -188,6 +188,7 @@ exports.chat = socket => {
   socket.on('blink', data => {
 	  socket.broadcast.emit('blink', data);
   });
+  
 }
 
 exports.player = socket => {

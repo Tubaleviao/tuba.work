@@ -25,7 +25,8 @@
 
 	<script defer src="/socket.io/socket.io.js"></script>
 	<script defer src="/upio/client.js"></script>
-	<script> (function($) {
+
+<script> (function($) {
   $.fn.drags = function(opt) {
     var ardio = document.getElementById('audio');
     opt = $.extend({
@@ -33,7 +34,6 @@
       cursor: "ew-resize"
     }, opt);
     var $el = this;
-
     return $el.css('cursor', opt.cursor).on("mousedown", function(e) {
       var $drag = $(this).addClass('draggable');
       var drg_w = $drag.width(),
@@ -79,6 +79,7 @@
     });
   }
 })(jQuery); </script>
+	
 	<script>
 		var musicsJs = <%-JSON.stringify(musics)%>;
 		addMusics(musicsJs);
