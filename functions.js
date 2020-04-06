@@ -3,7 +3,7 @@ const mongo = require('./mongo')
 const fs = require('fs')
 const getSize = require('get-folder-size')
 
-let nav = ["chat", "player", "shooter", "notes", "webcam_face_detection"]
+let nav = ["chat", "player", "shooter", "notes", "webcam_face_detection", "hibo"]
 
 exports.home = (req, res) => {
   let date = new Date();
@@ -59,7 +59,7 @@ exports.login = (req, res) =>{
             res.redirect("home")
           }else{
             res.redirect(req.body.url);
-            console.log(req.body.url)
+            //console.log(req.body.url)
           }
 				}else{
 					res.render('home', {title: 'Home', msg: 'Wrong password'})
