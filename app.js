@@ -6,7 +6,7 @@ const fs = require('fs')
 const session = require('express-session')
 const socketio = require('socket.io')
 const upio = require('up.io');
-const helmet = require('helmet');
+//const helmet = require('helmet');
 
 const router = require('./routes')
 const io_code = require('./io_code')
@@ -18,7 +18,7 @@ const io = socketio(server)
 const port = process.env.PORT
 app.set('view engine', 'ejs')
 
-app.use(helmet())
+//app.use(helmet())
 app.use(upio.router);
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
