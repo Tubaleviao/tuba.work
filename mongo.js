@@ -62,7 +62,7 @@ exports.auth = (user, pass, callback) => {
     if(record){
       bcrypt.compare(pass, record.password, (err, success) => {
         if(err){ console.log(err); callback(false);}
-        success ? callback(true) : callback(false);
+        success ? callback(record) : callback(false); // true
       });
     }else{ callback(false); }
   }

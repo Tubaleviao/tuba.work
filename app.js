@@ -20,7 +20,7 @@ app.set('view engine', 'ejs')
 
 //app.use(helmet())
 app.use(upio.router);
-app.use(express.urlencoded({ extended: false }))
+app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(session({secret: process.env.SESSION_SECRET ,cookie: {}, resave: true, saveUninitialized: false}))
 app.use(express.static('public'))

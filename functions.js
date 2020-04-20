@@ -224,3 +224,37 @@ exports.shooter = (req, res) =>{
 	res.render('shooter', {title: 'Shooter', user: req.session.user});
 	console.log(req.ip+" "+now.format('DD/MM/YYYY HH:mm:ss')+' shooter');
 }
+
+// API CODE
+
+exports.songs = async (req, res) => {
+  let date = new Date();
+	let visit = {ip: req.ip, date: date.getTime(), user: req.me.username, page: "songs"};
+  let dir = __dirname+'/public/users/'+req.me.username;
+  //let songs = 
+      
+  if (!fs.existsSync(dir)) {
+    res.status(404).send(`User ${req.me.username} has no songs stored in the server!`)
+  }else{
+    fs.readdir(dir, (err, files) =>{
+      if(err) res.send(`Error: ${err}`)
+      else {
+        res.json(files)
+        mongo.saveVisit(visit)
+      }
+    })
+  }
+}
+
+exports.jwt = (req, res) => {
+  console.log(req.body)
+  mongo.auth(req.body.username, req.body.password, user => {
+    if(user){
+      const token = jwt.sign({ ...user }, process.env.JWT_KEY);
+      res.header("auth-token", token).json({ ok: true, token: token, data: user })
+    }else{
+      res.json({ok: false, msg: "User not found"})
+    }
+  })
+}
+

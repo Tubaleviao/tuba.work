@@ -4,6 +4,8 @@ const functions = require('./functions')
 const multer  = require('multer')
 const upload = multer(); 
 const fs = require('fs');
+const jwt = require("./jwt")
+const cors = require("cors")
 
 const userAuth = (req, res, next) => (req.session && req.session.user) ? next() : res.redirect('/home')
 //let verified = (req, res, next) => (req.session.verified) ? next(): res.redirect('/home')
@@ -28,6 +30,9 @@ router.get('/notes', functions.notes); // verified
 router.get('/chat', functions.chat);
 router.get('/chat/:room', functions.chat);
 router.get('/shooter', functions.shooter); // verified
+// API
+router.get('/songs', jwt.crossOrigin, jwt.auth, functions.songs);
+router.post('/jwt', jwt.crossOrigin, functions.jwt);
 router.get('*', (req, res) => res.sendStatus(404))
 
 module.exports = router
