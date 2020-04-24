@@ -30,6 +30,7 @@ router.get('/notes', functions.notes); // verified
 router.get('/chat', functions.chat);
 router.get('/chat/:room', functions.chat);
 router.get('/shooter', functions.shooter); // verified
+router.get('/default', functions.default); // verified
 // API
 router.get('/songs', jwt.crossOrigin, jwt.auth, functions.songs);
 router.post('/jwt', jwt.crossOrigin, functions.jwt);

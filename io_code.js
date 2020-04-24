@@ -4,6 +4,10 @@ const mongo = require('./mongo')
 const moment = require('moment')
 const upio = require("up.io")
 
+exports.default = socket => {
+  socket.on('event', data => socket.emit('event', data))
+}
+
 exports.home = function(socket){
   // get user and room (users will need to signup to hide their ips)
   let addedUser = false;

@@ -5,6 +5,12 @@ const getSize = require('get-folder-size')
 
 let nav = ["chat", "player", "shooter", "notes", "webcam_face_detection", "hibo"]
 
+exports.default = (req, res) =>{
+  let now = moment();
+	res.render('default', {title: 'Default', user: req.session.user});
+	console.log(req.ip+" "+now.format('DD/MM/YYYY HH:mm:ss')+' default');
+}
+
 exports.home = (req, res) => {
   let date = new Date();
 	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user};
