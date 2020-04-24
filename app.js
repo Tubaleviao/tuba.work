@@ -39,5 +39,6 @@ io.of('/notes').on('connection', io_code.notes)
 io.of('/chat').on('connection', io_code.chat)
 io.of('/shooter').on('connection', io_code.shooter)
 io.of('/default').on('connection', io_code.default)
+io.of('/talking').on('connection', io_code.talking)
 
 server.listen(port, () => console.log(`Port ${port}!`))

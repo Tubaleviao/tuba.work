@@ -4,6 +4,11 @@ const mongo = require('./mongo')
 const moment = require('moment')
 const upio = require("up.io")
 
+
+exports.talking = socket => {
+  socket.on('event', data => socket.emit('event', data))
+}
+
 exports.default = socket => {
   socket.on('event', data => socket.emit('event', data))
 }
