@@ -6,7 +6,7 @@ const upio = require("up.io")
 
 
 exports.talking = socket => {
-  socket.on('event', data => socket.emit('event', data))
+  socket.on('talk', data => socket.broadcast.emit('talk', data))
 }
 
 exports.default = socket => {
