@@ -39,7 +39,7 @@ exports.home = (req, res) => {
 		res.render('home', data);
 		visit.page = "home";
 	}
-	mongo.saveRecord('visits', visit);
+	mongo.saveRecord.bind(req.db)('visits', visit)
 }
 
 exports.profile = (req, res) => {
@@ -47,22 +47,22 @@ exports.profile = (req, res) => {
 	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user, page: "profile"};
 	let data = {};
 	data.title = 'Profile', data.user = req.session.user
-	mongo.getUserInfo(req.session.user, (err, resp)=>{
+	mongo.getUserInfo.bind(req.db)(req.session.user, (err, resp)=>{
 		if(err){console.log(err)}else{
 			data.userinfo = resp;
 			res.render("profile", data);
-			mongo.saveVisit(visit);
+			mongo.saveVisit.bind(req.db)(visit)
 		}
-	});
+	})
 }
 
 exports.login = (req, res) =>{
   let date = new Date();
 	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user};
 	
-	mongo.existUser(req.body.username, (exist) => {
+	mongo.existUser.bind(req.db)(req.body.username, (exist) => {
 		if(exist){
-			mongo.auth(req.body.username, req.body.password, (success) => {
+			mongo.auth.bind(req.db)(req.body.username, req.body.password, (success) => {
 				if(success){
 					req.session.user = req.body.username
 					req.session.email = exist.email
@@ -76,13 +76,13 @@ exports.login = (req, res) =>{
 				}else{
 					res.render('home', {title: 'Home', msg: 'Wrong password'})
 				}
-			});
+			})
 		}else{
 			res.render('home', {title: 'Home', msg: 'User don\'t exists'})
 		}
-	});
+	})
 	visit.page = "login"
-	mongo.saveRecord('visits', visit)
+	mongo.saveRecord.bind(req.db)('visits', visit)
 }
 
 exports.logout = (req, res) =>{
@@ -90,18 +90,18 @@ exports.logout = (req, res) =>{
 	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user, page: "about"};
 	req.session.destroy();
 	res.redirect('/home');
-	mongo.saveRecord('visits', visit);
+	mongo.saveRecord.bind(req.db)('visits', visit)
 }
 
 exports.signup = (req, res) =>{
   let now = moment();
 
-	mongo.existUser(req.body.username, (exist) => {
+	mongo.existUser.bind(req.db)(req.body.username, (exist) => {
 		if(exist){
 			res.render('home', {title: 'home', msg: 'User already exists'});
 		}else{
       console.log(req.body.username)
-			mongo.addUser(req.body.username, req.body.password, req.body.email, (success) => {
+			mongo.addUser.bind(req.db)(req.body.username, req.body.password, req.body.email, (success) => {
 				if(success){
 					req.session.user = req.body.username;
 					req.session.email = req.body.email;
@@ -109,37 +109,37 @@ exports.signup = (req, res) =>{
 				}else{
 					res.render('home', {title: 'home', msg: 'User not registred'});
 				}
-			});
+			})
 		}
-	});
+	})
 	console.log(req.ip+" "+now.format('DD/MM/YYYY HH:mm:ss')+' sigup');
 }
 
 exports.auth = (req, res) =>{
   if(req.query.id){
-		mongo.existId(req.query.id, record => {
+		mongo.existId.bind(req.db)(req.query.id, record => {
 			if(record){
 				req.session.verified = true;
 				record.verified = true;
-				mongo.updateRecord('users', {_id: record._id}, record, resp => {
+				mongo.updateRecord.bind(req.db)('users', {_id: record._id}, record, resp => {
 					if(resp){
 						let dir = __dirname+'/public/users/'+record.username;
 						if (!fs.existsSync(dir)){fs.mkdirSync(dir, { recursive: true });}
 						res.redirect('/');
 					}
-				});
+				})
 			}
-		});
+		})
 	}else{
-		mongo.setEmail({user: req.session.user, email: req.query.email}, resp => {
+		mongo.setEmail.bind(req.db)({user: req.session.user, email: req.query.email}, resp => {
 			if(resp){
 				otherEmail = true;
 				req.session.email = req.query.email;
-				mongo.existUser(req.session.user, exist => {
+				mongo.existUser.bind(req.db)(req.session.user, exist => {
 					if(exist) res.redirect('/auth?id='+exist._id);
-				});
+				})
 			}
-		});
+		})
 	}
 }
 
@@ -169,7 +169,7 @@ exports.dashboard = (req, res) =>{
 		res.render('home', data);
 		visit.page = "home";
 	}
-	mongo.saveRecord('visits', visit);
+	mongo.saveRecord.bind(req.db)('visits', visit)
 }
 
 exports.player = (req, res) =>{
@@ -192,7 +192,7 @@ exports.player = (req, res) =>{
 				data.user = req.session.user
         data.title = 'Player'
 				res.render('player', data);
-				mongo.saveRecord('visits' , visit);
+				mongo.saveRecord.bind(req.db)('visits' , visit)
 			});
 		}
 	});
@@ -203,7 +203,7 @@ exports.notes = (req, res) =>{
 	let date = new Date();
 	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user, page: "notes"};
 	data.title = 'Notes', data.user = req.session.user, data.nav = nav
-	mongo.takeNotes(req.session.user, (err, docs) => {
+	mongo.takeNotes.bind(req.db)(req.session.user, (err, docs) => {
 		if(!docs){res.render('notes', data);}else{
 			if(docs){
 				data.notes = docs;
@@ -212,8 +212,8 @@ exports.notes = (req, res) =>{
 				res.render('notes', data);
 			}
 		}
-	});
-	mongo.saveRecord('visits', visit);
+	})
+	mongo.saveRecord.bind(req.db)('visits', visit)
 }
 
 exports.chat = (req, res) =>{
@@ -227,8 +227,10 @@ exports.chat = (req, res) =>{
 	if(req.params.room){
 		data.room = req.params.room;
 	}
-	res.render('chat', data);
-	mongo.saveRecord('visits', visit);
+	res.render('chat', data)
+	//mongo.saveRecord.apply( {db:req.db}, ['visits', visit])
+	//mongo.saveRecord.call({db:req.db},'visits', visit)
+	mongo.saveRecord.bind(req.db)('visits', visit)
 }
 
 exports.shooter = (req, res) =>{
@@ -252,7 +254,7 @@ exports.songs = async (req, res) => {
       if(err) res.send(`Error: ${err}`)
       else {
         res.json(files)
-        mongo.saveVisit(visit)
+        mongo.saveVisit.bind(req.db)(visit)
       }
     })
   }
@@ -260,7 +262,7 @@ exports.songs = async (req, res) => {
 
 exports.jwt = (req, res) => {
   console.log(req.body)
-  mongo.auth(req.body.username, req.body.password, user => {
+  mongo.auth.bind(req.db)(req.body.username, req.body.password, user => {
     if(user){
       const token = jwt.sign({ ...user }, process.env.JWT_KEY);
       res.header("auth-token", token).json({ ok: true, token: token, data: user })
