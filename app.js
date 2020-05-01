@@ -16,13 +16,16 @@ const cert = prod? () => ({key: fs.readFileSync(process.env.CERT_KEY), cert: fs.
 const server = prod ? protocol.createServer(cert(), app) : protocol.createServer(app)
 const io = socketio(server)
 const port = process.env.PORT
+const cookie = {secret: process.env.SESSION_SECRET, 
+  cookie: {secure: true, sameSite: true, httpOnly: true}, 
+  resave: true, saveUninitialized: false}
 app.set('view engine', 'ejs')
 
 //app.use(helmet())
 app.use(upio.router);
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
-app.use(session({secret: process.env.SESSION_SECRET ,cookie: {}, resave: true, saveUninitialized: false}))
+app.use(session(cookie))
 app.use(express.static('public'))
 app.use(express.static('public/face-stuff/weights'))
 app.use('/', router)
