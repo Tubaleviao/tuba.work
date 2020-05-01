@@ -28,7 +28,7 @@ app.use(express.static('public/face-stuff/weights'))
 app.use('/', router)
 
 app.use((err, req, res, next)=>{
-  if(err) res.send(err);
+  if(err) console.log(err);
   else next();
 })
 
