@@ -10,7 +10,7 @@ Before you run, you may need to create a .env file with your environment variabl
 
 ```
 PROD=
-PORT=80
+PORT=3000
 SESSION_SECRET="some secret words"
 MONGO_HOST=void-wfsmn.mongodb.net
 MONGO_USER=alvro
@@ -19,8 +19,6 @@ MONGO_PORT=27017
 MONGO_DB=test
 MONGO_PROTOCOL="mongodb+srv"
 MONGO_OPTIONS="?retryWrites=true&w=majority"
-CERT_KEY="you/certificate/privatekey/path.pem"
-CERT_CERT="/your/certificate/fullchain/path.pem"
 ```
 
 OBS: The database above is not the same as production, it was created just for testing purposes.
@@ -29,7 +27,7 @@ After configurating the .env file, just run the application:
 
 ```
 npm install
-sudo node app.js
+node app.js
 ```
 
 ## how to change the original website
