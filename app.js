@@ -42,3 +42,5 @@ io.of('/default').on('connection', io_code.default)
 io.of('/talking').on('connection', io_code.talking)
 
 server.listen(port, () => console.log(`Port ${port}!`))
+
+module.exports = app
