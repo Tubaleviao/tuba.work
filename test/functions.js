@@ -13,3 +13,23 @@ describe('Home', () => {
       .expect(200, done)
   })
 })
+
+describe('Authentication', () => {
+  it('Login: should return 200', done => {
+    request(app).post('/login')
+      .send({username: "test", password: "test"})
+      .set('Accept', 'application/json')
+      .expect(302) // text, body, headers
+      .end((err,res)=> {
+        if(err) return done(err)
+        assert(res.text == '', "texto differente do esperado")
+        return done()
+      })
+  })
+  it('Signup: should return 200', done => {
+    const user = Math.floor(Math.random()*10000000000).toString()
+    request(app).post('/signup')
+      .send({username:user, password:user})
+      .expect(302, done)
+  })
+})

@@ -12,7 +12,7 @@ exports.talking = (req, res) =>{
 }
 
 exports.default = (req, res) =>{
-  let now = moment();
+	let now = moment();
 	res.render('default', {title: 'Default', user: req.session.user});
 	console.log(req.ip+" "+now.format('DD/MM/YYYY HH:mm:ss')+' default');
 }
@@ -60,19 +60,15 @@ exports.login = (req, res) =>{
   let date = new Date();
 	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user};
 	
-	mongo.existUser.bind(req.db)(req.body.username, (exist) => {
+	mongo.existUser.bind(req.db)(req.body.username, exist => {
 		if(exist){
 			mongo.auth.bind(req.db)(req.body.username, req.body.password, (success) => {
 				if(success){
 					req.session.user = req.body.username
 					req.session.email = exist.email
 					req.session.verified = true
-          if(req.body.url == "login"){
-            res.redirect("home")
-          }else{
-            res.redirect(req.body.url);
-            //console.log(req.body.url)
-          }
+					if(req.body.url == "/login") res.redirect("home")
+					else res.redirect(req.body.url)
 				}else{
 					res.render('home', {title: 'Home', msg: 'Wrong password'})
 				}
@@ -105,7 +101,7 @@ exports.signup = (req, res) =>{
 				if(success){
 					req.session.user = req.body.username;
 					req.session.email = req.body.email;
-          res.redirect('/auth?id='+success.ops[0]._id);
+          			res.redirect('/auth?id='+success.ops[0]._id);
 				}else{
 					res.render('home', {title: 'home', msg: 'User not registred'});
 				}
@@ -169,7 +165,7 @@ exports.dashboard = (req, res) =>{
 		res.render('home', data);
 		visit.page = "home";
 	}
-	mongo.saveRecord.bind(req.db)('visits', visit)
+	//mongo.saveRecord.bind(req.db)('visits', visit)
 }
 
 exports.player = (req, res) =>{

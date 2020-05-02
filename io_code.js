@@ -3,7 +3,7 @@ const fs = require('fs')
 const mongo = require('./mongo')
 const moment = require('moment')
 const upio = require("up.io")
-
+const {connect} = require('./middle')
 
 exports.talking = socket => {
   socket.on('talk', data => socket.broadcast.emit('talk', data))
@@ -17,7 +17,7 @@ exports.home = function(socket){
   // get user and room (users will need to signup to hide their ips)
   let addedUser = false;
   
-  socket.on('new message', data => {
+  socket.on('new message', async data => {
     let hora = moment().format('h:mm:ss a');
     let resp = {
       hora: hora,
@@ -29,12 +29,13 @@ exports.home = function(socket){
     socket.emit('new message', resp);
     resp.hora = moment().format('x');
     if(socket.room != ''){
-      mongo.saveChat(resp, done => done ? true : console.log('ERROR while saving chat'));
+		const db = await connect()
+    	mongo.saveChat.bind(db)(resp, done => done ? true : console.log('ERROR while saving chat'));
     }
 
   });
 
-  socket.on('add user', data => {
+  socket.on('add user', async data => {
     const client_ip_address = socket.request.connection.remoteAddress;
 		let existe_user = false;
 		let existe_room = false;
@@ -73,7 +74,8 @@ exports.home = function(socket){
 				}
 			}
 			addedUser = true;
-        mongo.getChat(data.room, (err, chat) => {
+			const db = await connect()
+        mongo.getChat.bind(db)(data.room, (err, chat) => {
           if(!chat){ 
             console.log('No records for the room '+data.room)
           }else room_json.chats = chat;
@@ -110,7 +112,7 @@ exports.home = function(socket){
 exports.chat = socket => {
 	let addedUser = false;
   
-  socket.on('new message', data => {
+  socket.on('new message', async data => {
     const hora = moment().format('h:mm:ss a');
     const resp = {
       hora,
@@ -122,12 +124,13 @@ exports.chat = socket => {
     socket.emit('new message', resp);
     resp.hora = moment().format('x');
     if(socket.room != ''){
-      mongo.saveChat(resp, done => done ? true : console.log('ERROR while saving chat'));
+		const db = await connect()
+      mongo.saveChat.bind(db)(resp, done => done ? true : console.log('ERROR while saving chat'));
     }
 
   });
 
-  socket.on('add user', data => {
+  socket.on('add user', async data => {
     const client_ip_address = socket.request.connection.remoteAddress;
 		let existe_user = false;
 		let existe_room = false;
@@ -166,7 +169,8 @@ exports.chat = socket => {
 				}
 			}
 			addedUser = true;
-        mongo.getChat(data.room, (err, chat) => {
+			const db = await connect()
+        mongo.getChat.bind(db)(data.room, (err, chat) => {
           if(!chat){ 
             console.log('No records for the room '+data.room)
           }else room_json.chats = chat;
@@ -262,20 +266,23 @@ exports.notes = socket => {
 	
 	setInterval(() => {socket.emit('attBTC', {}) }, 5000);
 	
-  socket.on('save', data => {
-    mongo.saveNote(data, success => {
+  socket.on('save', async data => {
+	const db = await connect()
+    mongo.saveNote.bind(db)(data, success => {
       socket.emit('saved', success);
     });
   });
   
-  socket.on('delete', data => {
-    mongo.deleteNote(data, success => {
+  socket.on('delete', async data => {
+	const db = await connect()
+    mongo.deleteNote.bind(db)(data, success => {
       socket.emit('deleted', success);
     });
   });
 	
-	socket.on('saveSize', data => {
-    mongo.saveNoteSize(data, success => {
+	socket.on('saveSize', async data => {
+		const db = await connect()
+    mongo.saveNoteSize.bind(db)(data, success => {
       if(!success) console.log("ERROR ON SAVING NOTE SIZE OMG");
     });
   });

@@ -1,7 +1,7 @@
 const ObjectID = require('mongodb').ObjectID;
 const bcrypt = require('bcrypt');
 
-exports.findOneRecord = (col, query, callback) => {
+const findOneRecord = function(col, query, callback){
 		let collection = this.collection(col);
 		collection.findOne(query, (err, record) => {
 			if(err){ console.log(err); callback(false);}
@@ -9,7 +9,7 @@ exports.findOneRecord = (col, query, callback) => {
 		});
 	}
 
-exports.saveRecordCallback = (col, record, callback) => {
+const saveRecordCallback = function(col, record, callback) {
   let collection = this.collection(col);
 		collection.insertOne(record, {w:1}, (err, inserted) => {
 			if(err){ console.log(err); callback(false);
@@ -17,14 +17,14 @@ exports.saveRecordCallback = (col, record, callback) => {
 		});
 	}
 
-exports.saveRecord = function(col, record){
+const saveRecord = function(col, record){
 		let collection = this.collection(col);
 		collection.insertOne(record, {w:1}, (err, inserted) => {
 			if(err) console.log(err);
 		});
 	}
 
-exports.updateRecord = (col, query, update, callback) => {
+const updateRecord = function(col, query, update, callback){
     let collection = this.collection(col);
 		collection.updateOne(query, {$set: update },{upsert: true}, (err, resp) => {
 			if(err){ console.log(err); callback(false);
@@ -32,7 +32,7 @@ exports.updateRecord = (col, query, update, callback) => {
 		});
   }
 
-exports.findRecords = (col, query, callback) => {
+const findRecords = function(col, query, callback){
     let collection = this.collection(col);
 		collection.find(query).toArray((err, docs) => {
 			if(err){console.log(err); callback(err, null);}
@@ -40,7 +40,7 @@ exports.findRecords = (col, query, callback) => {
 		});
   }
 
-exports.auth = (user, pass, callback) => {
+const auth = function(user, pass, callback){
   let c = record => {
     if(record){
       bcrypt.compare(pass, record.password, (err, success) => {
@@ -49,10 +49,10 @@ exports.auth = (user, pass, callback) => {
       });
     }else{ callback(false); }
   }
-  this.findOneRecord('users', {username: user}, c)
+  findOneRecord.bind(this)('users', {username: user}, c)
 }
 
-exports.addUser = (user, pass, email, callback) => {
+const addUser = function(user, pass, email, callback){
   users = this.collection('users');
   bcrypt.hash(pass, 8, (err, hash) => {
     if (err){ console.log(err); callback(false);
@@ -65,7 +65,7 @@ exports.addUser = (user, pass, email, callback) => {
     }
   });
 }
-exports.getUserInfo = (user, callback) => {
+const getUserInfo = function(user, callback){
   let users = this.collection('users');
 		
   users.findOne( {username: user}, {verified: 0}, (err, record) => {
@@ -87,41 +87,47 @@ exports.getUserInfo = (user, callback) => {
     }
   })
 }
-exports.delete = (col, query) => {
+const del = function(col, query){
   let collection = this.collection(col);
   collection.deleteOne(query, (err, obj) => err ? console.log(err) : true)
 }
-exports.existId = (id, callback) => {
+const existId = function(id, callback){
   id = ObjectID.createFromHexString(id);
-  this.findOneRecord.bind(this)('users', {_id: id}, callback)
+  findOneRecord.bind(this)('users', {_id: id}, callback)
 }
-exports.existUser = (user, callback) => {
-  this.findOneRecord.bind(this)('users', {username: user}, callback)
+const existUser = function(user, callback){
+  findOneRecord.bind(this)('users', {username: user}, callback)
 }
-exports.setEmail = (data, callback) => {
-  this.updateRecord.bind(this)('users', {username: data.user}, {$set: {email: data.email}}, callback);
+const setEmail = function(data, callback){
+  updateRecord.bind(this)('users', {username: data.user}, {$set: {email: data.email}}, callback);
 }
-exports.saveNote = (data, callback) => {
-  this.updateRecord.bind(this)('notes', {user: data.user, id: data.id}, {note: data.note}, callback) // query, update
+const saveNote = function(data, callback){
+  updateRecord.bind(this)('notes', {user: data.user, id: data.id}, {note: data.note}, callback) // query, update
 }
-exports.saveNoteSize = (data, callback) => {
-  this.updateRecord.bind(this)('notes', {user: data.user, id: data.id}, {x: data.x, y: data.y}, callback)
+const saveNoteSize = function(data, callback){
+  updateRecord.bind(this)('notes', {user: data.user, id: data.id}, {x: data.x, y: data.y}, callback)
 }
-exports.takeNotes = (user, callback) => {
-  this.findRecords.bind(this)('notes', {user: user}, callback)
+const takeNotes = function(user, callback){
+  findRecords.bind(this)('notes', {user: user}, callback)
 }
-exports.deleteNote = (data, callback) => {
-  this.delete.bind(this)('notes', {user: data.user, id: data.id})
+const deleteNote = function(data, callback){
+  del.bind(this)('notes', {user: data.user, id: data.id})
   callback(true)
 }
-exports.saveChat = (data, callback) => {
-  this.saveRecordCallback.bind(this)('chats', data, callback)
+const saveChat = function(data, callback){
+  saveRecordCallback.bind(this)('chats', data, callback)
 }
-exports.getChat = (data, callback) => {
-  this.findRecords.bind(this)('chats', {"room": data}, callback)
+const getChat = function(data, callback){
+  findRecords.bind(this)('chats', {"room": data}, callback)
 }
-exports.saveVisit = (visit) => {
-  this.saveRecord.bind(this)('visits', visit);
+const saveVisit = function(visit){
+  saveRecord.bind(this)('visits', visit);
 }
 
 //if(record._id) record._id = ObjectID.createFromHexString(record._id);
+
+module.exports = {findOneRecord, saveRecordCallback, 
+  saveRecord, updateRecord, findRecords, auth, 
+  addUser, getUserInfo, delete:del, existId, existUser, 
+  setEmail, saveNote, saveNoteSize, takeNotes, 
+  deleteNote, saveChat, getChat, saveVisit}

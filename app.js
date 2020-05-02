@@ -1,11 +1,12 @@
 require('dotenv').config() // load environment variables
 const express = require('express')
-const prod = process.env.PROD
+const prod = process.env.PROD=="true" || false
 const protocol = prod ? require('https'): require('http') // spdy
 const fs = require('fs')
 const session = require('express-session')
 const socketio = require('socket.io')
 const upio = require('up.io');
+const {mongo} = require('./middle')
 //const helmet = require('helmet');
 
 const router = require('./routes')
@@ -17,7 +18,7 @@ const server = prod ? protocol.createServer(cert(), app) : protocol.createServer
 const io = socketio(server)
 const port = process.env.PORT
 const cookie = {secret: process.env.SESSION_SECRET, 
-  cookie: {secure: true, sameSite: true, httpOnly: true}, 
+  cookie: {sameSite: true, httpOnly: true, secure: prod},
   resave: true, saveUninitialized: false}
 app.set('view engine', 'ejs')
 
@@ -28,6 +29,7 @@ app.use(express.json())
 app.use(session(cookie))
 app.use(express.static('public'))
 app.use(express.static('public/face-stuff/weights'))
+app.use(mongo)
 app.use('/', router)
 
 app.use((err, req, res, next)=>{
