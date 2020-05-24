@@ -6,6 +6,7 @@ const upload = multer();
 const fs = require('fs');
 const middle = require("./middle")
 const cors = require("cors")
+const request = require('request')
 
 const userAuth = (req, res, next) => (req.session && req.session.user) ? next() : res.redirect('/home')
 //let verified = (req, res, next) => (req.session.verified) ? next(): res.redirect('/home')
@@ -16,6 +17,8 @@ router.post('/upload', upload.single('soundBlob'), function (req, res, next) {
   fs.writeFileSync(uploadLocation, Buffer.from(new Uint8Array(req.file.buffer)));
   res.sendStatus(200);
 })
+router.get('/parabains', (req, res) => 
+           request(`http://localhost:3000/${req.query.names ? "?names="+req.query.names : ""}`, (e,r,b) => res.send(b)))
 router.get('/hibo', (req, res) => res.render('rec'));
 router.get('/webcam_face_detection', (req, res) => res.render('face'));
 router.get('/profile', userAuth, functions.profile);
