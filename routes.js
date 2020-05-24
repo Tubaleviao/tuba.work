@@ -18,7 +18,7 @@ router.post('/upload', upload.single('soundBlob'), function (req, res, next) {
   res.sendStatus(200);
 })
 router.get('/parabains', (req, res) => 
-           request(`http://localhost:3000/${req.query.names ? "?names="+req.query.names : ""}`, (e,r,b) => res.send(b)))
+           request(`http://localhost:3000/?names=${req.query.names ? req.query.names : "Álvaro,Natália"}`, (e,r,b) => res.send(b)))
 router.get('/hibo', (req, res) => res.render('rec'));
 router.get('/webcam_face_detection', (req, res) => res.render('face'));
 router.get('/profile', userAuth, functions.profile);
