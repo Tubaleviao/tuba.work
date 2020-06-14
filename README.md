@@ -19,6 +19,7 @@ MONGO_PORT=27017
 MONGO_DB=test
 MONGO_PROTOCOL="mongodb+srv"
 MONGO_OPTIONS="?retryWrites=true&w=majority"
+JWT_KEY="some other secret words"
 ```
 
 OBS: The database above is not the same as production, it was created just for testing purposes.
