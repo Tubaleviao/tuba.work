@@ -11,7 +11,7 @@ const client = new mc(url, {useNewUrlParser: true, useUnifiedTopology: true,});
 
 const auth = (req, res, next) => {
   try {
-    const [type, token] = req.headers.authorization.split(" ");
+    const {token} = req.headers
     let json = verify(token, process.env.JWT_KEY);
     req.me = json;
     next();

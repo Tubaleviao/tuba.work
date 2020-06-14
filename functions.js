@@ -1,3 +1,4 @@
+const { sign } = require("jsonwebtoken");
 const moment = require('moment')
 const mongo = require('./mongo')
 const fs = require('fs')
@@ -257,10 +258,9 @@ exports.songs = async (req, res) => {
 }
 
 exports.jwt = (req, res) => {
-  console.log(req.body)
   mongo.auth.bind(req.db)(req.body.username, req.body.password, user => {
     if(user){
-      const token = jwt.sign({ ...user }, process.env.JWT_KEY);
+      const token = sign({ ...user }, process.env.JWT_KEY);
       res.header("auth-token", token).json({ ok: true, token: token, data: user })
     }else{
       res.json({ok: false, msg: "User not found"})

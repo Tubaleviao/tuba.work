@@ -2,8 +2,8 @@ const express = require('express')
 const router = express.Router()
 const functions = require('./functions')
 const multer  = require('multer')
-const upload = multer(); 
-const fs = require('fs');
+const upload = multer()
+const fs = require('fs')
 const middle = require("./middle")
 const cors = require("cors")
 const request = require('request')
@@ -36,8 +36,8 @@ router.get('/shooter', functions.shooter); // verified
 router.get('/default', functions.default); // verified
 router.get('/talking', functions.talking); // verified
 // API
-router.get('/songs', middle.crossOrigin, middle.auth, functions.songs);
-router.post('/jwt', middle.crossOrigin, functions.jwt);
+router.get('/songs', middle.auth, functions.songs);
+router.post('/jwt', functions.jwt);
 router.get('*', (req, res) => res.sendStatus(404))
 
 module.exports = router
