@@ -38,6 +38,7 @@ router.get('/talking', functions.talking); // verified
 // API
 router.get('/songs', middle.auth, functions.songs);
 router.post('/jwt', functions.jwt);
+router.post('/join', functions.join);
 router.get('*', (req, res) => res.sendStatus(404))
 
 module.exports = router

@@ -268,3 +268,24 @@ exports.jwt = (req, res) => {
   })
 }
 
+exports.join = (req, res) =>{
+  let now = moment();
+	mongo.existUser.bind(req.db)(req.body.username, (exist) => {
+		if(exist){
+			res.json({ok: false, msg: 'User already exists'});
+		}else{
+      console.log(req.body.username)
+			mongo.addUser.bind(req.db)(req.body.username, req.body.password, req.body.email, (success) => {
+				if(success){
+          const data = { username: req.body.username, email: req.body.email }
+          const token = sign(data, process.env.JWT_KEY);
+          res.header("auth-token", token).json({ ok: true, token: token, data: data })
+				}else{
+					res.json({ok: false, msg: 'User not registred'});
+				}
+			})
+		}
+	})
+	console.log(req.ip+" "+now.format('DD/MM/YYYY HH:mm:ss')+' sigup');
+}
+
