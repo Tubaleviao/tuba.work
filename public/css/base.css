@@ -14,7 +14,7 @@ footer {
 	position: fixed;
 }
 a{
-	margin: 5px;
+	margin: 0.5em;
 }
 @media only screen and (orientation: portrait) {
   .optional div{
