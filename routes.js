@@ -36,9 +36,10 @@ router.get('/shooter', functions.shooter); // verified
 router.get('/default', functions.default); // verified
 router.get('/talking', functions.talking); // verified
 // API
-router.get('/songs', middle.auth, functions.songs);
-router.post('/jwt', functions.jwt);
-router.post('/join', functions.join);
+router.get('/songs', middle.auth, functions.songs)
+router.post('/jwt', functions.jwt)
+router.post('/join', functions.join)
+router.post('/audio/:user', functions.audio);
 router.get('*', (req, res) => res.sendStatus(404))
 
 module.exports = router

@@ -1,8 +1,10 @@
-const { sign } = require("jsonwebtoken");
+const { sign, verify } = require("jsonwebtoken")
+const path = require('path')
 const moment = require('moment')
 const mongo = require('./mongo')
 const fs = require('fs')
 const getSize = require('get-folder-size')
+const formidable = require('formidable')
 
 let nav = ["chat", "player", "shooter", "notes", "webcam_face_detection", "hibo"]
 
@@ -104,7 +106,7 @@ exports.signup = (req, res) =>{
 					req.session.email = req.body.email;
           			res.redirect('/auth?id='+success.ops[0]._id);
 				}else{
-					res.render('home', {title: 'home', msg: 'User not registred'});
+					res.render('home', {title: 'home', msg: 'User not registered'});
 				}
 			})
 		}
@@ -263,7 +265,7 @@ exports.jwt = (req, res) => {
       const token = sign({ ...user }, process.env.JWT_KEY);
       res.header("auth-token", token).json({ ok: true, token: token, data: user })
     }else{
-      res.json({ok: false, msg: "User not found"})
+      res.json({ok: false, msg: "Check your user or password"})
     }
   })
 }
@@ -281,11 +283,33 @@ exports.join = (req, res) =>{
           const token = sign(data, process.env.JWT_KEY);
           res.header("auth-token", token).json({ ok: true, token: token, data: data })
 				}else{
-					res.json({ok: false, msg: 'User not registred'});
+					res.json({ok: false, msg: 'Error occurred, user not registered'});
 				}
 			})
 		}
 	})
-	console.log(req.ip+" "+now.format('DD/MM/YYYY HH:mm:ss')+' sigup');
+	console.log(req.ip+" "+now.format('DD/MM/YYYY HH:mm:ss')+' join');
+}
+
+exports.audio = (req, res) =>{
+  let now = moment();
+  const data = verify(req.header('token'), process.env.JWT_KEY)
+  if(data.username === req.params.user){
+    const p = path.join(__dirname, 'public/users', req.params.user)
+    if(!fs.existsSync(p)){
+      fs.mkdir(p, err =>{
+        if(err) console.error(err)
+      })
+    }
+    const formi = formidable({ keepExtensions: true, uploadDir: p });
+    formi.parse(req, (err, fields, files) => {
+      if(err) console.log(err)
+      let oldn = files.audio.path
+      let newn = oldn.substr(0,oldn.lastIndexOf('/')+1)+files.audio.name
+      fs.renameSync(oldn, newn)
+      res.json({ ok: true, song: files.audio.name })
+    })
+  }else res.json({ ok: false, msg: "You must to be authenticated to upload" })
+	console.log(req.ip+" "+now.format('DD/MM/YYYY HH:mm:ss')+' audio');
 }
 

@@ -31,6 +31,7 @@
     "ejs": "^2.7.1",
     "express": "^4.17.1",
     "express-session": "^1.16.2",
+    "formidable": "^1.2.2",
     "get-folder-size": "^2.0.1",
     "helmet": "^3.22.0",
     "jsonwebtoken": "^8.5.1",
