@@ -4,6 +4,7 @@ const mongo = require('./mongo')
 const moment = require('moment')
 const upio = require("up.io")
 const {connect} = require('./middle')
+const getSize = require('get-folder-size')
 
 exports.talking = socket => {
   socket.on('talk', data => socket.broadcast.emit('talk', data))
@@ -206,11 +207,9 @@ exports.chat = socket => {
 
 exports.player = socket => {
 	const uploader = new upio();
-	let user; 
+	let user;
 	uploader.dir = "/public/tmp";
 	uploader.listen(socket);
-	
-	//setInterval(() => { socket.emit('attBTC', cur3)	}, 5000);
 	
 	socket.on('setUser', username => { user = username });
 
@@ -220,18 +219,33 @@ exports.player = socket => {
 		});
 	});
 
-	socket.on('up_started', event => {
-		if(fs.existsSync(`${__dirname}/public/${user}/${event.music}`)){
-			socket.emit('up_abortOne', event.id); 
-		}else{
-			socket.emit('addMusicProgress', {
-				exists: false,
-				id: event.id,
-				music: event.music,
-				size: (event.size/1024/1024).toFixed(2),
-				loaded: 0
-			});
-		}
+	socket.on('up_started', async event => {
+    const size = () => new Promise((reso, reje) => getSize(`${__dirname}/public/${user}`, (err, folder_size) => {
+      if (err) { console.log(err);
+      }else{ reso((folder_size/1024/1024/1024).toFixed(2)) }
+    }))
+    let dirSize = await size()
+    const db = await connect()
+    mongo.saveChat.bind(db)(resp, done => done ? true : console.log('ERROR while saving chat'))
+    // should validate jwt token
+    let permission = await mongo.getPermission.bind(db)(user)
+    if(dirSize > permission){
+      socket.emit('up_abortOne', event.id); 
+    }else{
+      
+      if(fs.existsSync(`${__dirname}/public/${user}/${event.music}`)){
+        socket.emit('up_abortOne', event.id); 
+      }else{
+        socket.emit('addMusicProgress', {
+          exists: false,
+          id: event.id,
+          music: event.music,
+          size: (event.size/1024/1024).toFixed(2),
+          loaded: 0
+        });
+      }
+    }
+		
 	});
 
   socket.on('up_progress', event => {

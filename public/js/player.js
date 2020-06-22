@@ -22,9 +22,9 @@ let selected = () => {
 			}
 		}
 	}
-	if(Number(total)+Number(getSize()) >= 4048){
-		alert("You have only "+Number(2048-getSize()).toFixed(2)+" Mb of free space, you are trying to upload "+total+" Mb\n"+
-				 		"To get more space, you must to pay U$ 0,10 per Gb per Month.");
+	if(Number(total)+Number(getSize()) >= 1024){
+		alert("You have only "+Number(1024-getSize()).toFixed(2)+" Mb of free space, you are trying to upload "+total+" Mb\n"+
+				 		"To get more space, you may pay $1 for extra GB of space per year.");
 		$("#upio_input").val("");
 	}else{
 		$('#selected').empty();
@@ -89,11 +89,8 @@ $(document).ready(() => {
 	
 	socket.emit('setUser', user);
 	
-	socket.on('attBTC', (data) => {
-		if($("#brl").text() != data.brl){
-			$("#brl").css('display', 'none').text(data.brl).fadeIn(130);
-			$("#usd").css('display', 'none').text(data.usd).fadeIn(130);
-		}
+	socket.on('error', (data) => {
+		console.log(data)
 	});
 	
 	socket.on('addMusicProgress', (data) => {

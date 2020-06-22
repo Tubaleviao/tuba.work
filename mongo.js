@@ -52,13 +52,20 @@ const auth = function(user, pass, callback){
   findOneRecord.bind(this)('users', {username: user}, c)
 }
 
+const getPermission = function(user){
+  let users = this.collection('users')
+  users.findOneRecord(users, {username: user}, (rec) => {
+    return new Promise((res, rej) => res(rec.permission || 1) )
+  })
+}
+
 const addUser = function(user, pass, email, callback){
-  users = this.collection('users');
+  let users = this.collection('users');
   bcrypt.hash(pass, 8, (err, hash) => {
     if (err){ console.log(err); callback(false);
     }else{
       let d = new Date();
-      users.insertOne({username: user, password: hash, email: email, date: d.getTime()}, {w: 1}, (err, result) => {
+      users.insertOne({username: user, password: hash, email: email, date: d.getTime(), permission:1}, {w: 1}, (err, result) => {
         if(err){ console.log(err); callback(false);
         }else{ callback(result); }
       });

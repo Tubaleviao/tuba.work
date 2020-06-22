@@ -308,7 +308,7 @@ exports.audio = async (req, res) =>{
     }))
     let dirSize = await size()
     if(dirSize > (data.permission || 1)){
-      res.json({ ok: false, msg: "You've reached your limit of ${data.permission}GB." })
+      res.json({ ok: false, msg: `You've reached your limit of ${data.permission||1}GB.` })
     }else{
       const formi = formidable({ keepExtensions: true, uploadDir: p });
       formi.parse(req, (err, fields, files) => {
