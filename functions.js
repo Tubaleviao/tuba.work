@@ -291,7 +291,7 @@ exports.join = (req, res) =>{
 	console.log(req.ip+" "+now.format('DD/MM/YYYY HH:mm:ss')+' join');
 }
 
-exports.audio = (req, res) =>{
+exports.audio = async (req, res) =>{
   let now = moment();
   const data = verify(req.header('token'), process.env.JWT_KEY)
   if(data.username === req.params.user){
@@ -301,14 +301,24 @@ exports.audio = (req, res) =>{
         if(err) console.error(err)
       })
     }
-    const formi = formidable({ keepExtensions: true, uploadDir: p });
-    formi.parse(req, (err, fields, files) => {
-      if(err) console.log(err)
-      let oldn = files.audio.path
-      let newn = oldn.substr(0,oldn.lastIndexOf('/')+1)+files.audio.name
-      fs.renameSync(oldn, newn)
-      res.json({ ok: true, song: files.audio.name })
-    })
+    
+    const size = () => new Promise((reso, reje) => getSize(p, (err, folder_size) => {
+      if (err) { console.log(err);
+      }else{ reso((folder_size/1024/1024/1024).toFixed(2)) }
+    }))
+    let dirSize = await size()
+    if(dirSize > (data.permission || 1)){
+      res.json({ ok: false, msg: "You've reached your limit of ${data.permission}GB." })
+    }else{
+      const formi = formidable({ keepExtensions: true, uploadDir: p });
+      formi.parse(req, (err, fields, files) => {
+        if(err) console.log(err)
+        let oldn = files.audio.path
+        let newn = oldn.substr(0,oldn.lastIndexOf('/')+1)+files.audio.name
+        fs.renameSync(oldn, newn)
+        res.json({ ok: true, song: files.audio.name })
+      })
+    }
   }else res.json({ ok: false, msg: "You must to be authenticated to upload" })
 	console.log(req.ip+" "+now.format('DD/MM/YYYY HH:mm:ss')+' audio');
 }
