@@ -53,8 +53,7 @@ const auth = function(user, pass, callback){
 }
 
 const getPermission = function(user){
-  let users = this.collection('users')
-  users.findOneRecord(users, {username: user}, (rec) => {
+  findOneRecord.bind(this)('users', {username: user}, (rec) => {
     return new Promise((res, rej) => res(rec.permission || 1) )
   })
 }
@@ -137,4 +136,4 @@ module.exports = {findOneRecord, saveRecordCallback,
   saveRecord, updateRecord, findRecords, auth, 
   addUser, getUserInfo, delete:del, existId, existUser, 
   setEmail, saveNote, saveNoteSize, takeNotes, 
-  deleteNote, saveChat, getChat, saveVisit}
+  deleteNote, saveChat, getChat, saveVisit, getPermission}

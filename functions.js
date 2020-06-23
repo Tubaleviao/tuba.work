@@ -175,6 +175,7 @@ exports.player = (req, res) =>{
   let dir = __dirname+'/public/users/'+req.session.user;
 	let date = new Date();
 	let data = {};
+  data.token = 'none'
 	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user, page: "player"};
 	
   if (!fs.existsSync(dir)) {
@@ -189,6 +190,7 @@ exports.player = (req, res) =>{
 				data.musics = files
         data.size = (folder_size/1024/1024).toFixed(2)
 				data.user = req.session.user
+        data.token = sign({username: data.user, email: req.session.email, permission: req.session.permission||1}, process.env.JWT_KEY)
         data.title = 'Player'
 				res.render('player', data);
 				mongo.saveRecord.bind(req.db)('visits' , visit)

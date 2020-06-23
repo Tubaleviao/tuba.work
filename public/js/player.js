@@ -87,7 +87,7 @@ $(document).ready(() => {
 	
 	// SOCKET FUNCTIONS
 	
-	socket.emit('setUser', user);
+	socket.emit('setUser', {user_url: user, user: getUser(), token: getJWT()});
 	
 	socket.on('error', (data) => {
 		console.log(data)

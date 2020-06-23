@@ -5,6 +5,7 @@ const moment = require('moment')
 const upio = require("up.io")
 const {connect} = require('./middle')
 const getSize = require('get-folder-size')
+const { sign, verify } = require("jsonwebtoken")
 
 exports.talking = socket => {
   socket.on('talk', data => socket.broadcast.emit('talk', data))
@@ -207,45 +208,46 @@ exports.chat = socket => {
 
 exports.player = socket => {
 	const uploader = new upio();
-	let user;
+	let user
+  let user_url
+  let token
 	uploader.dir = "/public/tmp";
 	uploader.listen(socket);
 	
-	socket.on('setUser', username => { user = username });
+	socket.on('setUser', obj => { user_url= obj.user_url; user = obj.user; token = obj.token });
 
 	socket.on('delete', music => {
-		fs.unlink(`${__dirname}/public/${user}/${music}`, (err, resp) => {
+		fs.unlink(`${__dirname}/public/${user_url}/${music}`, (err, resp) => {
 			if(err) console.log(err);
 		});
 	});
 
 	socket.on('up_started', async event => {
-    const size = () => new Promise((reso, reje) => getSize(`${__dirname}/public/${user}`, (err, folder_size) => {
+    const size = () => new Promise((reso, reje) => getSize(`${__dirname}/public/${user_url}`, (err, folder_size) => {
       if (err) { console.log(err);
       }else{ reso((folder_size/1024/1024/1024).toFixed(2)) }
     }))
     let dirSize = await size()
     const db = await connect()
-    mongo.saveChat.bind(db)(resp, done => done ? true : console.log('ERROR while saving chat'))
-    // should validate jwt token
-    let permission = await mongo.getPermission.bind(db)(user)
-    if(dirSize > permission){
-      socket.emit('up_abortOne', event.id); 
-    }else{
-      
-      if(fs.existsSync(`${__dirname}/public/${user}/${event.music}`)){
+    const comming = verify(token, process.env.JWT_KEY)
+    if(comming.username === user){
+      let permission = await mongo.getPermission.bind(db)(user)
+      if(dirSize > permission){
         socket.emit('up_abortOne', event.id); 
       }else{
-        socket.emit('addMusicProgress', {
-          exists: false,
-          id: event.id,
-          music: event.music,
-          size: (event.size/1024/1024).toFixed(2),
-          loaded: 0
-        });
+        if(fs.existsSync(`${__dirname}/public/${user_url}/${event.music}`)){
+          socket.emit('up_abortOne', event.id); 
+        }else{
+          socket.emit('addMusicProgress', {
+            exists: false,
+            id: event.id,
+            music: event.music,
+            size: (event.size/1024/1024).toFixed(2),
+            loaded: 0
+          });
+        }
       }
-    }
-		
+    }else{socket.emit('up_abortOne', event.id)}
 	});
 
   socket.on('up_progress', event => {
@@ -261,7 +263,7 @@ exports.player = socket => {
     event.id = event.file_id;
 		event.music = event.file_name;
     if(event.success){
-      fs.rename( `${__dirname}/public/tmp/${event.music}`, `${__dirname}/public/${user}/${event.music}`, err => {
+      fs.rename( `${__dirname}/public/tmp/${event.music}`, `${__dirname}/public/${user_url}/${event.music}`, err => {
         if(err) console.log(err);
       });
     }
