@@ -11,7 +11,7 @@ $(function(){
 		let id0 = $('.note').last().attr('id');
 		if(id0){
       let id = Number($('.note').length);
-      for(let i=0; i<$("body textarea").length; i++){
+      for(let i=0; i<$("body textarea").length; i++){c
         let note_id = $("textarea:eq("+i+")").attr("id");
         note_id = Number(note_id);
         if( note_id >= id){
@@ -47,7 +47,7 @@ $(function(){
 	$(document).on('change', ".note", function(){
 		let id = $(this).attr('id');
     let values = {user: getUser(), note: id ? $('#'+id).val() : "", id: id!="" ? Number(id) : null}
-    console.log(values);
+    //console.log(values);
 		socket.emit(values.note == '' ? 'delete' : 'save', values);
 	});
   
