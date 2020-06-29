@@ -69,6 +69,7 @@ exports.login = (req, res) =>{
 				if(success){
 					req.session.user = req.body.username
 					req.session.email = exist.email
+          req.session.permission = exist.permission||1
 					req.session.verified = true
 					if(req.body.url == "/login") res.redirect("home")
 					else res.redirect(req.body.url)
@@ -190,7 +191,8 @@ exports.player = (req, res) =>{
 				data.musics = files
         data.size = (folder_size/1024/1024).toFixed(2)
 				data.user = req.session.user
-        data.token = sign({username: data.user, email: req.session.email, permission: req.session.permission||1}, process.env.JWT_KEY)
+        data.permission = req.session.permission||1
+        data.token = sign({username: data.user, email: req.session.email, permission: data.permission}, process.env.JWT_KEY)
         data.title = 'Player'
 				res.render('player', data);
 				mongo.saveRecord.bind(req.db)('visits' , visit)

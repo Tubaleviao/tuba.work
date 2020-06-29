@@ -22,8 +22,9 @@ let selected = () => {
 			}
 		}
 	}
-	if(Number(total)+Number(getSize()) >= 1024){
-		alert("You have only "+Number(1024-getSize()).toFixed(2)+" Mb of free space, you are trying to upload "+total+" Mb\n"+
+	if(Number(total)+Number(getSize()) >= Number(getPermission())*1024){
+		alert("You have only "+Number((Number(getPermission())*1024)-getSize()).toFixed(2)+
+          " Mb of free space, you are trying to upload "+total+" Mb\n"+
 				 		"To get more space, you may pay $1 for extra GB of space per year.");
 		$("#upio_input").val("");
 	}else{
