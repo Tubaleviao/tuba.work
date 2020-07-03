@@ -256,7 +256,8 @@ exports.songs = async (req, res) => {
     fs.readdir(dir, (err, files) =>{
       if(err) res.send(`Error: ${err}`)
       else {
-        res.json(files)
+        function shufle(b){let a = [...b]; for(let i=a.length-1; i>0; i--){const j = Math.floor(Math.random()*(i+1)); [a[i], a[j]] = [a[j], a[i]];} return a;}
+        res.json(shufle(files))
         mongo.saveVisit.bind(req.db)(visit)
       }
     })
