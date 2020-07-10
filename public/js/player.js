@@ -37,12 +37,12 @@ let addMusics = (musicsJs) => {
 	musics = musicsJs;
 	let $musics = $('.musics');
 	musics.forEach((music) => {
-		if(music.slice(-4) == '.mp3'){
+		//if(music.slice(-4) == '.mp3'){
 			let $trash = $('<div>').addClass('trash');
 			let $el = $('<div>').addClass('music').text(music);
 			let $li = $('<li>').append($el,$trash);
 			$musics.append($li);
-		}
+		//}
 	});
 }
 	

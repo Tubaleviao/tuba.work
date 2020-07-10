@@ -94,8 +94,7 @@ exports.logout = (req, res) =>{
 }
 
 exports.signup = (req, res) =>{
-  let now = moment();
-
+  let now = moment()
 	mongo.existUser.bind(req.db)(req.body.username, (exist) => {
 		if(exist){
 			res.render('home', {title: 'home', msg: 'User already exists'});
@@ -256,7 +255,7 @@ exports.songs = async (req, res) => {
     fs.readdir(dir, (err, files) =>{
       if(err) res.send(`Error: ${err}`)
       else {
-        function shufle(b){let a = [...b]; for(let i=a.length-1; i>0; i--){const j = Math.floor(Math.random()*(i+1)); [a[i], a[j]] = [a[j], a[i]];} return a;}
+        const shufle = b => {let a = [...b]; for(let i=a.length-1; i>0; i--){const j = Math.floor(Math.random()*(i+1)); [a[i], a[j]] = [a[j], a[i]];} return a;}
         res.json(shufle(files))
         mongo.saveVisit.bind(req.db)(visit)
       }
@@ -265,14 +264,17 @@ exports.songs = async (req, res) => {
 }
 
 exports.jwt = (req, res) => {
+  let now = moment();
   mongo.auth.bind(req.db)(req.body.username, req.body.password, user => {
     if(user){
       const token = sign({ ...user }, process.env.JWT_KEY);
       res.header("auth-token", token).json({ ok: true, token: token, data: user })
     }else{
+      console.log('ano')
       res.json({ok: false, msg: "Check your user or password"})
     }
   })
+  console.log(req.ip+" "+now.format('DD/MM/YYYY HH:mm:ss')+' jwt');
 }
 
 exports.join = (req, res) =>{
@@ -302,9 +304,7 @@ exports.audio = async (req, res) =>{
   if(data.username === req.params.user){
     const p = path.join(__dirname, 'public/users', req.params.user)
     if(!fs.existsSync(p)){
-      fs.mkdir(p, err =>{
-        if(err) console.error(err)
-      })
+      fs.mkdirSync(p)
     }
     
     const size = () => new Promise((reso, reje) => getSize(p, (err, folder_size) => {
@@ -318,6 +318,7 @@ exports.audio = async (req, res) =>{
       const formi = formidable({ keepExtensions: true, uploadDir: p });
       formi.parse(req, (err, fields, files) => {
         if(err) console.log(err)
+        //console.log(files)
         let oldn = files.audio.path
         let newn = oldn.substr(0,oldn.lastIndexOf('/')+1)+files.audio.name
         fs.renameSync(oldn, newn)
