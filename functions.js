@@ -8,6 +8,18 @@ const formidable = require('formidable')
 
 let nav = ["chat", "player", "shooter", "notes", "webcam_face_detection", "hibo"]
 
+exports.privacy = (req, res) =>{
+  let now = moment();
+	res.render('privacy', {title: 'Privacy', user: req.session.user});
+	console.log(req.ip+" "+now.format('DD/MM/YYYY HH:mm:ss')+' privacy');
+}
+
+exports.cookies = (req, res) =>{
+  let now = moment();
+	res.render('cookies', {title: 'Cookies', user: req.session.user});
+	console.log(req.ip+" "+now.format('DD/MM/YYYY HH:mm:ss')+' cookies');
+}
+
 exports.talking = (req, res) =>{
   let now = moment();
 	res.render('talking', {title: 'Talking', user: req.session.user});

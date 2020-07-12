@@ -35,6 +35,8 @@ router.get('/chat/:room', functions.chat);
 router.get('/shooter', functions.shooter); // verified
 router.get('/default', functions.default); // verified
 router.get('/talking', functions.talking); // verified
+router.get('/cookies', functions.cookies); // verified
+router.get('/privacy', functions.privacy); // verified
 // API
 router.get('/songs', middle.auth, functions.songs)
 router.post('/jwt', functions.jwt)
