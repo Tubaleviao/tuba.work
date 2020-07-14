@@ -42,6 +42,6 @@ router.get('/songs', middle.auth, functions.songs)
 router.post('/jwt', functions.jwt)
 router.post('/join', functions.join)
 router.post('/audio/:user', functions.audio);
-router.get('*', (req, res) => res.sendStatus(404))
+router.all('*', (req, res) => {console.log("404"); res.sendStatus(404)})
 
 module.exports = router
