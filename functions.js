@@ -282,7 +282,6 @@ exports.jwt = (req, res) => {
       const token = sign({ ...user }, process.env.JWT_KEY);
       res.header("auth-token", token).json({ ok: true, token: token, data: user })
     }else{
-      console.log('ano')
       res.json({ok: false, msg: "Check your user or password"})
     }
   })

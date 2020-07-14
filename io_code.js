@@ -266,6 +266,7 @@ exports.player = socket => {
       fs.rename( `${__dirname}/public/tmp/${event.music}`, `${__dirname}/public/${user_url}/${event.music}`, err => {
         if(err) console.log(err);
       });
+      console.log(`user: ${user_url}, song: ${event.music}`)
     }
 		socket.emit('deleteMusicProgress', event);
 	});
