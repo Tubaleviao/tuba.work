@@ -243,7 +243,9 @@ exports.chat = (req, res) =>{
 	let data = {ip: req.ip, title: 'Chat'};
 	if(req.session.user != null){
 		data.user = req.session.user;
-	}
+	}else if(req.query.user){
+    data.user = 'u'+Math.floor(Math.random()*100000000);
+  }
 	if(req.params.room){
 		data.room = req.params.room;
 	}
