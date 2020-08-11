@@ -129,10 +129,18 @@ const getChat = function(data, callback){
 const saveVisit = function(visit){
   saveRecord.bind(this)('visits', visit);
 }
+const setPassword = function(user, pass){ // updateRecord = function(col, query, update, callback){
+  return new Promise((resolve, reject) => {
+    bcrypt.hash(pass, 8, (err, hash) => {
+       bcrypt.compare(pass, hash, (err, success) => console.log(err, success))
+      updateRecord.bind(this)('users', {username: user}, {password: hash}, resolve)
+    })
+  })
+}
 
 //if(record._id) record._id = ObjectID.createFromHexString(record._id);
 
-module.exports = {findOneRecord, saveRecordCallback, 
+module.exports = {setPassword, findOneRecord, saveRecordCallback, 
   saveRecord, updateRecord, findRecords, auth, 
   addUser, getUserInfo, delete:del, existId, existUser, 
   setEmail, saveNote, saveNoteSize, takeNotes, 

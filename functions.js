@@ -67,6 +67,7 @@ exports.profile = (req, res) => {
   let date = new Date();
 	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user, page: "profile"};
 	let data = {};
+  data.token = sign({username: req.session.user, email: req.session.email}, process.env.JWT_KEY)
 	data.title = 'Profile', data.user = req.session.user
 	mongo.getUserInfo.bind(req.db)(req.session.user, (err, resp)=>{
 		if(err){console.log(err)}else{
@@ -190,7 +191,7 @@ exports.dashboard = (req, res) =>{
 }
 
 exports.player = (req, res) =>{
-  let dir = __dirname+'/public/users/'+req.session.user;
+  let dir = __dirname+'/public/users/'+(req.params.user ? req.params.user : req.session.user);
 	let date = new Date();
 	let data = {};
   data.token = 'none'
@@ -207,9 +208,11 @@ exports.player = (req, res) =>{
 				if(err) throw err;
 				data.musics = files
         data.size = (folder_size/1024/1024).toFixed(2)
-				data.user = req.session.user
+        //data.user = req.session.user
+        if(req.params.user) data = { ...data, user: req.params.user, owner:false }
+        else data = { ...data, user: req.session.user, owner:true } 
         data.permission = req.session.permission||1
-        data.token = sign({username: data.user, email: req.session.email, permission: data.permission}, process.env.JWT_KEY)
+        data.token = sign({username: req.session.user, email: req.session.email, permission: data.permission}, process.env.JWT_KEY)
         data.title = 'Player'
 				res.render('player', data);
 				mongo.saveRecord.bind(req.db)('visits' , visit)
@@ -327,8 +330,8 @@ exports.audio = async (req, res) =>{
     }
     
     const size = () => new Promise((reso, reje) => getSize(p, (err, folder_size) => {
-      if (err) { console.log(err);
-      }else{ reso((folder_size/1024/1024/1024).toFixed(2)) }
+      if (err) console.log(err);
+      else reso((folder_size/1024/1024/1024).toFixed(2)) 
     }))
     let dirSize = await size()
     if(dirSize > (data.permission || 1)){
@@ -346,5 +349,17 @@ exports.audio = async (req, res) =>{
     }
   }else res.json({ ok: false, msg: "You must to be authenticated to upload" })
 	console.log(req.ip+" "+now.format('DD/MM/YYYY HH:mm:ss')+' audio');
+}
+
+exports.cp = async (req,res) => {
+  let now = moment()
+  const data = verify(req.body.token, process.env.JWT_KEY)
+  if(data.username === req.body.user){
+    let np = req.body.password.trim()
+    if(np != ""){
+      let worked = await mongo.setPassword.bind(req.db)(req.body.user, np)
+      res.json({success: worked, msg: 'Password set!'})
+    }else res.json({success: false, msg: 'Password cannot be empty!'})
+  }else res.json({success: false, msg: 'You should be the same user!'})
 }
 

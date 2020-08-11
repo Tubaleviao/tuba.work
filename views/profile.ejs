@@ -16,11 +16,23 @@
 		<% } %>
 	</table>
 	<div class="accounts"><% include profile_buttons.ejs %></div>
+  <form method="POST" action="new_pass" onsubmit="return checkform()">
+    <fieldset>
+      <legend>Change password</legend>
+      <input id="p1" name="password" type="password" placeholder="New password..." onkeyup='checkPass()' required />
+      <input id="p2" name="check" type="password" placeholder="Again..." onkeyup='checkPass()' required />
+      <input id="jwt" name="token" type="hidden"/>
+      <input id="user" name="user" type="hidden"/>
+      <input type="submit" />  
+    </fieldset>
+    
+  </form>
 </div>
 <script>
 	function getUser(){var user = <%-JSON.stringify(user)%>;return(user);	}
+  let getJWT = () => "<%=token%>";
 </script>
 <script src="/socket.io/socket.io.js"></script>
-<script src="https://apis.google.com/js/platform.js" async defer></script>
+<!-- <script src="https://apis.google.com/js/platform.js" async defer></script> -->
 
 <% include footer.ejs %>

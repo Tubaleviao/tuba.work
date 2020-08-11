@@ -17,8 +17,6 @@ router.post('/upload', upload.single('soundBlob'), function (req, res, next) {
   fs.writeFileSync(uploadLocation, Buffer.from(new Uint8Array(req.file.buffer)));
   res.sendStatus(200);
 })
-router.get('/parabains', (req, res) => 
-           res.redirect(`http://tuba.work:3000/?names=${req.query.names ? req.query.names : "Álvaro,Natália"}`))
 router.get('/hibo', (req, res) => res.render('rec'));
 router.get('/webcam_face_detection', (req, res) => res.render('face'));
 router.get('/profile', userAuth, functions.profile);
@@ -29,6 +27,7 @@ router.post('/signup', functions.signup);
 router.get('/auth', functions.auth);
 router.get('/', userAuth, functions.dashboard);
 router.get('/player', userAuth, functions.player); // verified
+router.get('/player/:user', userAuth, functions.player)
 router.get('/notes', userAuth, functions.notes); // verified
 router.get('/chat', functions.chat);
 router.get('/chat/:room', functions.chat);
@@ -40,6 +39,7 @@ router.get('/privacy', functions.privacy); // verified
 router.get('/tuba-player-privacy', functions.tuba_player_privacy); // verified
 // API
 router.get('/songs', middle.auth, functions.songs)
+router.post('/new_pass', functions.cp)
 router.post('/jwt', functions.jwt)
 router.post('/join', functions.join)
 router.post('/audio/:user', functions.audio);
