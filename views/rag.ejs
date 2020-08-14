@@ -1,0 +1,97 @@
+<% include header.ejs %>
+<div class="scene">
+  <div class="cube">
+    <div class="cube_face face-front">front</div>
+    <div class="cube_face face-back">back</div>
+    <div class="cube_face face-right">right</div>
+    <div class="cube_face face-left">left</div>
+    <div class="cube_face face-top">top</div>
+    <div class="cube_face face-bottom">bottom</div>
+  </div>
+</div>
+<p class="radio-group">
+  <label><input type="radio" name="side" value="front" checked /> front</label>
+  <label><input type="radio" name="side" value="right" /> right</label>
+  <label><input type="radio" name="side" value="back" /> back</label>
+  <label><input type="radio" name="side" value="left" /> left</label>
+  <label><input type="radio" name="side" value="top" /> top</label>
+  <label><input type="radio" name="side" value="bottom" /> bottom</label>
+</p>
+
+<script>
+  var cube = document.querySelector('.cube');
+  var radioGroup = document.querySelector('.radio-group');
+  var currentClass = '';
+
+  function changeSide() {
+    var checkedRadio = radioGroup.querySelector(':checked');
+    var showClass = 'show-' + checkedRadio.value;
+    if ( currentClass ) {
+      cube.classList.remove( currentClass );
+    }
+    cube.classList.add( showClass );
+    currentClass = showClass;
+  }
+  //changeSide();
+
+  radioGroup.addEventListener( 'change', changeSide );
+</script>
+
+<style>
+  * { box-sizing: border-box; }
+  label { margin: 10px; border: 1px solid; padding: 1em; display:inline-block;}
+  body { font-family: sans-serif; }
+
+  .scene {
+    width: 200px;
+    height: 200px;
+    border: 1px solid #CCC;
+    margin-left: 40%;
+    perspective: 400px;
+    align-items: center;
+  }
+
+  .cube {
+    width: 200px;
+    height: 200px;
+    position: relative;
+    transform-style: preserve-3d;
+    transform: translateZ(-100px);
+    transition: transform 1s;
+  }
+  
+  .cube_face {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border: 2px solid black;
+    line-height: 200px;
+    font-size: 40px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+  }
+  
+  .face-front  { background: hsla(120, 100%, 50%, 0.7); }
+  .face-right  { background: hsla(120, 100%, 50%, 0.7); }
+  .face-back   { background: hsla(120, 100%, 50%, 0.7); }
+  .face-left   { background: hsla(120, 100%, 50%, 0.7); }
+  .face-top    { background: hsla(120, 100%, 50%, 0.7); }
+  .face-bottom { background: hsla(120, 100%, 50%, 0.7); }
+  
+  .face-front  { transform: rotateY(  0deg) translateZ(100px); }
+  .face-right  { transform: rotateY( 90deg) translateZ(100px); }
+  .face-back   { transform: rotateY(180deg) translateZ(100px); }
+  .face-left   { transform: rotateY(-90deg) translateZ(100px); }
+  .face-top    { transform: rotateX( 90deg) translateZ(100px); }
+  .face-bottom { transform: rotateX(-90deg) translateZ(100px); }
+
+  .cube.show-front  { transform: translateZ(-100px) rotateY(   0deg); }
+  .cube.show-right  { transform: translateZ(-100px) rotateY( -90deg); }
+  .cube.show-back   { transform: translateZ(-100px) rotateY(-180deg); }
+  .cube.show-left   { transform: translateZ(-100px) rotateY(  90deg); }
+  .cube.show-top    { transform: translateZ(-100px) rotateX( -90deg); }
+  .cube.show-bottom { transform: translateZ(-100px) rotateX(  90deg); }
+  
+</style>
+<% include footer.ejs %>

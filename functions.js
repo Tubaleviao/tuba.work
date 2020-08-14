@@ -8,6 +8,12 @@ const formidable = require('formidable')
 
 let nav = ["chat", "player", "shooter", "notes", "webcam_face_detection", "hibo"]
 
+exports.rag = (req, res) =>{
+  let now = moment();
+	res.render('rag', {title: 'Ragnatuba', user: req.session.user});
+	console.log(req.ip+" "+now.format('DD/MM/YYYY HH:mm:ss')+' rag');
+}
+
 exports.tuba_player_privacy = (req, res) =>{
   let now = moment();
 	res.render('tuba_player_privacy', {title: 'tuba_player_privacy', user: req.session.user});
