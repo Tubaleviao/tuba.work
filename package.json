@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/Tubaleviao/tuba.work#readme",
   "dependencies": {
-    "bcrypt": "^3.0.7",
+    "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "dotenv": "^8.1.0",
