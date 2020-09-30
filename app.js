@@ -7,13 +7,18 @@ const session = require('express-session')
 const socketio = require('socket.io')
 const upio = require('up.io');
 const {mongo} = require('./middle')
+const { createProxyMiddleware } = require('http-proxy-middleware');
 //const helmet = require('helmet');
+const cookieParser = require('cookie-parser')
 
 const router = require('./routes')
 const io_code = require('./io_code')
 
 const app = express()
-const cert = prod? () => ({key: fs.readFileSync(process.env.CERT_KEY), cert: fs.readFileSync(process.env.CERT_CERT), allowHTTP1: true}) : false
+const cert = prod? () => ({
+  key: fs.readFileSync(process.env.CERT_KEY), 
+  cert: fs.readFileSync(process.env.CERT_CERT), 
+  allowHTTP1: true}) : false
 const server = prod ? protocol.createServer(cert(), app) : protocol.createServer(app)
 const io = socketio(server)
 const port = process.env.PORT
@@ -23,6 +28,29 @@ const cookie = {secret: process.env.SESSION_SECRET,
 app.set('view engine', 'ejs')
 
 //app.use(helmet())
+app.use(cookieParser()) // add this > req.cookies.ck > res.cookie('ck', newValue, opts)
+app.use('/parabains', createProxyMiddleware({
+  target: 'http://tuba.work:3000', 
+  changeOrigin: true, 
+  headers: {oh: 'parabains'},
+  pathRewrite: {'^/parabains': '/'} }))
+app.use(express.static('../parabains/public'))
+app.use('/stracker', createProxyMiddleware({
+  target: 'http://tuba.work:3003', 
+  changeOrigin: true, 
+  ws: true,
+  //prependPath: true,
+  headers: {oh: 'stracker'},
+  pathRewrite: {'^/stracker': '/'}
+}))
+/*
+const apiProxy = createProxyMiddleware({
+  target: 'https://skycode.work:3004', changeOrigin: true, ws: true,
+  router: {'skycode.work': 'https://skycode.work:3004',
+          'tuba.work': 'https://skycode.work:3004'}
+})
+app.use('/', apiProxy) */
+
 app.use(upio.router);
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())

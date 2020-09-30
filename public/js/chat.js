@@ -19,7 +19,7 @@ $(function() {
 
   let username, room = getRoom();
   let connected = false;
-  let $currentInput = $usernameInput.focus();
+  let $currentInput = $usernameInput //.focus();
   let manolos = {};
   let bluered;
   let num_mens = 0;
@@ -199,7 +199,7 @@ $(function() {
     $loginPage.fadeOut();
     $chatPage.show();
     $loginPage.off('click');
-    $currentInput = $inputMessage.focus();
+    $currentInput = $inputMessage //.focus();
     connected = true;
     let message = "Welcome";
 	  $footer.prepend(screen.width+"x"+screen.height);

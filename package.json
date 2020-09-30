@@ -26,6 +26,7 @@
   "dependencies": {
     "bcrypt": "^3.0.7",
     "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "dotenv": "^8.1.0",
     "ejs": "^2.7.1",
@@ -34,6 +35,7 @@
     "formidable": "^1.2.2",
     "get-folder-size": "^2.0.1",
     "helmet": "^3.22.0",
+    "http-proxy-middleware": "^1.0.5",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.24.0",
     "mongodb": "^3.3.2",

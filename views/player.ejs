@@ -7,7 +7,7 @@
 
 <a href='https://play.google.com/store/apps/details?id=com.tubaplayer&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/></a>
 
-		<!--<div class="body"><br />
+		<div class="body"><br />
 			<p id="np">Web audio player</p>
 			
 			<div class="bt play" id="play"></div>
@@ -20,6 +20,7 @@
 			<div class="checkbox random checked"></div>
 			<div class="checkbox repeat"></div>
 			<br/><br/>
+      <% if(locals.owner){ %>
 			<div id="upload-progress"></div>
 			<div id="selected"></div>
 			<input type="text" class="search" placeholder="Search..."></input>
@@ -27,8 +28,9 @@
 				<input type="file" id="upio_input" accept="audio/mp3" onchange="selected()" multiple/>
 				Upload Files
 			</div><br/>
+      <% }%>
 			<ul class="musics"></ul>
-		</div>-->
+		</div>
 
 	<script defer src="/socket.io/socket.io.js"></script>
 	<script defer src="/upio/client.js"></script>
@@ -92,6 +94,9 @@
 		addMusics(musicsJs);
 		function getSize(){
 			return <%-size%>;
+		}
+    function isOwner(){
+			return <%-owner%>;
 		}
 		function getUser(){
 			return "<%=user%>";

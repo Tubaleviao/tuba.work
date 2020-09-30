@@ -40,7 +40,7 @@ let addMusics = (musicsJs) => {
 		//if(music.slice(-4) == '.mp3'){
 			let $trash = $('<div>').addClass('trash');
 			let $el = $('<div>').addClass('music').text(music);
-			let $li = $('<li>').append($el,$trash);
+			let $li = isOwner() ? $('<li>').append($el,$trash) : $('<li>').append($el);
 			$musics.append($li);
 		//}
 	});
@@ -51,7 +51,7 @@ let addMusic = (music) => {
 	if(music.slice(-4) == '.mp3'){
 		let $trash = $('<div>').addClass('trash');
 		let $el = $('<div>').addClass('music').text(music);
-		let $li = $('<li>').append($el,$trash);
+		let $li = isOwner() ? $('<li>').append($el,$trash) : $('<li>').append($el);
 		$musics.prepend($li);
 	}
 }
@@ -208,7 +208,7 @@ $(document).ready(() => {
 	};
 
 	$(document).on('click', ".music", (e) => {
-		audioTag.attr('src', user+'/'+e.currentTarget.textContent);
+		audioTag.attr('src', '/'+user+'/'+e.currentTarget.textContent);
 		$('#np').text(e.currentTarget.textContent);
 	});
 
@@ -216,23 +216,23 @@ $(document).ready(() => {
 	    if($('.repeat').hasClass('checked')){
 	    	audioTag.currentTime = 0;
 	    } else if($('.random').hasClass('checked')){
-	    	audioTag.attr('src', user+'/'+next);
+	    	audioTag.attr('src', '/'+user+'/'+next);
 	    	$('#np').text(next);
         next = musics[Math.floor(Math.random()*musics.length)];
-        $('body').append($('<link>').attr('rel','prefetch').attr('href', user+'/'+next))
+        $('body').append($('<link>').attr('rel','prefetch').attr('href', '/'+user+'/'+next))
 		}
 	});
 
 	$('#next').click(() => {
-    audioTag.attr('src', user+'/'+next);
+    audioTag.attr('src', '/'+user+'/'+next);
     $('#np').text(next);
     next = musics[Math.floor(Math.random()*musics.length)];
-    $('body').append($('<link>').attr('rel','prefetch').attr('href', user+'/'+next))
+    $('body').append($('<link>').attr('rel','prefetch').attr('href', '/'+user+'/'+next))
 	});
 
-	audioTag.attr('src', user+'/'+current);
+	audioTag.attr('src', '/'+user+'/'+current);
 	$('#np').text(current);
-  $('body').append($('<link>').attr('rel','prefetch').attr('href', user+'/'+next))
+  $('body').append($('<link>').attr('rel','prefetch').attr('href', '/'+user+'/'+next))
 });
 
 // drag code
