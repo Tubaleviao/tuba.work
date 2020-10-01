@@ -1,66 +1,66 @@
 body {
-	font-family: "Courier New";	/* Yeah */
-	background-color: black; 
-	color: lime;
-	margin: 10px;
-	text-align: center;
+  font-family: 'Courier New'; /* Yeah */
+  background-color: black;
+  color: lime;
+  margin: 10px;
+  text-align: center;
 }
-ul{
-	list-style-type: none;
+ul {
+  list-style-type: none;
 }
 footer {
-	right: 0;
-	bottom: 0;
-	position: fixed;
+  right: 0;
+  bottom: 0;
+  position: fixed;
 }
-a{
-	margin: 0.5em;
+a {
+  margin: 0.5em;
 }
 @media only screen and (orientation: portrait) {
-  .optional div{
+  .optional div {
     display: inline-block;
     margin-bottom: 5px;
     font-size: 50px;
-    border:1px;
+    border: 1px;
     border-color: #009900;
     border-style: solid;
   }
 }
-.optional div{
-    display: inline-block;
+.optional div {
+  display: inline-block;
 }
 a:link {
-	color: #00ff00;
-	text-decoration:none;
+  color: #00ff00;
+  text-decoration: none;
 }
 a:visited {
-	color: #00ff00;
-	text-decoration:none;
+  color: #00ff00;
+  text-decoration: none;
 }
 a:hover {
-	background-color:lime;
-	color:black;
+  background-color: lime;
+  color: black;
 }
-input{
-	background-color: black;
-	border:1px solid #00BB00;
-	color:lime;
-	width:100px;
+input {
+  background-color: black;
+  border: 1px solid #00bb00;
+  color: lime;
+  width: 100px;
 }
-form{
-	display: inline;
+form {
+  display: inline;
 }
-.bt{
-	width:50px;
+.bt {
+  width: 50px;
 }
-.nav-head{
-	float: left;
+.nav-head {
+  float: left;
 }
-.nav-body{
-	text-align: right;
-	height: 19px;
+.nav-body {
+  text-align: right;
+  height: 19px;
   margin-bottom: 10px;
 }
-#signup{
-	display:none;
+#signup {
+  display: none;
 }
