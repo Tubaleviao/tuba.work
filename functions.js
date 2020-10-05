@@ -48,7 +48,8 @@ exports.home = (req, res) => {
   let date = new Date();
 	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user};
 	let data = {};
-	
+	data.visitorCount = await mongo.getUniqueVisitors.bind(req.db)();
+
 	if(req.session.verified || req.session.user){
 		data.title = 'Dashboard';
 		data.nav = nav;
@@ -171,6 +172,8 @@ exports.dashboard = (req, res) =>{
 	let data = {};
 	let date = new Date();
 	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user};
+	data.visitorCount = await mongo.getUniqueVisitors.bind(req.db)();
+	
 	
 	if(req.session.verified || req.session.user){
 		data.title = 'Dashboard';

@@ -113,3 +113,8 @@
 .messageBody{
   white-space: pre-wrap;
 }
+
+.visitorCount {
+  position: fixed;
+  bottom: 50;
+}
