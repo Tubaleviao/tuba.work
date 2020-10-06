@@ -137,10 +137,14 @@ const setPassword = function(user, pass){ // updateRecord = function(col, query,
     })
   })
 }
-
+const getUniqueVisitors = async function () {
+  let visits = this.collection('visits');
+  let data = await visits.distinct('ip');
+  return data.length;
+};
 //if(record._id) record._id = ObjectID.createFromHexString(record._id);
 
-module.exports = {setPassword, findOneRecord, saveRecordCallback, 
+module.exports = {getUniqueVisitors, setPassword, findOneRecord, saveRecordCallback, 
   saveRecord, updateRecord, findRecords, auth, 
   addUser, getUserInfo, delete:del, existId, existUser, 
   setEmail, saveNote, saveNoteSize, takeNotes, 
