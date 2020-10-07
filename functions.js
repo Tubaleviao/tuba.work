@@ -44,7 +44,7 @@ exports.default = (req, res) =>{
 	console.log(req.ip+" "+now.format('DD/MM/YYYY HH:mm:ss')+' default');
 }
 
-exports.home = (req, res) => {
+exports.home = async (req, res) => {
   let date = new Date();
 	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user};
 	let data = {};
@@ -168,7 +168,7 @@ exports.auth = (req, res) =>{
 	}
 }
 
-exports.dashboard = (req, res) =>{
+exports.dashboard = async (req, res) =>{
 	let data = {};
 	let date = new Date();
 	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user};
