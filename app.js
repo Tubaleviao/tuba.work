@@ -39,7 +39,6 @@ app.use('/stracker', createProxyMiddleware({
   target: 'http://tuba.work:3003', 
   changeOrigin: true, 
   ws: true,
-  //prependPath: true,
   headers: {oh: 'stracker'},
   pathRewrite: {'^/stracker': '/'}
 }))
