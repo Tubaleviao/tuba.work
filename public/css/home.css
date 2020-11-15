@@ -15,7 +15,16 @@
     border-style: solid;
     width: 90%;
   }
-  #btn-signup{
-    float:right;
+  img{
+    width:20%;
+    height:auto;
+  }
+  .nav-head{
+    float: left;
+  }
+  .nav-body{
+    text-align: right;
+    height: auto;
+    margin-bottom: 10px;
   }
 }

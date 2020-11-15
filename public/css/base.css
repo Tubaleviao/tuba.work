@@ -53,14 +53,22 @@ form{
 .bt{
 	width:50px;
 }
+nav{
+  width: 100%;
+  overflow: auto;
+  display: inline-block;
+}
 .nav-head{
 	float: left;
 }
 .nav-body{
 	text-align: right;
-	height: 19px;
+	height: auto;
   margin-bottom: 10px;
 }
 #signup{
+	display:none;
+}
+#login{
 	display:none;
 }

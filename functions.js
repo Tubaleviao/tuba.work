@@ -346,7 +346,7 @@ exports.audio = async (req, res) =>{
       const formi = formidable({ keepExtensions: true, uploadDir: p });
       formi.parse(req, (err, fields, files) => {
         if(err) console.log(err)
-        //console.log(files)
+        console.log(files)
         let oldn = files.audio.path
         let newn = oldn.substr(0,oldn.lastIndexOf('/')+1)+files.audio.name
         fs.renameSync(oldn, newn)
