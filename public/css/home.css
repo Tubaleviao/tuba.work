@@ -28,3 +28,15 @@
     margin-bottom: 10px;
   }
 }
+
+.top{
+  position: relative;
+}
+
+canvas{
+  font-family: "Lucida Console", monospace;
+  display: inline;
+  position: absolute;
+  top:0;
+  left:0;
+}

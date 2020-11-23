@@ -331,10 +331,7 @@ exports.audio = async (req, res) =>{
   const data = verify(req.header('token'), process.env.JWT_KEY)
   if(data.username === req.params.user){
     const p = path.join(__dirname, 'public/users', req.params.user)
-    if(!fs.existsSync(p)){
-      fs.mkdirSync(p)
-    }
-    
+    if(!fs.existsSync(p)) fs.mkdirSync(p)
     const size = () => new Promise((reso, reje) => getSize(p, (err, folder_size) => {
       if (err) console.log(err);
       else reso((folder_size/1024/1024/1024).toFixed(2)) 
@@ -345,16 +342,19 @@ exports.audio = async (req, res) =>{
     }else{
       const formi = formidable({ keepExtensions: true, uploadDir: p });
       formi.parse(req, (err, fields, files) => {
-        if(err) console.log(err)
-        console.log(files)
-        let oldn = files.audio.path
-        let newn = oldn.substr(0,oldn.lastIndexOf('/')+1)+files.audio.name
-        fs.renameSync(oldn, newn)
-        res.json({ ok: true, song: files.audio.name })
+        if(err) res.json({ ok: false, error: err })
+        let songs = []
+        for(let key of Object.keys(files)){
+          let oldn = files[key].path
+          let newn = oldn.substr(0,oldn.lastIndexOf('/')+1)+files[key].name
+          fs.renameSync(oldn, newn)
+          songs.push(files[key].name)
+        }
+        res.json({ ok: true, song: songs.length === 1 ? songs[0] : songs })
       })
     }
   }else res.json({ ok: false, msg: "You must to be authenticated to upload" })
-	console.log(req.ip+" "+now.format('DD/MM/YYYY HH:mm:ss')+' audio');
+	console.log(req.ip+" "+now.format('DD/MM/YYYY HH:mm:ss')+' audio')
 }
 
 exports.cp = async (req,res) => {

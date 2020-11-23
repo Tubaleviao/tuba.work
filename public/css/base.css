@@ -57,6 +57,7 @@ nav{
   width: 100%;
   overflow: auto;
   display: inline-block;
+  position: relative;
 }
 .nav-head{
 	float: left;
@@ -71,4 +72,7 @@ nav{
 }
 #login{
 	display:none;
+}
+canvas{
+  display: none;
 }
