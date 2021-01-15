@@ -1,6 +1,7 @@
+export {}
 require('dotenv').config() // load environment variables
-const express = require('express')
-const prod = process.env.PROD=="true" || false
+let expresss = require('express')
+let prod = process.env.PROD=="true" || false
 const protocol = prod ? require('https'): require('http') // spdy
 const fs = require('fs')
 const session = require('express-session')
@@ -11,14 +12,14 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 //const helmet = require('helmet');
 const cookieParser = require('cookie-parser')
 
-const router = require('./routes')
+const router = require('./routes')  // ????
 const io_code = require('./io_code')
 
-const app = express()
+const app = expresss()
 const cert = prod? () => ({
   key: fs.readFileSync(process.env.CERT_KEY), 
   cert: fs.readFileSync(process.env.CERT_CERT), 
-  allowHTTP1: true}) : false
+  allowHTTP1: true}) : () => false
 const server = prod ? protocol.createServer(cert(), app) : protocol.createServer(app)
 const io = socketio(server)
 const port = process.env.PORT
@@ -34,7 +35,7 @@ app.use('/parabains', createProxyMiddleware({
   changeOrigin: true, 
   headers: {oh: 'parabains'},
   pathRewrite: {'^/parabains': '/'} }))
-app.use(express.static('../parabains/public'))
+app.use(expresss.static('../parabains/public'))
 app.use('/stracker', createProxyMiddleware({
   target: 'http://tuba.work:3003', 
   changeOrigin: true, 
@@ -52,11 +53,11 @@ const apiProxy = createProxyMiddleware({
 app.use('/', apiProxy) */
 
 app.use(upio.router);
-app.use(express.urlencoded({ extended: true }))
-app.use(express.json())
+app.use(expresss.urlencoded({ extended: true }))
+app.use(expresss.json())
 app.use(session(cookie))
-app.use(express.static('public'))
-app.use(express.static('public/face-stuff/weights'))
+app.use(expresss.static('public'))
+app.use(expresss.static('public/face-stuff/weights'))
 app.use(mongo)
 app.use('/', router)
 

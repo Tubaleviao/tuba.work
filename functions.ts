@@ -1,3 +1,4 @@
+export {}
 const { sign, verify } = require("jsonwebtoken")
 const path = require('path')
 const moment = require('moment')
@@ -5,6 +6,7 @@ const mongo = require('./mongo')
 const fs = require('fs')
 const getSize = require('get-folder-size')
 const formidable = require('formidable')
+require('./types')
 
 let nav = ["chat", "player", "shooter", "notes", "webcam_face_detection", "hibo"]
 
@@ -46,8 +48,8 @@ exports.default = (req, res) =>{
 
 exports.home = (req, res) => {
   let date = new Date();
-	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user};
-	let data = {};
+	let visit: Visit = {ip: req.ip, date: date.getTime(), user: req.session.user};
+	let data: Page = {}; // Page
 	
 	if(req.session.verified || req.session.user){
 		data.title = 'Dashboard';
@@ -71,9 +73,9 @@ exports.home = (req, res) => {
 
 exports.profile = (req, res) => {
   let date = new Date();
-	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user, page: "profile"};
-	let data = {};
-  data.token = sign({username: req.session.user, email: req.session.email}, process.env.JWT_KEY)
+	let visit: Visit = {ip: req.ip, date: date.getTime(), user: req.session.user, page: "profile"};
+	let data: Page = {};
+	data.token = sign({username: req.session.user, email: req.session.email}, process.env.JWT_KEY)
 	data.title = 'Profile', data.user = req.session.user
 	mongo.getUserInfo.bind(req.db)(req.session.user, (err, resp)=>{
 		if(err){console.log(err)}else{
@@ -86,7 +88,7 @@ exports.profile = (req, res) => {
 
 exports.login = (req, res) =>{
   let date = new Date();
-	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user};
+	let visit: Visit = {ip: req.ip, date: date.getTime(), user: req.session.user};
 	
 	mongo.existUser.bind(req.db)(req.body.username, exist => {
 		if(exist){
@@ -157,7 +159,7 @@ exports.auth = (req, res) =>{
 	}else{
 		mongo.setEmail.bind(req.db)({user: req.session.user, email: req.query.email}, resp => {
 			if(resp){
-				otherEmail = true;
+				//otherEmail = true;
 				req.session.email = req.query.email;
 				mongo.existUser.bind(req.db)(req.session.user, exist => {
 					if(exist) res.redirect('/auth?id='+exist._id);
@@ -168,9 +170,9 @@ exports.auth = (req, res) =>{
 }
 
 exports.dashboard = (req, res) =>{
-	let data = {};
+	let data: Page = {};
 	let date = new Date();
-	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user};
+	let visit: Visit = {ip: req.ip, date: date.getTime(), user: req.session.user};
 	
 	if(req.session.verified || req.session.user){
 		data.title = 'Dashboard';
@@ -199,8 +201,8 @@ exports.dashboard = (req, res) =>{
 exports.player = (req, res) =>{
   let dir = __dirname+'/public/users/'+(req.params.user ? req.params.user : req.session.user);
 	let date = new Date();
-	let data = {};
-  data.token = 'none'
+	let data: Page = {};
+	data.token = 'none'
 	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user, page: "player"};
 	
   if (!fs.existsSync(dir)) {
@@ -228,7 +230,7 @@ exports.player = (req, res) =>{
 }
 
 exports.notes = (req, res) =>{
-	let data = {};
+	let data: Page = {};
 	let date = new Date();
 	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user, page: "notes"};
 	data.title = 'Notes', data.user = req.session.user, data.nav = nav
@@ -246,10 +248,9 @@ exports.notes = (req, res) =>{
 }
 
 exports.chat = (req, res) =>{
-	let now = moment();
 	let date = new Date();
-	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user, page: "chat"};
-	let data = {ip: req.ip, title: 'Chat'};
+	let visit: Visit = {ip: req.ip, date: date.getTime(), user: req.session.user, page: "chat"};
+	let data: Page = {ip: req.ip, title: 'Chat'};
 	if(req.session.user != null){
 		data.user = req.session.user;
 	}else if(req.query.user){

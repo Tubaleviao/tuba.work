@@ -2,10 +2,11 @@
   "name": "tuba.work",
   "version": "1.0.0",
   "description": "My personal website to practice some code",
-  "main": "app.js",
+  "main": "app.ts",
   "scripts": {
     "test": "mocha",
-    "start": "node app.js"
+    "build": "tsc",
+    "start": "node ./dist/app.js"
   },
   "repository": {
     "type": "git",

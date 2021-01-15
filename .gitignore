@@ -7,3 +7,4 @@ public/users/*
 public/mp3/*
 node_modules/
 *.env
+dist/

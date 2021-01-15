@@ -1,4 +1,4 @@
-const { verify } = require("jsonwebtoken");
+import { verify } from "jsonwebtoken";
 const mc = require('mongodb').MongoClient;
 let db;
 const url = `${process.env.MONGO_PROTOCOL

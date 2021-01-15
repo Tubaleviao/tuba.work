@@ -1,3 +1,4 @@
+export {}
 const usernames = []
 const fs = require('fs')
 const mongo = require('./mongo')
@@ -306,7 +307,7 @@ exports.notes = socket => {
 }
 
 exports.shooter = socket => {
-  players =[];
+	let players =[];
 	socket.on('turn', data => { socket.broadcast.emit('turn', data) });
 
 	socket.on('addPlayer', data => {
