@@ -6,6 +6,15 @@ Go to https://tuba.work
 
 ## how to run
 
+### with docker
+
+```
+docker build -t baloon https://github.com/tubaleviao/tuba.work.git
+docker run -d -p 3000:3000/tcp --name tw baloon
+```
+
+### with node
+
 Before you run, you may need to create a .env file with your environment variables:
 
 ```
@@ -28,7 +37,8 @@ After configurating the .env file, just run the application:
 
 ```
 npm install
-node app.js
+npm run build
+npm start
 ```
 
 ## how to change the original website
