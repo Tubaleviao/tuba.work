@@ -1,4 +1,5 @@
-FROM node:10
+FROM alpine
+RUN apk add --update npm git
 RUN mkdir /home/tuba /home/tuba/nodejs /home/tuba/nodejs/tuba.work
 WORKDIR /home/tuba/nodejs/tuba.work
 RUN git clone https://github.com/tubaleviao/tuba.work .
