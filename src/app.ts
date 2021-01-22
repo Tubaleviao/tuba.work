@@ -7,7 +7,7 @@ const fs = require('fs')
 const session = require('express-session')
 const socketio = require('socket.io')
 const upio = require('up.io');
-const {mongo} = require('./middle')
+const {mongo, checkFolders} = require('./middle')
 const { createProxyMiddleware } = require('http-proxy-middleware');
 //const helmet = require('helmet');
 const cookieParser = require('cookie-parser')
@@ -30,6 +30,7 @@ app.set('view engine', 'ejs')
 
 //app.use(helmet())
 app.use(cookieParser()) // add this > req.cookies.ck > res.cookie('ck', newValue, opts)
+app.use(checkFolders)
 app.use('/parabains', createProxyMiddleware({
   target: 'http://tuba.work:3000', 
   changeOrigin: true, 

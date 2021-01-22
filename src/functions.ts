@@ -199,15 +199,15 @@ exports.dashboard = (req, res) =>{
 }
 
 exports.player = (req, res) =>{
-  let dir = __dirname+'/public/users/'+(req.params.user ? req.params.user : req.session.user);
+	let dir = path.join(__dirname, '../', '/public/users/', (req.params.user ? req.params.user : req.session.user) )
 	let date = new Date();
 	let data: Page = {};
 	data.token = 'none'
 	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user, page: "player"};
 	
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir);
-  }
+	if (!fs.existsSync(dir)) {
+		fs.mkdirSync(dir);
+	}
   
 	getSize(dir, (err, folder_size) => {
 		if (err) { console.log(err);

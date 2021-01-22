@@ -1,4 +1,6 @@
 import { verify } from "jsonwebtoken";
+const fs = require('fs')
+const path = require('path')
 const mc = require('mongodb').MongoClient;
 let db;
 const url = `${process.env.MONGO_PROTOCOL
@@ -43,6 +45,14 @@ const connect = async () => {
   return db
 }
 
+const checkFolders = async (req, res, next) => {
+  let dir = path.join(__dirname, '../', 'public', 'users')
+  if (!fs.existsSync(dir)) {
+		fs.mkdirSync(dir);
+  }
+  next()
+}
+
 const crossOrigin = (req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -50,4 +60,4 @@ const crossOrigin = (req, res, next) => {
   next();
 }
 
-module.exports = { connect, auth, crossOrigin, mongo };
+module.exports = { connect, auth, crossOrigin, mongo, checkFolders };
