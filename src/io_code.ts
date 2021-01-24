@@ -1,5 +1,6 @@
 export {}
-const usernames = []
+import { Room } from './types'
+const usernames: Array<Room> = []
 const fs = require('fs')
 const mongo = require('./mongo')
 const moment = require('moment')
@@ -42,7 +43,7 @@ exports.home = function(socket){
     const client_ip_address = socket.request.connection.remoteAddress;
 		let existe_user = false;
 		let existe_room = false;
-		let user_room, room_json;
+		let user_room: String, room_json;
 		if(data.room){
 			user_room = data.room;
 		}else{

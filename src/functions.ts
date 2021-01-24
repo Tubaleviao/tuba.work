@@ -6,7 +6,7 @@ const mongo = require('./mongo')
 const fs = require('fs')
 const getSize = require('get-folder-size')
 const formidable = require('formidable')
-require('./types')
+import { Page, Visit } from './types'
 
 let nav = ["chat", "player", "shooter", "notes", "webcam_face_detection", "hibo"]
 
@@ -47,12 +47,10 @@ exports.default = (req, res) =>{
 }
 
 exports.home = (req, res) => {
-  let date = new Date();
+	let date = new Date();
 	let visit: Visit = {ip: req.ip, date: date.getTime(), user: req.session.user};
-	let data: Page = {}; // Page
-	
 	if(req.session.verified || req.session.user){
-		data.title = 'Dashboard';
+		let data: Page = {title: 'Dashboard'};
 		data.nav = nav;
 		data.user = req.session.user;
 		res.render('dashboard', data);
@@ -64,7 +62,7 @@ exports.home = (req, res) => {
 		res.render('verify', data);
 		visit.page = "verify";
 	}*/else{
-		data.title = 'Home';
+		let data: Page = { title: 'Home'}
 		res.render('home', data);
 		visit.page = "home";
 	}
@@ -74,9 +72,9 @@ exports.home = (req, res) => {
 exports.profile = (req, res) => {
   let date = new Date();
 	let visit: Visit = {ip: req.ip, date: date.getTime(), user: req.session.user, page: "profile"};
-	let data: Page = {};
+	let data: Page = {title: 'Profile'};
 	data.token = sign({username: req.session.user, email: req.session.email}, process.env.JWT_KEY)
-	data.title = 'Profile', data.user = req.session.user
+	data.user = req.session.user
 	mongo.getUserInfo.bind(req.db)(req.session.user, (err, resp)=>{
 		if(err){console.log(err)}else{
 			data.userinfo = resp;
@@ -170,12 +168,12 @@ exports.auth = (req, res) =>{
 }
 
 exports.dashboard = (req, res) =>{
-	let data: Page = {};
+	
 	let date = new Date();
 	let visit: Visit = {ip: req.ip, date: date.getTime(), user: req.session.user};
 	
 	if(req.session.verified || req.session.user){
-		data.title = 'Dashboard';
+		let data: Page = {title: 'Dashboard'};
 		data.user = req.session.user;
 		data.nav = nav;
 		res.render('dashboard', data);
@@ -191,7 +189,7 @@ exports.dashboard = (req, res) =>{
 		res.render('verify', data);
 		visit.page = "verify";
 	}*/else{
-		data.title = 'Home';
+		let data: Page = {title: 'Home'};
 		res.render('home', data);
 		visit.page = "home";
 	}
@@ -201,7 +199,7 @@ exports.dashboard = (req, res) =>{
 exports.player = (req, res) =>{
 	let dir = path.join(__dirname, '../', '/public/users/', (req.params.user ? req.params.user : req.session.user) )
 	let date = new Date();
-	let data: Page = {};
+	let data: Page = {title: 'Player'};
 	data.token = 'none'
 	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user, page: "player"};
 	
@@ -210,30 +208,27 @@ exports.player = (req, res) =>{
 	}
   
 	getSize(dir, (err, folder_size) => {
-		if (err) { console.log(err);
-		}else{
-			fs.readdir(dir, (err, files) =>{
-				if(err) throw err;
-				data.musics = files
-        data.size = (folder_size/1024/1024).toFixed(2)
-        //data.user = req.session.user
-        if(req.params.user) data = { ...data, user: req.params.user, owner:false }
-        else data = { ...data, user: req.session.user, owner:true } 
-        data.permission = req.session.permission||1
-        data.token = sign({username: req.session.user, email: req.session.email, permission: data.permission}, process.env.JWT_KEY)
-        data.title = 'Player'
-				res.render('player', data);
-				mongo.saveRecord.bind(req.db)('visits' , visit)
-			});
-		}
+		if (err) console.log(err) 
+		else fs.readdir(dir, (err, files) =>{
+			if(err) throw err;
+			data.musics = files
+			data.size = (folder_size/1024/1024).toFixed(2)
+			//data.user = req.session.user
+			if(req.params.user) data = { ...data, user: req.params.user, owner:false }
+			else data = { ...data, user: req.session.user, owner:true } 
+			data.permission = req.session.permission||1
+			data.token = sign({username: req.session.user, email: req.session.email, permission: data.permission}, process.env.JWT_KEY)
+			res.render('player', data);
+			mongo.saveRecord.bind(req.db)('visits' , visit)
+		});
 	});
 }
 
 exports.notes = (req, res) =>{
-	let data: Page = {};
+	let data: Page = {title: 'Notes'};
 	let date = new Date();
 	let visit = {ip: req.ip, date: date.getTime(), user: req.session.user, page: "notes"};
-	data.title = 'Notes', data.user = req.session.user, data.nav = nav
+	data.user = req.session.user, data.nav = nav
 	mongo.takeNotes.bind(req.db)(req.session.user, (err, docs) => {
 		if(!docs){res.render('notes', data);}else{
 			if(docs){

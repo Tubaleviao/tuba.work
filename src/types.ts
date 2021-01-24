@@ -1,5 +1,5 @@
-type Page = {
-    title?: string,
+export type Page = {
+    title: string,
     nav?: Array<string>,
     user?: string,
     token?: string,
@@ -13,9 +13,14 @@ type Page = {
     room?: string,
 }
 
-type Visit = {
+export type Visit = {
     ip: string,
     date: number,
     user: string,
     page?: string
+}
+
+export type Room = {
+	room: String,
+	users: Array<String>,
 }
