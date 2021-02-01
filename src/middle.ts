@@ -46,7 +46,7 @@ const connect = async () => {
 }
 
 const checkFolders = async (req, res, next) => {
-  let dir = path.join(__dirname, '../', 'public', 'users')
+  let dir = path.join(__dirname, 'public', 'users')
   if (!fs.existsSync(dir)) {
 		fs.mkdirSync(dir);
   }

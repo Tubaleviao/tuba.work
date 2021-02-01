@@ -197,7 +197,7 @@ exports.dashboard = (req, res) =>{
 }
 
 exports.player = (req, res) =>{
-	let dir = path.join(__dirname, '../', '/public/users/', (req.params.user ? req.params.user : req.session.user) )
+	let dir = path.join(__dirname, '/public/users/', (req.params.user ? req.params.user : req.session.user) )
 	let date = new Date();
 	let data: Page = {title: 'Player'};
 	data.token = 'none'

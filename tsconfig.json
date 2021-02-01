@@ -6,7 +6,8 @@
         "target": "es2019",
         //"moduleResolution": "node",
         //"sourceMap": true,
-        "outDir": "dist"
+        "outDir": "."
     },
-    
+    "exclude": [],
+    "include": ["./src"]
 }
