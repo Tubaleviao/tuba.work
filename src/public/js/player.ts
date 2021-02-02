@@ -10,9 +10,6 @@ declare global{
 		readonly getJWT?: Function;
 		UpIoFileUpload(socket:any): void;
 		readonly io?: Function;
-		// UpIoFileUpload{
-		// 	new(socket: any): any
-		// }
 	}
 	
 	interface JQuery{
@@ -178,11 +175,6 @@ $(document).ready(() => {
 		.indexOf(m.toLowerCase()) >= 0;
 	})
 	
-	// (a, i, m) => { // sets contains to lowercase
-	// 	return jQuery(a).text().toLowerCase()
-	// 			.indexOf(m[3].toLowerCase()) >= 0;
-	// }
-
 	$('.search').on('input', (e: any) => {
 		$("li:not(:contains('"+e.target.value.toLowerCase()+"'))").hide(); //val().toLowerCase()
 		$("li:contains('"+e.target.value.toLowerCase()+"')").show();

@@ -27,30 +27,7 @@
 	</div>
   
   <script> // https://github.com/yckart/jquery.overlaps.js
-    (function($){ // https://raw.githubusercontent.com/yckart/jquery.overlaps.js/master/jquery.overlaps.js
-      $.fn.overlaps = function(obj) {
-          var elems = {targets: [], hits:[]};
-          this.each(function() {
-              var bounds = $(this).offset();
-              bounds.right = bounds.left + $(this).outerWidth();
-              bounds.bottom = bounds.top + $(this).outerHeight();
-
-              var compare = $(obj).offset();
-              compare.right = compare.left + $(obj).outerWidth();
-              compare.bottom = compare.top + $(obj).outerHeight(); 
-
-              if (!(compare.right < bounds.left ||
-                    compare.left > bounds.right ||
-                    compare.bottom < bounds.top ||
-                    compare.top > bounds.bottom)
-                 ) {
-                  elems.targets.push(this);
-                  elems.hits.push(obj);
-              }
-          });
-          return elems;
-      };
-    }(jQuery));
+    
   </script>
 	
 </body>
