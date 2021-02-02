@@ -1,10 +1,31 @@
+import { ClassDeclaration, ClassElement } from "typescript";
 
+export = {}
+declare global{
+	interface Window {
+		readonly getSize?: Function;
+		readonly getPermission?: Function;
+		readonly isOwner?: Function;
+		readonly getUser?: Function;
+		readonly getJWT?: Function;
+		UpIoFileUpload(socket:any): void;
+		readonly io?: Function;
+		// UpIoFileUpload{
+		// 	new(socket: any): any
+		// }
+	}
+	
+	interface JQuery{
+		drags(): void;
+		currentTime: number;
+	}
+}
 let musics
 
 let selected = () => {
-	let x = document.getElementById("upio_input");
+	let x : HTMLInputElement = <HTMLInputElement>document.getElementById("upio_input");
 	let txt3 = $("<div/>");
-	let txt = "", total=0;
+	let txt = "", total="0";
 	if ('files' in x) {
 		if (x.files.length === 0) {
 			txt = "Select one or more files.";
@@ -22,8 +43,9 @@ let selected = () => {
 			}
 		}
 	}
-	if(Number(total)+Number(getSize()) >= Number(getPermission())*1024){
-		alert("You have only "+Number((Number(getPermission())*1024)-getSize()).toFixed(2)+
+	
+	if(Number(total)+Number(window.getSize()) >= Number(window.getPermission())*1024){
+		alert("You have only "+Number((Number(window.getPermission())*1024)-window.getSize()).toFixed(2)+
           " Mb of free space, you are trying to upload "+total+" Mb\n"+
 				 		"To get more space, you may pay $1 for extra GB of space per year.");
 		$("#upio_input").val("");
@@ -40,7 +62,7 @@ let addMusics = (musicsJs) => {
 		//if(music.slice(-4) == '.mp3'){
 			let $trash = $('<div>').addClass('trash');
 			let $el = $('<div>').addClass('music').text(music);
-			let $li = isOwner() ? $('<li>').append($el,$trash) : $('<li>').append($el);
+			let $li = window.isOwner() ? $('<li>').append($el,$trash) : $('<li>').append($el);
 			$musics.append($li);
 		//}
 	});
@@ -51,7 +73,7 @@ let addMusic = (music) => {
 	if(music.slice(-4) == '.mp3'){
 		let $trash = $('<div>').addClass('trash');
 		let $el = $('<div>').addClass('music').text(music);
-		let $li = isOwner() ? $('<li>').append($el,$trash) : $('<li>').append($el);
+		let $li = window.isOwner() ? $('<li>').append($el,$trash) : $('<li>').append($el);
 		$musics.prepend($li);
 	}
 }
@@ -69,17 +91,20 @@ let putOnQueue = (data) => {
 	}
 }
 
-let remove = id => (elem=document.getElementById(id)).parentNode.removeChild(elem)
+let remove = id => {
+	let elem=document.getElementById(id)
+	elem.parentNode.removeChild(elem)
+}
 
 $(document).ready(() => {
 	
-	let socket = io('/player');
-	let uploader = new UpIoFileUpload(socket);
+	let socket = window.io('/player');
+	let uploader = new window.UpIoFileUpload(socket);
 	let current = musics[Math.floor(Math.random()*musics.length)];
   let next = musics[Math.floor(Math.random()*musics.length)];
-	let user = "users/"+getUser();
-	let audioTag = $('#audio');
-	let dom = document.getElementById("audio");
+	let user = "users/"+window.getUser();
+	let audioTag: JQuery<HTMLAudioElement> = $('#audio');
+	let dom: HTMLAudioElement = <HTMLAudioElement>document.getElementById("audio");
 	
 	dom.volume = 0.5;
 	
@@ -88,7 +113,7 @@ $(document).ready(() => {
 	
 	// SOCKET FUNCTIONS
 	
-	socket.emit('setUser', {user_url: user, user: getUser(), token: getJWT()});
+	socket.emit('setUser', {user_url: user, user: window.getUser(), token: window.getJWT()});
 	
 	socket.on('error', (data) => {
 		console.log(data)
@@ -148,12 +173,17 @@ $(document).ready(() => {
 		$(e.target).closest('li').children('.music').css('text-decoration', 'none');
 	});
 	
-	jQuery.expr[':'].contains = (a, i, m) => { // sets contains to lowercase
-		return jQuery(a).text().toLowerCase()
-				.indexOf(m[3].toLowerCase()) >= 0;
-	};
+	$.expr.pseudos.contains = $.expr.createPseudo(m => {
+		return a => jQuery(a).text().toLowerCase()
+		.indexOf(m.toLowerCase()) >= 0;
+	})
+	
+	// (a, i, m) => { // sets contains to lowercase
+	// 	return jQuery(a).text().toLowerCase()
+	// 			.indexOf(m[3].toLowerCase()) >= 0;
+	// }
 
-	$('.search').on('input', (e) => {
+	$('.search').on('input', (e: any) => {
 		$("li:not(:contains('"+e.target.value.toLowerCase()+"'))").hide(); //val().toLowerCase()
 		$("li:contains('"+e.target.value.toLowerCase()+"')").show();
 	});
