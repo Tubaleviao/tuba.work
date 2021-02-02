@@ -190,7 +190,7 @@ $(function() {
         $('#' + player).offset(position);
     }
 
-    $('#player').keydown((event) => {
+    $('#player').on("keydown", (event) => {
         if (event.which == 13 && $('#player').val() != '') {
             me = $('#player').val().toString();
             let p = getNewPosition();
@@ -249,24 +249,25 @@ $(function() {
 
     // Player movement code
 
-    $window.keydown((event) => {
+    $window.on("keydown", (event) => {
         if ($('#' + me).length != 0) {
-            if (event.which == 87) { // up
+            let key = event.key.toLowerCase()
+            if ( key == "w") { // up
                 if (!pressed[87]) {
                     up = true;
                     pressed[87] = true;
                 }
-            } else if (event.which == 83) { // down
+            } else if (key == "s") { // down
                 if (!pressed[83]) {
                     down = true;
                     pressed[83] = true;
                 }
-            } else if (event.which == 65) { // left
+            } else if (key == "a") { // left
                 if (!pressed[65]) {
                     left = true;
                     pressed[65] = true;
                 }
-            } else if (event.which == 68) { // right
+            } else if (key == "d") { // right
                 if (!pressed[68]) {
                     right = true;
                     pressed[68] = true;
@@ -275,23 +276,24 @@ $(function() {
         }
     });
 
-    $window.keyup((event) => {
-        if (event.which == 87) { // up
+    $window.on("keyup", (event) => {
+        let key = event.key.toLowerCase()
+        if (key == "w") { // up
             if (up) {
                 up = false;
             }
             pressed[87] = false;
-        } else if (event.which == 83) { // down
+        } else if (key == "s") { // down
             if (down) {
                 down = false;
             }
             pressed[83] = false;
-        } else if (event.which == 65) { // left
+        } else if (key == "a") { // left
             if (left) {
                 left = false;
             }
             pressed[65] = false;
-        } else if (event.which == 68) { // right
+        } else if (key == "d") { // right
             if (right) {
                 right = false;
             }
