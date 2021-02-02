@@ -1,3 +1,4 @@
+// https://github.com/yckart/jquery.overlaps.js
 (function ($) {
     $.fn.overlaps = function (obj) {
         var elems = { targets: [], hits: [] };

@@ -8,27 +8,13 @@
 </head>
 <body>
 	<div id="score"></div>
-	<div>
-		<img src="img/life.ico"/>
-		<img src="img/life.ico"/>
-		<img src="img/life.ico"/>
-		<img src="img/life.ico"/>
-		<img src="img/life.ico"/>
-	</div>
-
+	<div> <% for (let i=0; i<5; i++){ %> <img src="img/life.ico"/> <% } %> </div>
 	<div class="login">
 		<p>Insert your nick</p>
 		<input type="text" id="player" maxlength="14"/>
 	</div>
-
-	<div class="logout">
-		<p>GAME OVER</p>
-		<a href="/">Try again</a>
-	</div>
+	<div class="logout"> <p>GAME OVER</p> <a href="/">Try again</a> </div>
   
-  <script> // https://github.com/yckart/jquery.overlaps.js
-    
-  </script>
-	
+	<script>  function getUser(){ return "<%=user%>"; } </script>
 </body>
 </html>

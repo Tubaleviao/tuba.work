@@ -8,7 +8,7 @@ interface Object{
     bottom?: number;
     top?: number;
 }
-
+// https://github.com/yckart/jquery.overlaps.js
 (function($){ // https://raw.githubusercontent.com/yckart/jquery.overlaps.js/master/jquery.overlaps.js
     $.fn.overlaps = function(obj) {
         var elems = {targets: [], hits:[]};
