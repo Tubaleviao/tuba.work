@@ -139,11 +139,11 @@ $(function () {
     }, false);
     impossible.volume = 0.5;
     impossible.play(); */
-    $('#player').on('keypress', (e) => {
+    $('#player').on('keypress', e => {
         if (e.which == 32)
             return false;
     });
-    $('#player').focus();
+    $('#player').trigger("focus"); //.focus();
     const getNewPosition = () => {
         return { top: Math.floor(768 * Math.random()), left: Math.floor(Math.random() * 1366) };
     };
@@ -154,15 +154,20 @@ $(function () {
         $('body').append($player);
         $('#' + player).offset(position);
     };
-    $('#player').on("keydown", (event) => {
-        if (event.which == 13 && $('#player').val() != '') {
-            me = $('#player').val().toString();
-            let p = getNewPosition();
-            putPlayer(me, p);
-            socket.emit('addPlayer', { name: me, position: p });
-            $('.login').hide();
-            $('#p1').hide();
-        }
+    let init = nickname => {
+        me = nickname;
+        let p = getNewPosition();
+        putPlayer(me, p);
+        socket.emit('addPlayer', { name: me, position: p });
+        $('.login').hide();
+        $('#p1').hide();
+    };
+    me = window.getUser();
+    if (me)
+        init(me);
+    $('#player').on("keydown", event => {
+        if (event.which == 13 && $('#player').val() != '')
+            init($('#player').val().toString());
     });
     socket.on('addPlayer', (data) => {
         putPlayer(data.name, data.position);

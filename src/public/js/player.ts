@@ -1,4 +1,3 @@
-import { ClassDeclaration, ClassElement } from "typescript";
 
 export = {}
 declare global{

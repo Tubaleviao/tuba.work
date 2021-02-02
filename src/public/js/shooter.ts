@@ -1,3 +1,8 @@
+
+interface Window {
+    getUser(): string;
+}
+
 interface JQuery{
     overlaps?: Function;
     Coordinates?: any;
@@ -7,6 +12,11 @@ interface Object{
     left?: number;
     bottom?: number;
     top?: number;
+}
+interface Player{
+    name?: string,
+    score?: number,
+
 }
 // https://github.com/yckart/jquery.overlaps.js
 (function($){ // https://raw.githubusercontent.com/yckart/jquery.overlaps.js/master/jquery.overlaps.js
@@ -39,9 +49,9 @@ $(function() {
     let $window = $(window);
     let socket = window.io('/shooter');
     let up, down, left, right;
-    let pressed = [],
-        players = [];
-    let me = 'p1';
+    let pressed: Array<boolean> = [],
+        players: Array<Player> = [];
+    let me: string = 'p1';
     let shooted = 0;
     let mouse:{x:number, y:number} = {x: 0, y:0};
     let life = 5;
@@ -171,12 +181,12 @@ $(function() {
     impossible.volume = 0.5;
     impossible.play(); */
 
-    $('#player').on('keypress', (e) => {
+    $('#player').on('keypress', e => {
         if (e.which == 32)
             return false;
     });
 
-    $('#player').focus();
+    $('#player').trigger("focus") //.focus();
 
     const getNewPosition = () => {
         return { top: Math.floor(768 * Math.random()), left: Math.floor(Math.random() * 1366) };
@@ -189,17 +199,23 @@ $(function() {
         $('body').append($player);
         $('#' + player).offset(position);
     }
+    
+    let init = nickname =>{
+        me = nickname
+        let p = getNewPosition();
+        putPlayer(me, p);
+        socket.emit('addPlayer', { name: me, position: p });
+        $('.login').hide();
+        $('#p1').hide();
+    }
 
-    $('#player').on("keydown", (event) => {
-        if (event.which == 13 && $('#player').val() != '') {
-            me = $('#player').val().toString();
-            let p = getNewPosition();
-            putPlayer(me, p);
-            socket.emit('addPlayer', { name: me, position: p });
-            $('.login').hide();
-            $('#p1').hide();
-        }
-    });
+    me = window.getUser()
+    if(me) init(me)
+
+    $('#player').on("keydown", event => {
+        if (event.which == 13 && $('#player').val() != '') 
+            init($('#player').val().toString())
+    })
 
     socket.on('addPlayer', (data) => {
         putPlayer(data.name, data.position);
