@@ -5,7 +5,7 @@ declare global{
 		readonly getSize?: Function;
 		readonly getPermission?: Function;
 		readonly isOwner?: Function;
-		readonly getUser?: Function;
+		getUser(): string;
 		readonly getJWT?: Function;
 		UpIoFileUpload(socket:any): void;
 		readonly io?: Function;
