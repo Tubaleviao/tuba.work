@@ -75,6 +75,7 @@ io.of('/chat').on('connection', io_code.chat)
 io.of('/shooter').on('connection', io_code.shooter)
 io.of('/default').on('connection', io_code.default)
 io.of('/talking').on('connection', io_code.talking)
+io.of('/money').on('connection', io_code.money)
 
 server.listen(port, () => console.log(`Port ${port}!`))
 

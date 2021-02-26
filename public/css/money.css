@@ -1,0 +1,117 @@
+input{
+  margin: 5px;
+}
+input[name="name"]{
+  width: 90%;
+}
+select{
+	background-color: black;
+	color: lime;
+	margin: 5px;
+}
+li{
+	cursor: pointer;
+	height: 20px;
+}
+li:nth-child(odd){
+	background-color: #003300;
+}
+.noma{
+	overflow: hidden;
+  white-space: nowrap;
+	display: inline-block;
+	padding-top: 2px;
+}
+.mona{
+	float: right;
+	padding-top: 2px;
+}
+.month{
+	-moz-user-select: none; 
+	-webkit-user-select: none; 
+	-ms-user-select: none; 
+	user-select: none;
+	-o-user-select: none;
+	cursor: pointer;
+	width: 30%;
+	margin: 1%;
+	height: 44%;
+	float: left;
+	border-style: solid;
+	border-width: 1px;
+	border-color: lime;
+	box-shadow: 0px 0px 10px 1px lime;
+}
+.old{
+	-moz-user-select: none; 
+	-webkit-user-select: none; 
+	-ms-user-select: none; 
+	user-select: none;
+	-o-user-select: none;
+	cursor: pointer;
+	margin: 1%;
+}
+.fmpy{					/* few months per year */
+	display: none;
+	width: 50px;
+}
+.norepeat{
+	width: 50px;
+}
+.inputs{
+	/*color: blue;*/
+	text-align: right;
+	font-weight: bold;
+	padding-right: 5px;
+}
+.total{
+	text-align: right;
+	font-weight: bold;
+	padding-right: 5px;
+}
+.outputs{
+	/*color: red;*/
+	text-align: right;
+	font-weight: bold;
+	padding-right: 5px;
+}
+.in{
+	background-image: url("../img/checked.png");
+	background-repeat: no-repeat;
+}
+.out{
+	background-image: url("../img/unchecked.png");
+	background-repeat: no-repeat;
+}
+.unchecked{
+	height: 20px;
+	padding-left: 25px;
+	display: inline-block;
+}
+.checked{
+	height: 20px;
+	padding-left: 25px;
+	display: inline-block;
+}
+#data{
+	text-align: center;
+	width: 20%;
+	height: 98%;
+	float: left;
+	font-size: 15px;
+}
+#lookup{
+	width: 78%;
+	float: right;
+}
+#form{
+	display: none;
+	width: 99%;
+	border-style: solid;
+	border-color: lime;
+	border-width: 1px;
+	float: right;
+}
+#oneMonth > h2{
+	padding-right: 40px;
+}

@@ -1,5 +1,82 @@
 const ObjectID = require('mongodb').ObjectID;
 const bcrypt = require('bcrypt');
+// money
+const deleteMove = function (data, callback) {
+    data._id = ObjectID.createFromHexString(data._id);
+    del.bind(this)({ _id: data._id }, 'moves');
+}, saveMove = function (data, callback) {
+    if (data._id && data._id !== "") {
+        data._id = ObjectID.createFromHexString(data._id);
+        saveRecordCallback.bind(this)('moves', data, callback);
+    }
+    else {
+        delete data._id;
+        saveRecordCallback.bind(this)('moves', data, result => {
+            callback({
+                id: result.insertedIds[0],
+                name: data.name, value: data.value, in: data.in
+            });
+        });
+    }
+}, getFirstRpMove = function (user, callback) {
+    const query = [{ $match: { user: user } }, { $group: { _id: "firstRecord", min: { $min: "$starty" } } }];
+    aggregate.bind(this)('moves', query, function (result) {
+        const query2 = [{ $match: { starty: result.min, user: user } }, { $group: { _id: "firstm", min: { $min: "$startm" } } }];
+        aggregate.bind(this)('moves', query2, function (result2) {
+            if (result && result2)
+                callback({ fy: result.min, fm: result2.min });
+            else
+                callback(false);
+        });
+    });
+}, getRpMoves = function (user, callback) {
+    findRecords.bind(this)('moves', { user: user, repeat: "1" }, callback);
+}, getFirstNrpMove = function (user, callback) {
+    const query = [{ $match: { user: user } }, { $group: { _id: "firstRecord", min: { $min: "$year" } } }];
+    aggregate.bind(this)('moves', query, function (result) {
+        if (result) {
+            const query2 = [{ $match: { year: result.min, user: user } }, { $group: { _id: "firstm", min: { $min: "$month" } } }];
+            aggregate.bind(this)('moves', query2, function (result2) {
+                if (result2) {
+                    callback({ fy: result.min, fm: result2.min });
+                }
+            });
+        }
+    });
+}, getNrpMoves = function (user, callback) {
+    findRecords.bind(this)('moves', { user: user, repeat: "0" }, callback);
+}, 
+//   saveSingle = function(data, callback){
+// 		if(data._id) data._id = ObjectID.createFromHexString(data._id);
+// 		var single = db.collection('single');
+// 		single.save(data, {w: 1}, function(err, record){
+// 			if(err){ console.log(err); callback(false);
+// 			}else{ callback(record); }
+// 		});
+// 	},
+getMoves = function (user, callback) {
+    findRecords.bind(this)('moves', { user: user }, callback);
+};
+// 	getSingle: function(callback){
+// 		var single = db.collection('single');
+// 		single.find( {}, function(err, docs){
+// 			if(err){console.log(err); callback(err, null); // get single movement
+// 			}else{callback(null, docs);}
+// 		});
+// 	},
+// others
+const aggregate = function (col, query, callback) {
+    let collection = this.collection(col);
+    collection.aggregate(query, (err, record) => {
+        if (err) {
+            console.log(err);
+            callback(false);
+        }
+        else {
+            record == null ? callback(false) : callback(record);
+        }
+    });
+};
 const findOneRecord = function (col, query, callback) {
     let collection = this.collection(col);
     collection.findOne(query, (err, record) => {
@@ -172,4 +249,7 @@ module.exports = { setPassword, findOneRecord, saveRecordCallback,
     saveRecord, updateRecord, findRecords, auth,
     addUser, getUserInfo, delete: del, existId, existUser,
     setEmail, saveNote, saveNoteSize, takeNotes,
-    deleteNote, saveChat, getChat, saveVisit, getPermission };
+    deleteNote, saveChat, getChat, saveVisit, getPermission,
+    // money
+    deleteMove, saveMove, getFirstRpMove, getRpMoves, getFirstNrpMove,
+    getNrpMoves, getMoves };

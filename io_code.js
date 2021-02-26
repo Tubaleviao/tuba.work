@@ -8,6 +8,71 @@ const upio = require("up.io");
 const { connect } = require('./middle');
 const getSize = require('get-folder-size');
 const { sign, verify } = require("jsonwebtoken");
+exports.money = async function (socket) {
+    const db = await connect();
+    socket.on('getMovements', function (data) {
+        var moves;
+        mongo.getMoves.bind(db)(data.user, function (err, resp) {
+            moves = resp;
+            socket.emit('getMovements', { moves: moves });
+        });
+    });
+    socket.on('getSingle', function (nothing) {
+        var single;
+        mongo.getSingle.bind(db)(function (err, resp) {
+            single = resp;
+            socket.emit('getRepeat', { singles: single });
+        });
+    });
+    socket.on('oldMoves', function (data) {
+        mongo.getRpMoves.bind(db)(data.user, function (err, resp) {
+            mongo.getNrpMoves.bind(db)(data.user, function (err2, resp2) {
+                socket.emit('oldMoves', { rpMoves: resp, nrpMoves: resp2 });
+            });
+        });
+    });
+    socket.on('deleteMove', function (data) {
+        mongo.deleteMove.bind(db)({ _id: data.id }, function (resp) {
+            if (!resp) {
+                console.log("Error while removing move");
+            }
+            else {
+                socket.emit('moveDeleted', data);
+            }
+        });
+    });
+    socket.on('saveMove', function (data) {
+        var record = data;
+        if (record.value !== "") {
+            if (record.repeat == "1") {
+                delete record.month;
+                delete record.year;
+                mongo.saveMove.bind(db)(record, function (resp) {
+                    if (!resp) {
+                        console.log('Nãosalvo');
+                    }
+                    else {
+                        socket.emit('moveSaved', resp);
+                    }
+                });
+            }
+            else {
+                delete record.months;
+                delete record.years;
+                delete record.startm;
+                delete record.starty;
+                mongo.saveMove.bind(db)(record, function (resp) {
+                    if (!resp) {
+                        console.log('Nãosalvo');
+                    }
+                    else {
+                        socket.emit('moveSaved', resp);
+                    }
+                });
+            }
+        }
+    });
+};
 exports.talking = socket => {
     socket.on('talk', data => socket.broadcast.emit('talk', data));
 };

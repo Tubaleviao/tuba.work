@@ -1,0 +1,70 @@
+<% include header.ejs %>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <div id="data">
+		<form id="form">
+			<input type="text" placeholder="Food, trip, salary, etc..." name="name" required /> <br />
+			<div class="checked in">in</div> 
+			<div class="unchecked out">Out</div><br/>
+			<input type="hidden" name="in" value="1" id="in" />
+			<input type="number" min="1" pattern="^\d+(\.|\,)\d{2}$" name="value" placeholder="Value..." required /><br/>
+			<select onchange="appear()" name="repeat">
+				<option value="0">One Time</option>
+				<option value="1">Repeat</option>
+			</select>
+			<select name="month" class="norepeat inp_month">
+				<option value="1">Jan</option>
+				<option value="2">Feb</option>
+				<option value="3">Mar</option>
+				<option value="4">Apr</option>
+				<option value="5">May</option>
+				<option value="6">Jun</option>
+				<option value="7">Jul</option>
+				<option value="8">Ago</option>
+				<option value="9">Sep</option>
+				<option value="10">Oct</option>
+				<option value="11">Nov</option>
+				<option value="12">Dec</option>
+			</select>
+			<input type="number" name="year" class="norepeat inp_year" /><br />
+			<label class="fmpy">Months per Year: </label><input onchange="att_prev()" type="number" min="1" max="12" name="months" value="12" class="fmpy" id="rep_months" />
+			<label class="fmpy">Years:</label><input onchange="att_prev()" type="number" min="1" value="1"name="years" class="fmpy" id="rep_years"/><br/>
+			<label class="fmpy">Starting from:</label>
+			<select name="startm" class="fmpy inp_month" id="startm" onchange="att_prev()">
+				<option value="1">Jan</option>
+				<option value="2">Feb</option>
+				<option value="3">Mar</option>
+				<option value="4">Apr</option>
+				<option value="5">May</option>
+				<option value="6">Jun</option>
+				<option value="7">Jul</option>
+				<option value="8">Ago</option>
+				<option value="9">Sep</option>
+				<option value="10">Oct</option>
+				<option value="11">Nov</option>
+				<option value="12">Dec</option>
+			</select>
+			<input type="number" name="starty" class="fmpy inp_year" id="starty" onchange="att_prev()"/><br/>
+			<label class="fmpy">Ending Preview:</label><label class="fmpy" id="prev"></label><br/>
+			<input type="hidden" value="<%=page%>" name="page" />
+			<input type="hidden" name="_id" />
+			<input type="button" name="save" id="save" value="Save" /> 
+			<!--<input type="submit" name="del" id="delete" value="Delete" />-->
+			<input type="button" name="del" id="delete" value="Delete" />
+		</form>
+		<input type="button" value="Add" id="add" /><br>
+		<p>
+			Created to control your future outgoings, so it gets easier to plan a trip or something like this.
+		</p>
+		<ul id="months"></ul>
+	</div>
+
+	<div id="lookup">Loading...</div>
+
+	<script>
+		function getUser(){
+			return "<%=user%>";
+		}
+	</script>
+
+<% include footer.ejs %>

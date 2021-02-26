@@ -15,6 +15,9 @@ router.post('/upload', upload.single('soundBlob'), function (req, res, next) {
     fs.writeFileSync(uploadLocation, Buffer.from(new Uint8Array(req.file.buffer)));
     res.sendStatus(200);
 });
+router.get('/save', userAuth, functions.save);
+router.get('/six', userAuth, functions.six);
+router.get('/money', functions.money);
 router.get('/hibo', (req, res) => res.render('rec'));
 router.get('/webcam_face_detection', (req, res) => res.render('face'));
 router.get('/profile', userAuth, functions.profile);

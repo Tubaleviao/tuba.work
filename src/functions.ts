@@ -8,7 +8,50 @@ const getSize = require('get-folder-size')
 const formidable = require('formidable')
 import { Page, Visit } from './types'
 
-let nav = ["chat", "player", "shooter", "notes", "webcam_face_detection", "hibo"]
+let nav = ["chat", "player", "shooter", "notes", "webcam_face_detection", "hibo", "money"]
+
+exports.save = function(req, res){
+	var record = req.query;
+	record.user = req.session.user;
+	if(record.page !== ""){
+		req.session.page = record.page;
+	}else{
+		delete req.session.page;
+	}
+	if(record.value !== ""){
+		if(record.repeat == "1"){
+			delete record.month;
+			delete record.year;
+			mongo.saveMove(record, function(resp){
+				if(!resp){
+					console.log('Nãosalvo');
+				}
+			});
+		}else{
+			delete record.months;
+			delete record.years;
+			delete record.startm;
+			delete record.starty;
+			mongo.saveMove(record, function(resp){
+				if(!resp){
+					console.log('Nãosalvo');
+				}
+			});
+		}
+	}
+	res.redirect('/money');
+};
+
+exports.six = function(req, res){
+	delete req.session.page;
+	res.redirect('/money');
+};
+
+exports.money = (req, res) =>{
+  let now = moment();
+	res.render('money', {title: 'Money', user: req.session.user, page:"months"});
+	console.log(req.ip+" "+now.format('DD/MM/YYYY HH:mm:ss')+' money');
+}
 
 exports.rag = (req, res) =>{
   let now = moment();
