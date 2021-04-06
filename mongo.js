@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 // money
 const deleteMove = function (data, callback) {
     data._id = ObjectID.createFromHexString(data._id);
-    del.bind(this)({ _id: data._id }, 'moves');
+    del.bind(this)('moves', { _id: data._id });
 }, saveMove = function (data, callback) {
     if (data._id && data._id !== "") {
         data._id = ObjectID.createFromHexString(data._id);
@@ -13,7 +13,7 @@ const deleteMove = function (data, callback) {
         delete data._id;
         saveRecordCallback.bind(this)('moves', data, result => {
             callback({
-                id: result.insertedIds[0],
+                id: result.insertedId || result.insertedIds[0],
                 name: data.name, value: data.value, in: data.in
             });
         });
@@ -91,14 +91,17 @@ const findOneRecord = function (col, query, callback) {
 };
 const saveRecordCallback = function (col, record, callback) {
     let collection = this.collection(col);
-    collection.insertOne(record, { w: 1 }, (err, inserted) => {
-        if (err) {
-            console.log(err);
-            callback(false);
-        }
-        else
-            callback(inserted);
-    });
+    if (record._id)
+        collection.replaceOne({ _id: record._id }, record, { w: 1, upsert: true }, (err, inserted) => {
+            if (err) {
+                console.log(err);
+                callback(false);
+            }
+            else
+                callback(inserted);
+        });
+    else
+        collection.insertOne(record, { w: 1 }, (err, ins) => callback(err || ins));
 };
 const saveRecord = function (col, record) {
     let collection = this.collection(col);

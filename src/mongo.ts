@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 // money
 const deleteMove = function(data, callback){
   data._id = ObjectID.createFromHexString(data._id);
-  del.bind(this)({_id: data._id}, 'moves')
+  del.bind(this)('moves', {_id: data._id} )
 },
 	saveMove = function(data, callback){
 		if(data._id && data._id !== ""){
@@ -15,7 +15,7 @@ const deleteMove = function(data, callback){
 			delete data._id;
 			saveRecordCallback.bind(this)('moves', data, result => {
         callback({
-          id: result.insertedIds[0], 
+          id: result.insertedId || result.insertedIds[0], 
           name: data.name, value: data.value, in: data.in
         });
       })
@@ -50,26 +50,13 @@ const deleteMove = function(data, callback){
 	getNrpMoves = function(user, callback){
 		findRecords.bind(this)( 'moves', {user: user, repeat: "0"}, callback);
 	},
-//   saveSingle = function(data, callback){
-// 		if(data._id) data._id = ObjectID.createFromHexString(data._id);
-		
-// 		var single = db.collection('single');
-// 		single.save(data, {w: 1}, function(err, record){
-// 			if(err){ console.log(err); callback(false);
-// 			}else{ callback(record); }
-// 		});
-// 	},
+
 	getMoves = function(user, callback){
 		findRecords.bind(this)( 'moves', {user: user}, callback);
 	}
-// 	getSingle: function(callback){
-// 		var single = db.collection('single');
-// 		single.find( {}, function(err, docs){
-// 			if(err){console.log(err); callback(err, null); // get single movement
-// 			}else{callback(null, docs);}
-// 		});
-// 	},
+
     // others
+
 const aggregate = function(col, query, callback){
   let collection = this.collection(col)
   collection.aggregate(query, (err, record) => {
@@ -88,10 +75,12 @@ const findOneRecord = function(col, query, callback){
 
 const saveRecordCallback = function(col, record, callback) {
   let collection = this.collection(col);
-		collection.insertOne(record, {w:1}, (err, inserted) => {
-			if(err){ console.log(err); callback(false);
-			}else callback(inserted);
-		});
+  if(record._id)
+		collection.replaceOne({_id: record._id}, record, {w:1, upsert: true}, (err, inserted) => {
+			if(err){ console.log(err); callback(false); }
+      else callback(inserted);
+		})
+  else collection.insertOne(record, {w:1}, (err, ins) => callback(err || ins))
 	}
 
 const saveRecord = function(col, record){

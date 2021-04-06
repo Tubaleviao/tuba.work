@@ -90,7 +90,7 @@ function load_six_months(data){
 
 		inp = $('<p/>').addClass('inputs').append('Inputs: '+ins);
 		out = $('<p/>').addClass('outputs').append('Outputs: '+outs);		
-		total = $('<p/>').addClass('total').append('Resting: '+Number(ins+outs+accumulated));
+		total = $('<p/>').addClass('total').append('Cumulative: '+Number(ins+outs+accumulated));
 		monthBox.append(inp, out, total);
 		$('#lookup').append(monthBox);
     accumulated += Number(ins+outs);
@@ -99,6 +99,7 @@ function load_six_months(data){
 }
 
 function load_one_month(all, id){
+  console.log(all, id)
 	var month = Number(id.substring(0, id.length-4));
 	var year = Number(id.substring(id.length-4, id.length));
 	var list = $('<ul/>').attr('id', 'oneMonth').append("<h2>"+month+"/"+year+"</h2>");
@@ -159,7 +160,6 @@ $(function(){
 	var socket = io('/money');
 	var today = new Date();
 	var all;
-  console.log("yoooooo")
 	
 	$('.inp_month').val(today.getMonth()+1); //inp_year
 	$('.inp_year').val(today.getFullYear());
@@ -234,10 +234,13 @@ $(function(){
 	});
 	
 	socket.on('oldMoves', function(data){
-		var firstRpMove, rpMoves = data.rpMoves, nrpMoves = data.nrpMoves, done = new Array();
-		var current = new Date();
-		var thisMonth = Number(current.getMonth());
-		var thisYear = current.getFullYear();
+		let firstRpMove
+    let rpMoves = data.rpMoves
+    let nrpMoves = data.nrpMoves
+    let done = []
+		var current = new Date()
+		var thisMonth = Number(current.getMonth())
+		var thisYear = current.getFullYear()
 		
 		rpMoves.forEach((move) => {
 			var currentYear = Number(move.starty);
@@ -276,7 +279,7 @@ $(function(){
 			}
 		});
 		
-		for(var y in done){
+		for(let y in done){
 			var li = $('<li/>').addClass('old').attr('id', y);
 			var name = $('<div/>').addClass('noma').append(y);
 			var value = $('<div/>').addClass('mona').append(done[y]);

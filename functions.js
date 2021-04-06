@@ -47,7 +47,7 @@ exports.six = function (req, res) {
 };
 exports.money = (req, res) => {
     let now = moment();
-    res.render('money', { title: 'Money', user: req.session.user, page: "months" });
+    res.render('money', { title: 'Money', user: req.session.user, page: req.session.page });
     console.log(req.ip + " " + now.format('DD/MM/YYYY HH:mm:ss') + ' money');
 };
 exports.rag = (req, res) => {
