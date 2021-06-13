@@ -39,6 +39,7 @@ router.get('/cookies', functions.cookies); // verified
 router.get('/privacy', functions.privacy); // verified
 router.get('/tuba-player-privacy', functions.tuba_player_privacy); // verified
 router.get('/rag', functions.rag);
+router.get('/clock', functions.clock);
 // API
 router.get('/songs', middle.auth, functions.songs);
 router.post('/new_pass', functions.cp);

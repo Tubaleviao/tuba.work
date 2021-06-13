@@ -7,7 +7,12 @@ const mongo = require('./mongo');
 const fs = require('fs');
 const getSize = require('get-folder-size');
 const formidable = require('formidable');
-let nav = ["chat", "player", "shooter", "notes", "webcam_face_detection", "hibo", "money"];
+let nav = ["chat", "player", "shooter", "notes", "webcam_face_detection", "hibo", "money", "clock"];
+exports.clock = (req, res) => {
+    let now = moment();
+    res.render('clock');
+    console.log(req.ip + " " + now.format('DD/MM/YYYY HH:mm:ss') + ' money');
+};
 exports.save = function (req, res) {
     var record = req.query;
     record.user = req.session.user;
@@ -34,7 +39,7 @@ exports.save = function (req, res) {
             delete record.starty;
             mongo.saveMove(record, function (resp) {
                 if (!resp) {
-                    console.log('Nãosalvo');
+                    console.log('Nãosalvo2');
                 }
             });
         }

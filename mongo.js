@@ -45,25 +45,9 @@ const deleteMove = function (data, callback) {
     });
 }, getNrpMoves = function (user, callback) {
     findRecords.bind(this)('moves', { user: user, repeat: "0" }, callback);
-}, 
-//   saveSingle = function(data, callback){
-// 		if(data._id) data._id = ObjectID.createFromHexString(data._id);
-// 		var single = db.collection('single');
-// 		single.save(data, {w: 1}, function(err, record){
-// 			if(err){ console.log(err); callback(false);
-// 			}else{ callback(record); }
-// 		});
-// 	},
-getMoves = function (user, callback) {
+}, getMoves = function (user, callback) {
     findRecords.bind(this)('moves', { user: user }, callback);
 };
-// 	getSingle: function(callback){
-// 		var single = db.collection('single');
-// 		single.find( {}, function(err, docs){
-// 			if(err){console.log(err); callback(err, null); // get single movement
-// 			}else{callback(null, docs);}
-// 		});
-// 	},
 // others
 const aggregate = function (col, query, callback) {
     let collection = this.collection(col);
