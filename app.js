@@ -30,21 +30,21 @@ app.set('view engine', 'ejs');
 //app.use(helmet())
 app.use(cookieParser()); // add this > req.cookies.ck > res.cookie('ck', newValue, opts)
 app.use(checkFolders);
-app.use('/parabains', createProxyMiddleware({
-    target: 'http://tuba.work:3000',
-    changeOrigin: true,
-    headers: { oh: 'parabains' },
-    pathRewrite: { '^/parabains': '/' }
-}));
-app.use(expresss.static('../parabains/public'));
-app.use('/stracker', createProxyMiddleware({
-    target: 'http://tuba.work:3003',
-    changeOrigin: true,
-    ws: true,
-    //prependPath: true,
-    headers: { oh: 'stracker' },
-    pathRewrite: { '^/stracker': '/' }
-}));
+// app.use('/parabains', createProxyMiddleware({
+//     target: 'http://tuba.work:3000',
+//     changeOrigin: true,
+//     headers: { oh: 'parabains' },
+//     pathRewrite: { '^/parabains': '/' }
+// }));
+// app.use(expresss.static('../parabains/public'));
+// app.use('/stracker', createProxyMiddleware({
+//     target: 'http://tuba.work:3003',
+//     changeOrigin: true,
+//     ws: true,
+//     //prependPath: true,
+//     headers: { oh: 'stracker' },
+//     pathRewrite: { '^/stracker': '/' }
+// }));
 /*
 const apiProxy = createProxyMiddleware({
   target: 'https://skycode.work:3004', changeOrigin: true, ws: true,
@@ -61,10 +61,8 @@ app.use(expresss.static('public/face-stuff/weights'));
 app.use(mongo);
 app.use('/', router);
 app.use((err, req, res, next) => {
-    if (err)
-        console.log(err);
-    else
-        next();
+    if (err) console.log(err);
+    else next();
 });
 io.of('/').on('connection', io_code.chat);
 io.of('/home').on('connection', io_code.home);
