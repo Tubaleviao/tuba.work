@@ -1,18 +1,15 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 require('dotenv').config(); // load environment variables
 let expresss = require('express');
 let prod = process.env.PROD == "true" || false;
-const protocol = prod ? require('https') : require('http'); // spdy
+const protocol = prod ? require('https') : require('http');
 const fs = require('fs');
 const session = require('express-session');
 const socketio = require('socket.io');
 const upio = require('up.io');
 const { mongo, checkFolders } = require('./middle');
 const { createProxyMiddleware } = require('http-proxy-middleware');
-//const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
-const router = require('./routes'); // ????
+const router = require('./routes'); 
 const io_code = require('./io_code');
 const app = expresss();
 const cert = prod ? () => ({
@@ -27,31 +24,8 @@ const cookie = { secret: process.env.SESSION_SECRET,
     cookie: { sameSite: true, httpOnly: true, secure: prod },
     resave: true, saveUninitialized: false };
 app.set('view engine', 'ejs');
-//app.use(helmet())
-app.use(cookieParser()); // add this > req.cookies.ck > res.cookie('ck', newValue, opts)
+app.use(cookieParser());
 app.use(checkFolders);
-// app.use('/parabains', createProxyMiddleware({
-//     target: 'http://tuba.work:3000',
-//     changeOrigin: true,
-//     headers: { oh: 'parabains' },
-//     pathRewrite: { '^/parabains': '/' }
-// }));
-// app.use(expresss.static('../parabains/public'));
-// app.use('/stracker', createProxyMiddleware({
-//     target: 'http://tuba.work:3003',
-//     changeOrigin: true,
-//     ws: true,
-//     //prependPath: true,
-//     headers: { oh: 'stracker' },
-//     pathRewrite: { '^/stracker': '/' }
-// }));
-/*
-const apiProxy = createProxyMiddleware({
-  target: 'https://skycode.work:3004', changeOrigin: true, ws: true,
-  router: {'skycode.work': 'https://skycode.work:3004',
-          'tuba.work': 'https://skycode.work:3004'}
-})
-app.use('/', apiProxy) */
 app.use(upio.router);
 app.use(expresss.urlencoded({ extended: true }));
 app.use(expresss.json());

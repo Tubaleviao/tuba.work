@@ -8,8 +8,9 @@ const middle = require("./middle");
 const cors = require("cors");
 const request = require('request');
 const userAuth = (req, res, next) => (req.session && req.session.user) ? next() : res.redirect('/home');
-//let verified = (req, res, next) => (req.session.verified) ? next(): res.redirect('/home')
-router.post('/upload', upload.single('soundBlob'), function (req, res, next) {
+
+// used in hibo
+router.post('/upload', upload.single('soundBlob'), function (req, res) {
     console.log(req.file);
     let uploadLocation = __dirname + `/public/mp3/${new Date().getTime()}.mp3`;
     fs.writeFileSync(uploadLocation, Buffer.from(new Uint8Array(req.file.buffer)));
