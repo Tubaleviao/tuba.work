@@ -33,7 +33,7 @@ JWT_KEY="some other secret words"
 
 OBS: The database above is not the same as production, it was created just for testing purposes.
 
-After configurating the .env file, just run the application:
+After creating the .env file, just run the application:
 
 ```
 npm install
