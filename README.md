@@ -37,7 +37,6 @@ After configurating the .env file, just run the application:
 
 ```
 npm install
-npm run build
 npm start
 ```
 
