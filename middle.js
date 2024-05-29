@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const mc = require('mongodb').MongoClient;
 let db;
-const url = `${process.env.MONGO_PROTOCOL}://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@${process.env.MONGO_HOST}/${process.env.MONGO_DB}${process.env.MONGO_OPTIONS}`;
+const url = `${process.env.MONGO_PROTOCOL}://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@${process.env.MONGO_HOST}/${process.env.MONGO_OPTIONS}`;
 const client = new mc(url, { useNewUrlParser: true, useUnifiedTopology: true, });
 const auth = (req, res, next) => {
     try {
