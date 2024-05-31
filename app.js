@@ -14,7 +14,7 @@ const io_code = require('./io_code');
 const app = expresss();
 const cert = prod ? () => ({
     key: fs.readFileSync(process.env.CERT_KEY),
-    cert: fs.readFileSync(process.env.CERT_CERT),
+    cert: fs.readFileSync(process.env.CERT_CHAIN),
     allowHTTP1: true
 }) : () => false;
 const server = prod ? protocol.createServer(cert(), app) : protocol.createServer(app);
