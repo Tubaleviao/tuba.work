@@ -38,6 +38,11 @@ app.use((err, req, res, next) => {
     if (err) console.log(err);
     else next();
 });
+app.use((req, res) => {
+    if(!req.secure){
+        res.redirect("https://"+req.headers.host+req.url)
+    }
+});
 io.of('/').on('connection', io_code.chat);
 io.of('/home').on('connection', io_code.home);
 io.of('/player').on('connection', io_code.player);
