@@ -39,7 +39,7 @@ app.use((err, req, res, next) => {
     else next();
 });
 app.use((req, res) => {
-    if(!req.secure){
+    if(!req.secure && prod ){
         res.redirect("https://"+req.headers.host+req.url)
     }
 });
