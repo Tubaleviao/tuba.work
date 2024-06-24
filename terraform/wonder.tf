@@ -53,7 +53,10 @@ resource "google_compute_instance" "schwifty" {
         "podman tag docker.io/mongodb/mongodb-community-server:latest mongo",
         "export MONGO_INITDB_ROOT_USERNAME=${var.mongo_user}",
         "export MONGO_INITDB_ROOT_PASSWORD=${var.mongo_pass}",
-        "podman run -d --env 'MONGO*' -p ${var.mongo_port}:${var.mongo_port} --network shared --restart=always --name mongo-pod mongo --port ${var.mongo_port}",
+        "podman run -d --env 'MONGO*' -p ${var.mongo_port}:${var.mongo_port} --network shared --name mongo-pod mongo --port ${var.mongo_port}",
+        "podman generate systemd --name mongo-pod > $HOME/.config/systemd/user/mongo-pod.service",
+        "podman stop mongo-pod",
+        "systemctl --user start mongo-pod.service",
         "echo 'mongo running on port ${var.mongo_port}!!!'",
         
         # Install mongosh for data querying
@@ -89,7 +92,10 @@ resource "google_compute_instance" "schwifty" {
         "echo 'PROD=true' >> .env",
         "podman stop ${var.app_name}-pod",
         "podman --cgroup-manager cgroupfs build . -t ${var.app_name}",
-        "podman run -ti --network shared -v ./public:/opt/app/public/ --rm -d -p ${var.app_port}:${var.app_port} --name ${var.app_name}-pod ${var.app_name}",
+        "podman run -ti --network shared -v ./public:/opt/app/public/ -d -p ${var.app_port}:${var.app_port} --name ${var.app_name}-pod ${var.app_name}",
+        "podman generate systemd --name ${var.app_name}-pod > $HOME/.config/systemd/user/${var.app_name}-pod.service",
+        "podman stop ${var.app_name}-pod",
+        "systemctl --user start ${var.app_name}-pod.service",
         "sudo sed -i 's/^#Port 22.*/Port ${var.new_ssh_port}/' /etc/ssh/sshd_config",
         "sudo service sshd restart",
       ]
