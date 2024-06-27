@@ -46,6 +46,7 @@ resource "google_compute_instance" "schwifty" {
         "sudo apt-get update",
         "sudo apt-get install -y podman dbus-user-session snapd",
         "systemctl --user start dbus", # removes podman warnings
+        "loginctl enable-linger", # make container continue to run on user ssh logout
         "sudo iptables -t nat -A PREROUTING -i ens4 -p tcp --dport 80 -j REDIRECT --to-port 3000",
         "sudo iptables -t nat -A PREROUTING -i ens4 -p tcp --dport 443 -j REDIRECT --to-port ${var.app_port}",
         "podman network create shared",
