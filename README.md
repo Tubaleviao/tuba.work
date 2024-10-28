@@ -24,7 +24,7 @@ SESSION_SECRET="some secret words"
 MONGO_HOST=void-wfsmn.mongodb.net
 MONGO_USER=alvro
 MONGO_PASS=thisissecret
-MONGO_PORT=27017
+MONGO_PORT=
 MONGO_DB=test
 MONGO_PROTOCOL="mongodb+srv"
 MONGO_OPTIONS="?retryWrites=true&w=majority"
