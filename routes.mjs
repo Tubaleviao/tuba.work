@@ -1,12 +1,11 @@
-const express = require('express');
+import express from 'express'
 const router = express.Router();
-const functions = require('./functions.cjs');
-const multer = require('multer');
+import functions from './functions.mjs'
+import multer from 'multer'
 const upload = multer();
-const fs = require('fs');
-const middle = require("./middle.cjs");
-const cors = require("cors");
-const request = require('request');
+import fs from 'fs'
+import middle from "./middle.mjs"
+
 const userAuth = (req, res, next) => (req.session && req.session.user) ? next() : res.redirect('/home');
 
 // used in hibo
@@ -48,4 +47,5 @@ router.post('/jwt', functions.jwt);
 router.post('/join', functions.join);
 router.post('/audio/:user', functions.audio);
 router.all('*', (req, res) => { console.log(`${req.url} not found`); res.sendStatus(404); });
-module.exports = router;
+
+export default router

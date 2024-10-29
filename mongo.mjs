@@ -1,5 +1,5 @@
-const ObjectID = require('mongodb').ObjectID;
-const bcrypt = require('bcrypt');
+const { ObjectID } = import('mongodb')
+import bcrypt from 'bcrypt'
 // money
 const deleteMove = function (data, callback) {
     data._id = ObjectID.createFromHexString(data._id);
@@ -62,16 +62,13 @@ const aggregate = function (col, query, callback) {
     });
 };
 const findOneRecord = function (col, query, callback) {
-    let collection = this.collection(col);
-    collection.findOne(query, (err, record) => {
-        if (err) {
-            console.log(`Database Error: ${err}`);
-            callback(false);
-        }
-        else {
-            record == null ? callback(false) : callback(record);
-        }
-    });
+    let collection = this.collection(col)
+    collection.findOne(query).then(record => {
+        record == null ? callback(false) : callback(record);
+    }).catch(err => {
+        console.log(`Database Error: ${err}`)
+    })
+
 };
 const saveRecordCallback = function (col, record, callback) {
     let collection = this.collection(col);
@@ -232,7 +229,7 @@ const setPassword = function (user, pass) {
     });
 };
 //if(record._id) record._id = ObjectID.createFromHexString(record._id);
-module.exports = {
+export default {
     setPassword, findOneRecord, saveRecordCallback,
     saveRecord, updateRecord, findRecords, auth,
     addUser, getUserInfo, delete: del, existId, existUser,
@@ -241,4 +238,4 @@ module.exports = {
     // money
     deleteMove, saveMove, getFirstRpMove, getRpMoves, getFirstNrpMove,
     getNrpMoves, getMoves
-};
+}

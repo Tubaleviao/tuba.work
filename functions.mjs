@@ -1,12 +1,15 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const { sign, verify } = require("jsonwebtoken");
-const path = require('path');
-const moment = require('moment');
-const mongo = require('./mongo.cjs');
-const fs = require('fs');
-const getSize = require('get-folder-size');
-const formidable = require('formidable');
+//Object.defineProperty(exports, "__esModule", { value: true })
+const { sign, verify } = import('jsonwebtoken')
+import path from 'path'
+import moment from 'moment'
+import mongo from './mongo.mjs'
+import fs from 'fs'
+import getSize from 'get-folder-size'
+import formidable from 'formidable'
+
+let exports = {}
+
 let nav = ["chat", "player", "shooter", "notes", "webcam_face_detection", "hibo", "money", "clock"];
 exports.clock = (req, res) => {
     let now = moment();
@@ -121,6 +124,7 @@ exports.profile = (req, res) => {
 exports.login = (req, res) => {
     let date = new Date();
     let visit = { ip: req.ip, date: date.getTime(), user: req.session.user };
+
     mongo.existUser.bind(req.db)(req.body.username, exist => {
         if (exist) {
             mongo.auth.bind(req.db)(req.body.username, req.body.password, (success) => {
@@ -130,22 +134,20 @@ exports.login = (req, res) => {
                     req.session.permission = exist.permission || 1;
                     req.session.verified = true;
                     if (req.body.url == "/login")
-                        res.redirect("home");
+                        res.redirect("home")
                     else
-                        res.redirect(req.body.url);
-                }
-                else {
+                        res.redirect(req.body.url)
+                } else {
                     res.render('home', { title: 'Home', msg: 'Wrong password' });
                 }
             });
-        }
-        else {
+        } else {
             res.render('home', { title: 'Home', msg: 'User don\'t exists' });
         }
-    });
-    visit.page = "login";
-    mongo.saveRecord.bind(req.db)('visits', visit);
-};
+    })
+    visit.page = "login"
+    mongo.saveRecord.bind(req.db)('visits', visit)
+}
 exports.logout = (req, res) => {
     let date = new Date();
     let visit = { ip: req.ip, date: date.getTime(), user: req.session.user, page: "about" };
@@ -409,3 +411,5 @@ exports.cp = async (req, res) => {
     else
         res.json({ success: false, msg: 'You should be the same user!' });
 };
+
+export default exports
