@@ -2,10 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const usernames = [];
 const fs = require('fs');
-const mongo = require('./mongo');
+const mongo = require('./mongo.cjs');
 const moment = require('moment');
 const upio = require("up.io");
-const { connect } = require('./middle');
+const { connect } = require('./middle.cjs');
 const getSize = require('get-folder-size');
 const { sign, verify } = require("jsonwebtoken");
 exports.money = async function (socket) {

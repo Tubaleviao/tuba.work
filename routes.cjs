@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const functions = require('./functions');
+const functions = require('./functions.cjs');
 const multer = require('multer');
 const upload = multer();
 const fs = require('fs');
-const middle = require("./middle");
+const middle = require("./middle.cjs");
 const cors = require("cors");
 const request = require('request');
 const userAuth = (req, res, next) => (req.session && req.session.user) ? next() : res.redirect('/home');

@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "My personal website to practice some code",
   "main": "app.ts",
+  "type": "module",
   "scripts": {
     "test": "mocha",
-    "start": "node ./app.js"
+    "start": "node ./app.cjs"
   },
   "repository": {
     "type": "git",

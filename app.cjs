@@ -6,10 +6,10 @@ const fs = require('fs');
 const session = require('express-session');
 const socketio = require('socket.io');
 const upio = require('up.io');
-const { mongo, checkFolders } = require('./middle');
+const { mongo, checkFolders } = require('./middle.cjs');
 const cookieParser = require('cookie-parser');
-const router = require('./routes');
-const io_code = require('./io_code');
+const router = require('./routes.cjs');
+const io_code = require('./io_code.cjs');
 const app = expresss();
 const cert = prod ? () => ({
     key: fs.readFileSync(process.env.CERT_KEY),

@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const { sign, verify } = require("jsonwebtoken");
 const path = require('path');
 const moment = require('moment');
-const mongo = require('./mongo');
+const mongo = require('./mongo.cjs');
 const fs = require('fs');
 const getSize = require('get-folder-size');
 const formidable = require('formidable');
