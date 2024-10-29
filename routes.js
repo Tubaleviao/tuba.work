@@ -47,5 +47,5 @@ router.post('/new_pass', functions.cp);
 router.post('/jwt', functions.jwt);
 router.post('/join', functions.join);
 router.post('/audio/:user', functions.audio);
-router.all('*', (req, res) => { console.log("404"); res.sendStatus(404); });
+router.all('*', (req, res) => { console.log(`${req.url} not found`); res.sendStatus(404); });
 module.exports = router;

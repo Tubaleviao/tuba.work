@@ -53,7 +53,7 @@ const aggregate = function (col, query, callback) {
     let collection = this.collection(col);
     collection.aggregate(query, (err, record) => {
         if (err) {
-            console.log(err);
+            console.log(`Database Error: ${err}`);
             callback(false);
         }
         else {
@@ -65,7 +65,7 @@ const findOneRecord = function (col, query, callback) {
     let collection = this.collection(col);
     collection.findOne(query, (err, record) => {
         if (err) {
-            console.log(err);
+            console.log(`Database Error: ${err}`);
             callback(false);
         }
         else {
@@ -78,7 +78,7 @@ const saveRecordCallback = function (col, record, callback) {
     if (record._id)
         collection.replaceOne({ _id: record._id }, record, { w: 1, upsert: true }, (err, inserted) => {
             if (err) {
-                console.log(err);
+                console.log(`Database Error: ${err}`);
                 callback(false);
             }
             else
@@ -91,14 +91,14 @@ const saveRecord = function (col, record) {
     let collection = this.collection(col);
     collection.insertOne(record, { w: 1 }, (err, inserted) => {
         if (err)
-            console.log(err);
+            console.log(`Database Error: ${err}`);
     });
 };
 const updateRecord = function (col, query, update, callback) {
     let collection = this.collection(col);
     collection.updateOne(query, { $set: update }, { upsert: true }, (err, resp) => {
         if (err) {
-            console.log(err);
+            console.log(`Database Error: ${err}`);
             callback(false);
         }
         else
@@ -109,7 +109,7 @@ const findRecords = function (col, query, callback) {
     let collection = this.collection(col);
     collection.find(query).toArray((err, docs) => {
         if (err) {
-            console.log(err);
+            console.log(`Database Error: ${err}`);
             callback(err, null);
         }
         else
@@ -121,7 +121,7 @@ const auth = function (user, pass, callback) {
         if (record) {
             bcrypt.compare(pass, record.password, (err, success) => {
                 if (err) {
-                    console.log(err);
+                    console.log(`Database Error: ${err}`);
                     callback(false);
                 }
                 success ? callback(record) : callback(false); // true
@@ -142,14 +142,14 @@ const addUser = function (user, pass, email, callback) {
     let users = this.collection('users');
     bcrypt.hash(pass, 8, (err, hash) => {
         if (err) {
-            console.log(err);
+            console.log(`Database Error: ${err}`);
             callback(false);
         }
         else {
             let d = new Date();
             users.insertOne({ username: user, password: hash, email: email, date: d.getTime(), permission: 1 }, { w: 1 }, (err, result) => {
                 if (err) {
-                    console.log(err);
+                    console.log(`Database Error: ${err}`);
                     callback(false);
                 }
                 else {
@@ -163,7 +163,7 @@ const getUserInfo = function (user, callback) {
     let users = this.collection('users');
     users.findOne({ username: user }, { verified: 0 }, (err, record) => {
         if (err) {
-            console.log(err);
+            console.log(`Database Error: ${err}`);
             callback(false);
         }
         else {
@@ -174,7 +174,7 @@ const getUserInfo = function (user, callback) {
             info.date += createdDate.getHours() + ':' + createdDate.getMinutes() + ':' + createdDate.getSeconds();
             visits.aggregate([{ $match: { user: user } }, { $group: { _id: "$page", count: { $sum: 1 } } }, { $sort: { count: -1 } }]).toArray((err2, results) => {
                 if (err2) {
-                    console.log(err2);
+                    console.log(`Database Error: ${err2}`);
                     callback(false);
                 }
                 else {
@@ -232,11 +232,13 @@ const setPassword = function (user, pass) {
     });
 };
 //if(record._id) record._id = ObjectID.createFromHexString(record._id);
-module.exports = { setPassword, findOneRecord, saveRecordCallback,
+module.exports = {
+    setPassword, findOneRecord, saveRecordCallback,
     saveRecord, updateRecord, findRecords, auth,
     addUser, getUserInfo, delete: del, existId, existUser,
     setEmail, saveNote, saveNoteSize, takeNotes,
     deleteNote, saveChat, getChat, saveVisit, getPermission,
     // money
     deleteMove, saveMove, getFirstRpMove, getRpMoves, getFirstNrpMove,
-    getNrpMoves, getMoves };
+    getNrpMoves, getMoves
+};

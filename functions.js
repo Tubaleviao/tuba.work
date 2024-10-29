@@ -94,17 +94,10 @@ exports.home = (req, res) => {
         data.user = req.session.user;
         res.render('dashboard', data);
         visit.page = "dashboard";
-    } /*else if(req.session.user){
-        data.title = 'Verify';
-        data.user = req.session.user;
-        data.email = req.session.email;
-        res.render('verify', data);
-        visit.page = "verify";
-    }*/
-    else {
-        let data = { title: 'Home' };
-        res.render('home', data);
-        visit.page = "home";
+    } else {
+        let data = { title: 'Home' }
+        visit.page = "home"
+        res.render('home', data)
     }
     mongo.saveRecord.bind(req.db)('visits', visit);
 };
@@ -222,23 +215,12 @@ exports.dashboard = (req, res) => {
         data.nav = nav;
         res.render('dashboard', data);
         visit.page = "dashboard";
-    } /*else if(req.session.user){
-        data.title = 'Verify';
-        data.user = req.session.user;
-        data.email = req.session.email;
-        if(otherEmail){
-            otherEmail = false;
-            data.msg = "Email changed ~";
-        }
-        res.render('verify', data);
-        visit.page = "verify";
-    }*/
-    else {
-        let data = { title: 'Home' };
-        res.render('home', data);
-        visit.page = "home";
+    } else {
+        let data = { title: 'Home' }
+        visit.page = "home"
+        res.render('home', data)
     }
-    //mongo.saveRecord.bind(req.db)('visits', visit)
+    mongo.saveRecord.bind(req.db)('visits', visit)
 };
 exports.player = (req, res) => {
     let dir = path.join(__dirname, '/public/users/', (req.params.user ? req.params.user : req.session.user));
@@ -328,10 +310,12 @@ exports.songs = async (req, res) => {
             if (err)
                 res.send(`Error: ${err}`);
             else {
-                const shufle = b => { let a = [...b]; for (let i = a.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [a[i], a[j]] = [a[j], a[i]];
-                } return a; };
+                const shufle = b => {
+                    let a = [...b]; for (let i = a.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [a[i], a[j]] = [a[j], a[i]];
+                    } return a;
+                };
                 res.json(shufle(files));
                 mongo.saveVisit.bind(req.db)(visit);
             }

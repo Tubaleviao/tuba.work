@@ -9,7 +9,7 @@ const upio = require('up.io');
 const { mongo, checkFolders } = require('./middle');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const cookieParser = require('cookie-parser');
-const router = require('./routes'); 
+const router = require('./routes');
 const io_code = require('./io_code');
 const app = expresss();
 const cert = prod ? () => ({
@@ -20,9 +20,11 @@ const cert = prod ? () => ({
 const server = prod ? protocol.createServer(cert(), app) : protocol.createServer(app);
 const io = socketio(server);
 const port = process.env.PORT;
-const cookie = { secret: process.env.SESSION_SECRET,
+const cookie = {
+    secret: process.env.SESSION_SECRET,
     cookie: { sameSite: true, httpOnly: true, secure: prod },
-    resave: true, saveUninitialized: false };
+    resave: true, saveUninitialized: false
+};
 app.set('view engine', 'ejs');
 app.use(cookieParser());
 app.use(checkFolders);
@@ -35,12 +37,16 @@ app.use(expresss.static('public/face-stuff/weights'));
 app.use(mongo);
 app.use('/', router);
 app.use((err, req, res, next) => {
-    if (err) console.log(err);
-    else next();
-});
+    if (err) {
+        console.log(err)
+        let error = new Error(err)
+        error.status = 404
+        next(error)
+    } else next()
+})
 app.use((req, res) => {
-    if(!req.secure && prod ){
-        res.redirect("https://"+req.headers.host+req.url)
+    if (!req.secure && prod) {
+        res.redirect("https://" + req.headers.host + req.url)
     }
 });
 io.of('/').on('connection', io_code.chat);
