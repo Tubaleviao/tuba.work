@@ -7,7 +7,6 @@ const session = require('express-session');
 const socketio = require('socket.io');
 const upio = require('up.io');
 const { mongo, checkFolders } = require('./middle');
-const { createProxyMiddleware } = require('http-proxy-middleware');
 const cookieParser = require('cookie-parser');
 const router = require('./routes');
 const io_code = require('./io_code');
