@@ -1,7 +1,7 @@
 import mongodb from 'mongodb'
 const { ObjectId } = mongodb
 import bcrypt from 'bcrypt'
-console.log(typeof ObjectId)
+
 // money
 const deleteMove = function (data, callback) {
     data._id = ObjectId.createFromHexString(data._id)

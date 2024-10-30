@@ -7,7 +7,12 @@ import moment from 'moment'
 import upio from "up.io"
 import { connect } from './middle.mjs'
 import getFolderSize from 'get-folder-size'
-const { sign, verify } = import("jsonwebtoken")
+const { verify } = import("jsonwebtoken")
+import { fileURLToPath } from 'url'
+import { dirname } from 'path'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 let exports = {}
 
