@@ -1,22 +1,23 @@
-const ObjectID = require('mongodb').ObjectID;
-const bcrypt = require('bcrypt');
+import mongodb from 'mongodb'
+const { ObjectId } = mongodb
+import bcrypt from 'bcrypt'
+
 // money
 const deleteMove = function (data, callback) {
-    data._id = ObjectID.createFromHexString(data._id);
+    data._id = ObjectId.createFromHexString(data._id)
     del.bind(this)('moves', { _id: data._id });
 }, saveMove = function (data, callback) {
     if (data._id && data._id !== "") {
-        data._id = ObjectID.createFromHexString(data._id);
+        data._id = ObjectId.createFromHexString(data._id);
         saveRecordCallback.bind(this)('moves', data, callback);
-    }
-    else {
+    } else {
         delete data._id;
         saveRecordCallback.bind(this)('moves', data, result => {
             callback({
                 id: result.insertedId || result.insertedIds[0],
                 name: data.name, value: data.value, in: data.in
-            });
-        });
+            })
+        })
     }
 }, getFirstRpMove = function (user, callback) {
     const query = [{ $match: { user: user } }, { $group: { _id: "firstRecord", min: { $min: "$starty" } } }];
@@ -51,77 +52,64 @@ const deleteMove = function (data, callback) {
 // others
 const aggregate = function (col, query, callback) {
     let collection = this.collection(col);
-    collection.aggregate(query, (err, record) => {
-        if (err) {
-            console.log(`Database Error: ${err}`);
-            callback(false);
-        }
-        else {
-            record == null ? callback(false) : callback(record);
-        }
-    });
+    collection.aggregate(query).then(record => {
+        record == null ? callback(false) : callback(record);
+    }).catch(err => {
+        console.log(`aggregate Error: ${err}`)
+        callback(false)
+    })
 };
 const findOneRecord = function (col, query, callback) {
-    let collection = this.collection(col);
-    collection.findOne(query, (err, record) => {
-        if (err) {
-            console.log(`Database Error: ${err}`);
-            callback(false);
-        }
-        else {
-            record == null ? callback(false) : callback(record);
-        }
-    });
+    let collection = this.collection(col)
+    collection.findOne(query).then(record => {
+        record == null ? callback(false) : callback(record);
+    }).catch(err => {
+        console.log(`findOneRecord Error: ${err}`)
+    })
+
 };
 const saveRecordCallback = function (col, record, callback) {
-    let collection = this.collection(col);
+    let collection = this.collection(col)
+    let options = { w: 1, upsert: true }
     if (record._id)
-        collection.replaceOne({ _id: record._id }, record, { w: 1, upsert: true }, (err, inserted) => {
-            if (err) {
-                console.log(`Database Error: ${err}`);
-                callback(false);
-            }
-            else
-                callback(inserted);
-        });
-    else
-        collection.insertOne(record, { w: 1 }, (err, ins) => callback(err || ins));
+        collection.replaceOne({ _id: record._id }, record, options).then(inserted => {
+            callback(inserted)
+        }).catch(err => {
+            console.log(`saveRecordCallback Error: ${err}`)
+            callback(false)
+        })
+    else collection.insertOne(record, { w: 1 }).then(ins => callback(ins)).catch(err => callback(err))
 };
 const saveRecord = function (col, record) {
-    let collection = this.collection(col);
-    collection.insertOne(record, { w: 1 }, (err, inserted) => {
-        if (err)
-            console.log(`Database Error: ${err}`);
-    });
+    let collection = this.collection(col)
+    collection.insertOne(record, { w: 1 }).catch(err => {
+        console.log(`saveRecord Error: ${err}`)
+    })
 };
 const updateRecord = function (col, query, update, callback) {
     let collection = this.collection(col);
-    collection.updateOne(query, { $set: update }, { upsert: true }, (err, resp) => {
-        if (err) {
-            console.log(`Database Error: ${err}`);
-            callback(false);
-        }
-        else
-            callback(resp);
-    });
-};
+    collection.updateOne(query, { $set: update }, { upsert: true }).then(resp => {
+        callback(resp);
+    }).catch(err => {
+        console.log(`updateRecord Error: ${err}`)
+        callback(false)
+    })
+}
 const findRecords = function (col, query, callback) {
-    let collection = this.collection(col);
-    collection.find(query).toArray((err, docs) => {
-        if (err) {
-            console.log(`Database Error: ${err}`);
-            callback(err, null);
-        }
-        else
-            callback(null, docs);
-    });
-};
+    let collection = this.collection(col)
+    collection.find(query).toArray().then(docs => {
+        callback(null, docs)
+    }).catch(err => {
+        console.log(`findRecords Error: ${err}`)
+        callback(err, null)
+    })
+}
 const auth = function (user, pass, callback) {
     let c = record => {
         if (record) {
             bcrypt.compare(pass, record.password, (err, success) => {
                 if (err) {
-                    console.log(`Database Error: ${err}`);
+                    console.log(`auth Error: ${err}`);
                     callback(false);
                 }
                 success ? callback(record) : callback(false); // true
@@ -142,57 +130,52 @@ const addUser = function (user, pass, email, callback) {
     let users = this.collection('users');
     bcrypt.hash(pass, 8, (err, hash) => {
         if (err) {
-            console.log(`Database Error: ${err}`);
+            console.log(`addUser Error: ${err}`);
             callback(false);
         }
         else {
-            let d = new Date();
-            users.insertOne({ username: user, password: hash, email: email, date: d.getTime(), permission: 1 }, { w: 1 }, (err, result) => {
-                if (err) {
-                    console.log(`Database Error: ${err}`);
-                    callback(false);
-                }
-                else {
-                    callback(result);
-                }
-            });
+            let d = new Date()
+            let query = { username: user, password: hash, email: email, date: d.getTime(), permission: 1 }
+            users.insertOne(query, { w: 1 }).then(result => {
+                callback(result)
+            }).catch(err => {
+                console.log(`addUser Error: ${err}`)
+                callback(false)
+            })
         }
-    });
+    })
 };
 const getUserInfo = function (user, callback) {
-    let users = this.collection('users');
-    users.findOne({ username: user }, { verified: 0 }, (err, record) => {
-        if (err) {
-            console.log(`Database Error: ${err}`);
-            callback(false);
-        }
-        else {
-            let info = record;
-            let createdDate = new Date(record.date);
-            let visits = this.collection('visits');
-            info.date = createdDate.getDate() + '/' + createdDate.getMonth() + '/' + createdDate.getFullYear() + ' ';
-            info.date += createdDate.getHours() + ':' + createdDate.getMinutes() + ':' + createdDate.getSeconds();
-            visits.aggregate([{ $match: { user: user } }, { $group: { _id: "$page", count: { $sum: 1 } } }, { $sort: { count: -1 } }]).toArray((err2, results) => {
-                if (err2) {
-                    console.log(`Database Error: ${err2}`);
-                    callback(false);
-                }
-                else {
-                    let visitedPages = {};
-                    results.forEach(page => { visitedPages[page._id] = page.count; });
-                    info.visitedPages = visitedPages;
-                    callback(null, info);
-                }
-            });
-        }
-    });
-};
+    let users = this.collection('users')
+    users.findOne({ username: user }, { verified: 0 }).then(record => {
+        let info = record
+        let createdDate = new Date(record.date)
+        let visits = this.collection('visits')
+        info.date = createdDate.getDate() + '/' + createdDate.getMonth() + '/' + createdDate.getFullYear() + ' ';
+        info.date += createdDate.getHours() + ':' + createdDate.getMinutes() + ':' + createdDate.getSeconds();
+        visits.aggregate([{ $match: { user: user } }, { $group: { _id: "$page", count: { $sum: 1 } } }, { $sort: { count: -1 } }]).toArray((err2, results) => {
+            if (err2) {
+                console.log(`getUserInfo Error: ${err2}`);
+                callback(false);
+            }
+            else {
+                let visitedPages = {};
+                results.forEach(page => { visitedPages[page._id] = page.count; });
+                info.visitedPages = visitedPages;
+                callback(null, info);
+            }
+        })
+    }).catch(err => {
+        console.log(`getUserInfo Error: ${err}`)
+        callback(false)
+    })
+}
 const del = function (col, query) {
-    let collection = this.collection(col);
-    collection.deleteOne(query, (err, obj) => err ? console.log(err) : true);
+    let collection = this.collection(col)
+    collection.deleteOne(query, (err, obj) => err ? console.log(err) : true)
 };
 const existId = function (id, callback) {
-    id = ObjectID.createFromHexString(id);
+    id = ObjectId.createFromHexString(id);
     findOneRecord.bind(this)('users', { _id: id }, callback);
 };
 const existUser = function (user, callback) {
@@ -232,7 +215,7 @@ const setPassword = function (user, pass) {
     });
 };
 //if(record._id) record._id = ObjectID.createFromHexString(record._id);
-module.exports = {
+export default {
     setPassword, findOneRecord, saveRecordCallback,
     saveRecord, updateRecord, findRecords, auth,
     addUser, getUserInfo, delete: del, existId, existUser,
@@ -241,4 +224,4 @@ module.exports = {
     // money
     deleteMove, saveMove, getFirstRpMove, getRpMoves, getFirstNrpMove,
     getNrpMoves, getMoves
-};
+}

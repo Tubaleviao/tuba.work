@@ -1,12 +1,21 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const { sign, verify } = require("jsonwebtoken");
-const path = require('path');
-const moment = require('moment');
-const mongo = require('./mongo.cjs');
-const fs = require('fs');
-const getSize = require('get-folder-size');
-const formidable = require('formidable');
+//Object.defineProperty(exports, "__esModule", { value: true })
+import jwt from 'jsonwebtoken'
+const { sign, verify } = jwt
+import path from 'path'
+import moment from 'moment'
+import mongo from './mongo.mjs'
+import fs from 'fs'
+import getSize from 'get-folder-size'
+import formidable from 'formidable'
+import { fileURLToPath } from 'url'
+import { dirname } from 'path'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+
+let exports = {}
+
 let nav = ["chat", "player", "shooter", "notes", "webcam_face_detection", "hibo", "money", "clock"];
 exports.clock = (req, res) => {
     let now = moment();
@@ -121,6 +130,7 @@ exports.profile = (req, res) => {
 exports.login = (req, res) => {
     let date = new Date();
     let visit = { ip: req.ip, date: date.getTime(), user: req.session.user };
+
     mongo.existUser.bind(req.db)(req.body.username, exist => {
         if (exist) {
             mongo.auth.bind(req.db)(req.body.username, req.body.password, (success) => {
@@ -130,22 +140,20 @@ exports.login = (req, res) => {
                     req.session.permission = exist.permission || 1;
                     req.session.verified = true;
                     if (req.body.url == "/login")
-                        res.redirect("home");
+                        res.redirect("home")
                     else
-                        res.redirect(req.body.url);
-                }
-                else {
+                        res.redirect(req.body.url)
+                } else {
                     res.render('home', { title: 'Home', msg: 'Wrong password' });
                 }
             });
-        }
-        else {
+        } else {
             res.render('home', { title: 'Home', msg: 'User don\'t exists' });
         }
-    });
-    visit.page = "login";
-    mongo.saveRecord.bind(req.db)('visits', visit);
-};
+    })
+    visit.page = "login"
+    mongo.saveRecord.bind(req.db)('visits', visit)
+}
 exports.logout = (req, res) => {
     let date = new Date();
     let visit = { ip: req.ip, date: date.getTime(), user: req.session.user, page: "about" };
@@ -225,37 +233,36 @@ exports.dashboard = (req, res) => {
 exports.player = (req, res) => {
     let dir = path.join(__dirname, '/public/users/', (req.params.user ? req.params.user : req.session.user));
     let date = new Date();
-    let data = { title: 'Player' };
+    let data = { title: 'Player' }
     data.token = 'none';
     let visit = { ip: req.ip, date: date.getTime(), user: req.session.user, page: "player" };
     if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir);
     }
-    getSize(dir, (err, folder_size) => {
-        if (err)
-            console.log(err);
-        else
-            fs.readdir(dir, (err, files) => {
-                if (err)
-                    throw err;
-                data.musics = files;
-                data.size = (folder_size / 1024 / 1024).toFixed(2);
-                //data.user = req.session.user
-                if (req.params.user)
-                    data = { ...data, user: req.params.user, owner: false };
-                else
-                    data = { ...data, user: req.session.user, owner: true };
-                data.permission = req.session.permission || 1;
-                data.token = sign({ username: req.session.user, email: req.session.email, permission: data.permission }, process.env.JWT_KEY);
-                res.render('player', data);
-                mongo.saveRecord.bind(req.db)('visits', visit);
-            });
-    });
+    getSize(dir).then(folder_size => {
+        fs.readdir(dir, (err, files) => {
+            if (err)
+                throw err;
+            data.musics = files;
+            data.size = (folder_size / 1024 / 1024).toFixed(2);
+            //data.user = req.session.user
+            if (req.params.user)
+                data = { ...data, user: req.params.user, owner: false };
+            else
+                data = { ...data, user: req.session.user, owner: true };
+            data.permission = req.session.permission || 1;
+            data.token = sign({ username: req.session.user, email: req.session.email, permission: data.permission }, process.env.JWT_KEY);
+            res.render('player', data)
+            mongo.saveRecord.bind(req.db)('visits', visit);
+        })
+    }).catch(err => {
+        console.log(err)
+    })
 };
 exports.notes = (req, res) => {
     let data = { title: 'Notes' };
     let date = new Date();
-    let visit = { ip: req.ip, date: date.getTime(), user: req.session.user, page: "notes" };
+    let visit = { ip: req.ip, date: date.getTime(), user: req.session.user, page: "notes" }
     data.user = req.session.user, data.nav = nav;
     mongo.takeNotes.bind(req.db)(req.session.user, (err, docs) => {
         if (!docs) {
@@ -409,3 +416,5 @@ exports.cp = async (req, res) => {
     else
         res.json({ success: false, msg: 'You should be the same user!' });
 };
+
+export default exports

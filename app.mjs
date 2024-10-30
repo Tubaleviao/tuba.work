@@ -1,15 +1,16 @@
-require('dotenv').config(); // load environment variables
-let expresss = require('express');
-let prod = process.env.PROD == "true" || false;
-const protocol = prod ? require('https') : require('http');
-const fs = require('fs');
-const session = require('express-session');
-const socketio = require('socket.io');
-const upio = require('up.io');
-const { mongo, checkFolders } = require('./middle.cjs');
-const cookieParser = require('cookie-parser');
-const router = require('./routes.cjs');
-const io_code = require('./io_code.cjs');
+import 'dotenv/config' // load environment variables
+import expresss from 'express'
+let prod = process.env.PROD == "true" || false
+const protocol = prod ? await import('https') : await import('http')
+import fs from 'fs'
+import session from 'express-session'
+import { Server } from 'socket.io'
+import upio from 'up.io'
+import { mongo, checkFolders } from './middle.mjs'
+import cookieParser from 'cookie-parser'
+import router from './routes.mjs'
+import io_code from './io_code.mjs'
+
 const app = expresss();
 const cert = prod ? () => ({
     key: fs.readFileSync(process.env.CERT_KEY),
@@ -17,7 +18,7 @@ const cert = prod ? () => ({
     allowHTTP1: true
 }) : () => false;
 const server = prod ? protocol.createServer(cert(), app) : protocol.createServer(app);
-const io = socketio(server);
+const io = new Server(server);
 const port = process.env.PORT;
 const cookie = {
     secret: process.env.SESSION_SECRET,
@@ -58,4 +59,5 @@ io.of('/default').on('connection', io_code.default);
 io.of('/talking').on('connection', io_code.talking);
 io.of('/money').on('connection', io_code.money);
 server.listen(port, () => console.log(`Port ${port}!`));
-module.exports = app;
+
+export default app;
