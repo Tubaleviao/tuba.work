@@ -5,6 +5,11 @@ import multer from 'multer'
 const upload = multer();
 import fs from 'fs'
 import middle from "./middle.mjs"
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const userAuth = (req, res, next) => (req.session && req.session.user) ? next() : res.redirect('/home');
 
