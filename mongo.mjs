@@ -58,7 +58,8 @@ const aggregate = function (col, query, callback) {
         console.log(`aggregate Error: ${err}`)
         callback(false)
     })
-};
+}
+
 const findOneRecord = function (col, query, callback) {
     let collection = this.collection(col)
     collection.findOne(query).then(record => {
@@ -66,8 +67,8 @@ const findOneRecord = function (col, query, callback) {
     }).catch(err => {
         console.log(`findOneRecord Error: ${err}`)
     })
+}
 
-};
 const saveRecordCallback = function (col, record, callback) {
     let collection = this.collection(col)
     let options = { w: 1, upsert: true }
@@ -82,10 +83,8 @@ const saveRecordCallback = function (col, record, callback) {
 };
 const saveRecord = function (col, record) {
     let collection = this.collection(col)
-    collection.insertOne(record, { w: 1 }).catch(err => {
-        console.log(`saveRecord Error: ${err}`)
-    })
-};
+    return collection.insertOne(record, { w: 1 })
+}
 const updateRecord = function (col, query, update, callback) {
     let collection = this.collection(col);
     collection.updateOne(query, { $set: update }, { upsert: true }).then(resp => {
@@ -127,19 +126,18 @@ const getPermission = function (user) {
     });
 };
 const addUser = function (user, pass, email, callback) {
-    let users = this.collection('users');
+    let users = this.collection('users')
     bcrypt.hash(pass, 8, (err, hash) => {
         if (err) {
-            console.log(`addUser Error: ${err}`);
+            console.log(`addUser1 Error: ${err}`)
             callback(false);
-        }
-        else {
+        } else {
             let d = new Date()
-            let query = { username: user, password: hash, email: email, date: d.getTime(), permission: 1 }
+            let query = { username: user, password: hash, email, date: d.getTime(), permission: 1 }
             users.insertOne(query, { w: 1 }).then(result => {
                 callback(result)
             }).catch(err => {
-                console.log(`addUser Error: ${err}`)
+                console.log(`addUser2 Error: ${err}`)
                 callback(false)
             })
         }
@@ -204,7 +202,7 @@ const getChat = function (data, callback) {
     findRecords.bind(this)('chats', { "room": data }, callback);
 };
 const saveVisit = function (visit) {
-    saveRecord.bind(this)('visits', visit);
+    return saveRecord.bind(this)('visits', visit);
 };
 const setPassword = function (user, pass) {
     return new Promise((resolve, reject) => {
@@ -219,6 +217,17 @@ export default {
     setPassword, findOneRecord, saveRecordCallback,
     saveRecord, updateRecord, findRecords, auth,
     addUser, getUserInfo, delete: del, existId, existUser,
+    setEmail, saveNote, saveNoteSize, takeNotes,
+    deleteNote, saveChat, getChat, saveVisit, getPermission,
+    // money
+    deleteMove, saveMove, getFirstRpMove, getRpMoves, getFirstNrpMove,
+    getNrpMoves, getMoves
+}
+
+export {
+    setPassword, findOneRecord, saveRecordCallback,
+    saveRecord, updateRecord, findRecords, auth,
+    addUser, getUserInfo, del, existId, existUser,
     setEmail, saveNote, saveNoteSize, takeNotes,
     deleteNote, saveChat, getChat, saveVisit, getPermission,
     // money

@@ -6,12 +6,12 @@ import fs from 'fs'
 import session from 'express-session'
 import { Server } from 'socket.io'
 import upio from 'up.io'
-import { mongo, checkFolders } from './middle.mjs'
+import { mongo, checkFolders, mdb } from './middle.mjs'
 import cookieParser from 'cookie-parser'
 import router from './routes.mjs'
 import io_code from './io_code.mjs'
 
-const app = expresss();
+const app = expresss()
 const cert = prod ? () => ({
     key: fs.readFileSync(process.env.CERT_KEY),
     cert: fs.readFileSync(process.env.CERT_CHAIN),
@@ -48,7 +48,7 @@ app.use((req, res) => {
     if (!req.secure && prod) {
         res.redirect("https://" + req.headers.host + req.url)
     }
-});
+})
 io.of('/').on('connection', io_code.chat);
 io.of('/home').on('connection', io_code.home);
 io.of('/player').on('connection', io_code.player);
@@ -58,6 +58,14 @@ io.of('/shooter').on('connection', io_code.shooter);
 io.of('/default').on('connection', io_code.default);
 io.of('/talking').on('connection', io_code.talking);
 io.of('/money').on('connection', io_code.money);
-server.listen(port, () => console.log(`Port ${port}!`));
+server.listen(port, () => console.log(`Port ${port}!`))
+
+process.on('SIGTERM', () => {
+    io.close()
+    server.close()
+    mdb.close()
+})
 
 export default app;
+
+export { server, io, mdb }

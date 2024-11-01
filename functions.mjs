@@ -16,13 +16,16 @@ const __dirname = dirname(__filename)
 
 let exports = {}
 
-let nav = ["chat", "player", "shooter", "notes", "webcam_face_detection", "hibo", "money", "clock"];
-exports.clock = (req, res) => {
-    let now = moment();
-    res.render('clock');
-    console.log(req.ip + " " + now.format('DD/MM/YYYY HH:mm:ss') + ' money');
-};
-exports.save = function (req, res) {
+let nav = ["chat", "player", "shooter", "notes", "webcam_face_detection", "hibo", "money", "clock"]
+
+exports.clock = async (req, res) => {
+    let date = new Date()
+    let visit = { ip: req.ip, date: date.getTime(), user: req.me?.username, page: "clock" }
+    await mongo.saveVisit.bind(req.db)(visit)
+    res.render('clock')
+}
+
+exports.save = async function (req, res) {
     var record = req.query;
     record.user = req.session.user;
     if (record.page !== "") {
@@ -57,42 +60,48 @@ exports.save = function (req, res) {
 };
 exports.six = function (req, res) {
     delete req.session.page;
-    res.redirect('/money');
+    res.redirect('/money')
 };
-exports.money = (req, res) => {
-    let now = moment();
-    res.render('money', { title: 'Money', user: req.session.user, page: req.session.page });
-    console.log(req.ip + " " + now.format('DD/MM/YYYY HH:mm:ss') + ' money');
+exports.money = async (req, res) => {
+    let date = new Date()
+    let visit = { ip: req.ip, date: date.getTime(), user: req.me?.username, page: "money" }
+    await mongo.saveVisit.bind(req.db)(visit)
+    res.render('money', { title: 'Money', user: req.session.user, page: req.session.page })
 };
-exports.rag = (req, res) => {
-    let now = moment();
+exports.rag = async (req, res) => {
+    let date = new Date()
+    let visit = { ip: req.ip, date: date.getTime(), user: req.me?.username, page: "rag" }
+    await mongo.saveVisit.bind(req.db)(visit)
     res.render('rag', { title: 'Ragnatuba', user: req.session.user });
-    console.log(req.ip + " " + now.format('DD/MM/YYYY HH:mm:ss') + ' rag');
 };
 exports.tuba_player_privacy = (req, res) => {
     let now = moment();
     res.render('tuba_player_privacy', { title: 'tuba_player_privacy', user: req.session.user });
     console.log(req.ip + " " + now.format('DD/MM/YYYY HH:mm:ss') + ' tuba_player_privacy');
 };
-exports.privacy = (req, res) => {
-    let now = moment();
-    res.render('privacy', { title: 'Privacy', user: req.session.user });
-    console.log(req.ip + " " + now.format('DD/MM/YYYY HH:mm:ss') + ' privacy');
+exports.privacy = async (req, res) => {
+    let date = new Date()
+    let visit = { ip: req.ip, date: date.getTime(), user: req.me?.username, page: "privacy" }
+    await mongo.saveVisit.bind(req.db)(visit)
+    res.render('privacy', { title: 'Privacy', user: req.session.user })
 };
-exports.cookies = (req, res) => {
-    let now = moment();
-    res.render('cookies', { title: 'Cookies', user: req.session.user });
-    console.log(req.ip + " " + now.format('DD/MM/YYYY HH:mm:ss') + ' cookies');
+exports.cookies = async (req, res) => {
+    let date = new Date()
+    let visit = { ip: req.ip, date: date.getTime(), user: req.me?.username, page: "cookies" }
+    await mongo.saveVisit.bind(req.db)(visit)
+    res.render('cookies', { title: 'Cookies', user: req.session.user })
 };
-exports.talking = (req, res) => {
-    let now = moment();
-    res.render('talking', { title: 'Talking', user: req.session.user });
-    console.log(req.ip + " " + now.format('DD/MM/YYYY HH:mm:ss') + ' talking');
+exports.talking = async (req, res) => {
+    let date = new Date()
+    let visit = { ip: req.ip, date: date.getTime(), user: req.me?.username, page: "talking" }
+    await mongo.saveVisit.bind(req.db)(visit)
+    res.render('talking', { title: 'Talking', user: req.session.user })
 };
-exports.default = (req, res) => {
-    let now = moment();
-    res.render('default', { title: 'Default', user: req.session.user });
-    console.log(req.ip + " " + now.format('DD/MM/YYYY HH:mm:ss') + ' default');
+exports.default = async (req, res) => {
+    let date = new Date()
+    let visit = { ip: req.ip, date: date.getTime(), user: req.me?.username, page: "default" }
+    await mongo.saveVisit.bind(req.db)(visit)
+    res.render('default', { title: 'Default', user: req.session.user })
 };
 exports.home = (req, res) => {
     let date = new Date();
@@ -110,20 +119,20 @@ exports.home = (req, res) => {
     }
     mongo.saveRecord.bind(req.db)('visits', visit);
 };
-exports.profile = (req, res) => {
+exports.profile = async (req, res) => {
     let date = new Date();
     let visit = { ip: req.ip, date: date.getTime(), user: req.session.user, page: "profile" };
     let data = { title: 'Profile' };
     data.token = sign({ username: req.session.user, email: req.session.email }, process.env.JWT_KEY);
     data.user = req.session.user;
-    mongo.getUserInfo.bind(req.db)(req.session.user, (err, resp) => {
+    mongo.getUserInfo.bind(req.db)(req.session.user, async (err, resp) => {
         if (err) {
             console.log(err);
         }
         else {
             data.userinfo = resp;
             res.render("profile", data);
-            mongo.saveVisit.bind(req.db)(visit);
+            await mongo.saveVisit.bind(req.db)(visit);
         }
     });
 };
@@ -156,33 +165,32 @@ exports.login = (req, res) => {
 }
 exports.logout = (req, res) => {
     let date = new Date();
-    let visit = { ip: req.ip, date: date.getTime(), user: req.session.user, page: "about" };
+    let visit = { ip: req.ip, date: date.getTime(), user: req.session.user, page: "logout" };
     req.session.destroy();
     res.redirect('/home');
-    mongo.saveRecord.bind(req.db)('visits', visit);
+    mongo.saveRecord.bind(req.db)('visits', visit)
 };
 exports.signup = (req, res) => {
-    let now = moment();
-    mongo.existUser.bind(req.db)(req.body.username, (exist) => {
+    const { username, password, email } = req.body
+    let date = new Date();
+    let visit = { ip: req.ip, date: date.getTime(), user: username, page: "signup" }
+    mongo.existUser.bind(req.db)(username, (exist) => {
         if (exist) {
             res.render('home', { title: 'home', msg: 'User already exists' });
-        }
-        else {
-            console.log(req.body.username);
-            mongo.addUser.bind(req.db)(req.body.username, req.body.password, req.body.email, (success) => {
+        } else {
+            mongo.addUser.bind(req.db)(username, password, email, (success) => {
                 if (success) {
-                    req.session.user = req.body.username;
-                    req.session.email = req.body.email;
-                    res.redirect('/auth?id=' + success.ops[0]._id);
-                }
-                else {
+                    req.session.user = username
+                    req.session.email = email
+                    res.redirect('/auth?id=' + success.insertedId.toString())
+                } else {
                     res.render('home', { title: 'home', msg: 'User not registered' });
                 }
-            });
+            })
         }
-    });
-    console.log(req.ip + " " + now.format('DD/MM/YYYY HH:mm:ss') + ' sigup');
-};
+    })
+    mongo.saveRecord.bind(req.db)('signup', visit)
+}
 exports.auth = (req, res) => {
     if (req.query.id) {
         mongo.existId.bind(req.db)(req.query.id, record => {
@@ -298,10 +306,11 @@ exports.chat = (req, res) => {
     //mongo.saveRecord.call({db:req.db},'visits', visit)
     mongo.saveRecord.bind(req.db)('visits', visit);
 };
-exports.shooter = (req, res) => {
-    let now = moment();
-    res.render('shooter', { title: 'Shooter', user: req.session.user });
-    console.log(req.ip + " " + now.format('DD/MM/YYYY HH:mm:ss') + ' shooter');
+exports.shooter = async (req, res) => {
+    let date = new Date()
+    let visit = { ip: req.ip, date: date.getTime(), user: req.me?.username, page: "shooter" }
+    res.render('shooter', { title: 'Shooter', user: req.session.user })
+    await mongo.saveVisit.bind(req.db)(visit)
 };
 // API CODE
 exports.songs = async (req, res) => {
@@ -393,28 +402,26 @@ exports.audio = async (req, res) => {
                     fs.renameSync(oldn, newn);
                     songs.push(files[key].name);
                 }
-                res.json({ ok: true, song: songs.length === 1 ? songs[0] : songs });
+                res.json({ ok: true, song: songs.length === 1 ? songs[0] : songs })
             });
         }
     }
     else
-        res.json({ ok: false, msg: "You must to be authenticated to upload" });
-    console.log(req.ip + " " + now.format('DD/MM/YYYY HH:mm:ss') + ' audio');
+        res.json({ ok: false, msg: "You must to be authenticated to upload" })
+    console.log(req.ip + " " + now.format('DD/MM/YYYY HH:mm:ss') + ' audio')
 };
 exports.cp = async (req, res) => {
     let now = moment();
     const data = verify(req.body.token, process.env.JWT_KEY);
     if (data.username === req.body.user) {
-        let np = req.body.password.trim();
+        let np = req.body.password.trim()
         if (np != "") {
-            let worked = await mongo.setPassword.bind(req.db)(req.body.user, np);
-            res.json({ success: worked, msg: 'Password set!' });
+            let worked = await mongo.setPassword.bind(req.db)(req.body.user, np)
+            res.json({ success: worked, msg: 'Password set!' })
         }
-        else
-            res.json({ success: false, msg: 'Password cannot be empty!' });
+        else res.json({ success: false, msg: 'Password cannot be empty!' })
     }
-    else
-        res.json({ success: false, msg: 'You should be the same user!' });
+    else res.json({ success: false, msg: 'You should be the same user!' })
 };
 
 export default exports

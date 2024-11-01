@@ -11,9 +11,10 @@ import fs from 'fs'
 import { MongoClient as mc } from 'mongodb'
 
 const mongoPort = process.env.MONGO_PORT
-let db;
+let db, mdb;
 const url = `${process.env.MONGO_PROTOCOL}://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@${process.env.MONGO_HOST}${mongoPort ? ':' + mongoPort : ''}/${process.env.MONGO_OPTIONS}`;
-const client = new mc(url);
+const client = new mc(url)
+
 const auth = (req, res, next) => {
     try {
         const { token } = req.headers;
@@ -24,20 +25,26 @@ const auth = (req, res, next) => {
     catch (err) {
         next({ msg: "token not valid", error: err });
     }
-};
-const mongo = async (req, res, next) => {
+}
+
+const connectMongo = async () => {
     if (!db) {
         try {
-            const mdb = await client.connect();
+            mdb = await client.connect();
             db = mdb.db(process.env.MONGO_DB);
-        }
-        catch (e) {
-            next({ msg: "db error", error: e });
+        } catch (e) {
+            console.log("db error: ", e)
         }
     }
-    req.db = db;
-    next();
-};
+}
+
+const mongo = async (req, res, next) => {
+    await connectMongo()
+    req.db = db
+    req.mdb = mdb
+    next()
+}
+
 const connect = async () => {
     if (!db) {
         try {
@@ -64,4 +71,4 @@ const crossOrigin = (req, res, next) => {
     next();
 };
 export default { connect, auth, crossOrigin, mongo, checkFolders }
-export { connect, auth, crossOrigin, mongo, checkFolders }
+export { connect, auth, crossOrigin, mongo, checkFolders, mdb }
