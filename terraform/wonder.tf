@@ -99,6 +99,8 @@ resource "google_compute_instance" "schwifty" {
         "systemctl --user start ${var.app_name}-pod.service",
         "sudo sed -i 's/^#Port 22.*/Port ${var.new_ssh_port}/' /etc/ssh/sshd_config",
         "sudo service sshd restart",
+
+        # Add github actions bot
       ]
     }
 }

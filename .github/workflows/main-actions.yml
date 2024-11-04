@@ -1,0 +1,19 @@
+name: Deploy to production
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on: [push]
+jobs:
+  Explore-GitHub-Actions:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "🎉 The job was triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 Running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 Your branch is ${{ github.ref }} / repo ${{ github.repository }}"
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - run: cd ${{ github.workspace }}
+      - run: echo "🍏 This job's status is ${{ job.status }}."
+      - run: echo $'PROD=\nPORT=3000\nSESSION_SECRET="some secret words"\nMONGO_HOST=void-wfsmn.mongodb.net\n\
+MONGO_USER=alvro\nMONGO_PASS=thisissecret\nMONGO_DB=test\n\
+MONGO_PROTOCOL="mongodb+srv"\nMONGO_OPTIONS="?retryWrites=true&w=majority"\n\
+JWT_KEY="some other secret words"\n' > .env 
+      - run: npm test
