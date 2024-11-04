@@ -13,4 +13,5 @@ jobs:
       - run: cd ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
       - run: echo $'PROD=\nPORT=3000\nSESSION_SECRET="some secret words"\nMONGO_HOST=void-wfsmn.mongodb.net\nMONGO_USER=alvro\nMONGO_PASS=thisissecret\nMONGO_DB=test\nMONGO_PROTOCOL="mongodb+srv"\nMONGO_OPTIONS="?retryWrites=true&w=majority"\nJWT_KEY="some other secret words"\n' > .env 
+      - run: npm install 
       - run: npm test
