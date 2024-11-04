@@ -259,7 +259,12 @@ exports.player = (req, res) => {
             else
                 data = { ...data, user: req.session.user, owner: true };
             data.permission = req.session.permission || 1;
-            data.token = sign({ username: req.session.user, email: req.session.email, permission: data.permission }, process.env.JWT_KEY);
+            data.token = sign({
+                username: req.session.user,
+                email: req.session.email,
+                permission: data.permission
+            }, process.env.JWT_KEY)
+
             res.render('player', data)
             mongo.saveRecord.bind(req.db)('visits', visit);
         })
@@ -337,20 +342,20 @@ exports.songs = async (req, res) => {
             }
         });
     }
-};
+}
+
 exports.jwt = (req, res) => {
-    let now = moment();
     mongo.auth.bind(req.db)(req.body.username, req.body.password, user => {
         if (user) {
-            const token = sign({ ...user }, process.env.JWT_KEY);
-            res.header("auth-token", token).json({ ok: true, token: token, data: user });
+            const token = sign({ ...user }, process.env.JWT_KEY)
+            res.header("auth-token", token).json({ ok: true, token, data: user })
         }
         else {
-            res.json({ ok: false, msg: "Check your user or password" });
+            res.json({ ok: false, msg: "Check your user or password" })
         }
-    });
-    console.log(req.ip + " " + now.format('DD/MM/YYYY HH:mm:ss') + ' jwt');
-};
+    })
+}
+
 exports.join = (req, res) => {
     let now = moment();
     mongo.existUser.bind(req.db)(req.body.username, (exist) => {
@@ -411,7 +416,6 @@ exports.audio = async (req, res) => {
     console.log(req.ip + " " + now.format('DD/MM/YYYY HH:mm:ss') + ' audio')
 };
 exports.cp = async (req, res) => {
-    let now = moment();
     const data = verify(req.body.token, process.env.JWT_KEY);
     if (data.username === req.body.user) {
         let np = req.body.password.trim()

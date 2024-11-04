@@ -19,7 +19,7 @@ const auth = (req, res, next) => {
     try {
         const { token } = req.headers;
         let json = verify(token, process.env.JWT_KEY);
-        req.me = json;
+        req.me = json
         next();
     }
     catch (err) {

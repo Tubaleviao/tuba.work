@@ -1,5 +1,4 @@
 import assert from 'assert'
-import expresss from 'express'
 import { describe, it, before, after } from 'node:test'
 import request from 'supertest'
 import app, { server, io, mdb } from '../app.mjs'
@@ -79,10 +78,28 @@ describe('Authentication', () => {
     assert(response.headers['set-cookie'], "cookies not present in headers")
   })
 
+  let jwt
+
+  it('/jwt HTTP 200', async () => {
+    let response = await request(app).post('/jwt')
+      .send({ username: user, password: user })
+      .set('Accept', 'application/json').expect(200)
+    assert(response.body.ok == true, "Response needs to be ok")
+    assert(response.body.token != '', "Token should not be empty")
+    jwt = response.body.token
+  })
+
+  it('/new_pass HTTP 200', async () => {
+    let response = await request(app).post('/new_pass')
+      .send({ user: user, password: 'user', token: jwt })
+      .set('Accept', 'application/json')
+      .expect(200)
+    assert(response.body.success, "Password needs to be set successfully")
+  })
+
   it('/logout HTTP 200', async () => {
     let response = await request(app).get('/logout')
       .expect(302)
-
     assert(!response.headers['set-cookie'], "cookies not present in headers")
   })
 

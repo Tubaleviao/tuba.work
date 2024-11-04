@@ -63,7 +63,7 @@ const aggregate = function (col, query, callback) {
 const findOneRecord = function (col, query, callback) {
     let collection = this.collection(col)
     collection.findOne(query).then(record => {
-        record == null ? callback(false) : callback(record);
+        record == null ? callback(false) : callback(record)
     }).catch(err => {
         console.log(`findOneRecord Error: ${err}`)
     })
@@ -108,18 +108,18 @@ const auth = function (user, pass, callback) {
         if (record) {
             bcrypt.compare(pass, record.password, (err, success) => {
                 if (err) {
-                    console.log(`auth Error: ${err}`);
+                    console.log(`auth Error: ${err}`)
                     callback(false);
                 }
-                success ? callback(record) : callback(false); // true
-            });
-        }
-        else {
+                success ? callback(record) : callback(false)
+            })
+        } else {
             callback(false);
         }
-    };
-    findOneRecord.bind(this)('users', { username: user }, c);
-};
+    }
+    findOneRecord.bind(this)('users', { username: user }, c)
+}
+
 const getPermission = function (user) {
     findOneRecord.bind(this)('users', { username: user }, (rec) => {
         return new Promise((res, rej) => res(rec.permission || 1));
@@ -170,7 +170,7 @@ const getUserInfo = function (user, callback) {
 }
 const del = function (col, query) {
     let collection = this.collection(col)
-    collection.deleteOne(query, (err, obj) => err ? console.log(err) : true)
+    return collection.deleteOne(query)
 };
 const existId = function (id, callback) {
     id = ObjectId.createFromHexString(id);
@@ -207,7 +207,7 @@ const saveVisit = function (visit) {
 const setPassword = function (user, pass) {
     return new Promise((resolve, reject) => {
         bcrypt.hash(pass, 8, (err, hash) => {
-            bcrypt.compare(pass, hash, (err, success) => console.log(err, success));
+            bcrypt.compare(pass, hash, (err, success) => err ? console.log(err, success) : true)
             updateRecord.bind(this)('users', { username: user }, { password: hash }, resolve);
         });
     });

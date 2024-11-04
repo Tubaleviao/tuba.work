@@ -48,6 +48,7 @@
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/jquery": "^3.5.5",
+    "mongodb-memory-server": "^10.1.2",
     "supertest": "^7.0.0",
     "tslint": "^6.1.3"
   }
