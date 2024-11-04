@@ -12,8 +12,5 @@ jobs:
         uses: actions/checkout@v4
       - run: cd ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
-      - run: echo $'PROD=\nPORT=3000\nSESSION_SECRET="some secret words"\nMONGO_HOST=void-wfsmn.mongodb.net\n\
-MONGO_USER=alvro\nMONGO_PASS=thisissecret\nMONGO_DB=test\n\
-MONGO_PROTOCOL="mongodb+srv"\nMONGO_OPTIONS="?retryWrites=true&w=majority"\n\
-JWT_KEY="some other secret words"\n' > .env 
+      - run: echo $'PROD=\nPORT=3000\nSESSION_SECRET="some secret words"\nMONGO_HOST=void-wfsmn.mongodb.net\nMONGO_USER=alvro\nMONGO_PASS=thisissecret\nMONGO_DB=test\nMONGO_PROTOCOL="mongodb+srv"\nMONGO_OPTIONS="?retryWrites=true&w=majority"\nJWT_KEY="some other secret words"\n' > .env 
       - run: npm test
