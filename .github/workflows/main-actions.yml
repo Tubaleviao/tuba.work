@@ -16,6 +16,7 @@ jobs:
       # - run: npm install 
       # - run: npm test
       # - run: pwd # /home/runner/work/tuba.work/tuba.work
+      - run: mkdir ~/.ssh
       - run: echo "${{ secrets.SSH_PRIV_KEY }}" >> ~/.ssh/id_rsa
       - run: chmod 600 ~/.ssh/id_rsa
       - run: ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@tuba.work
