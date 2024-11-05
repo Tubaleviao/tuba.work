@@ -1,63 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-    <meta charset="UTF-8">
-    <meta name="Description" content="Open website tuba.work made by Tubalevião to test things.">
-		<meta name="theme-color" content="#00FF00"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-		<meta name="twitter:card" content="photo" />
-		<meta name="twitter:site" content="@tuba" />
-		<meta name="twitter:title" content="Sharhawkions" />
-		<meta name="twitter:image" content="https://tuba.work/img/logo.png" />
-		<meta name="twitter:url" content="https://www.tuba.work/" />
-    
-		<link rel="shortcut icon" href="/img/icon.ico"/>
-		<link rel="stylesheet" href="/css/base.css"/>
-		<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-		<% if(locals.title){ %>
-			<title><%=title%></title>
-			<script src="/js/<%=title.toLowerCase()%>.js"></script>
-			<link rel="stylesheet" href="/css/<%=title.toLowerCase()%>.css"/>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="Description" content="Open website tuba.work made by Tubalevião to test things.">
+	<meta name="theme-color" content="#00FF00" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="twitter:card" content="photo" />
+	<meta name="twitter:site" content="@tuba" />
+	<meta name="twitter:title" content="Sharhawkions" />
+	<meta name="twitter:image" content="https://tuba.work/img/logo.png" />
+	<meta name="twitter:url" content="https://www.tuba.work/" />
+
+	<link rel="shortcut icon" href="/img/icon.ico" />
+	<link rel="stylesheet" href="/css/base.css" />
+	<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+	<% if(locals.title){ %>
+		<title>
+			<%=title%>
+		</title>
+		<script src="/js/<%=title.toLowerCase()%>.js"></script>
+		<link rel="stylesheet" href="/css/<%=title.toLowerCase()%>.css" />
 		<% }else{ %>
 			<title>Sharhalkions</title>
-		<% } %>
-	</head>
-	<body>
-    <canvas id="canvas"></canvas>
-		<nav>
-			<div class="nav-head"><a href="home">Home</a></div>
-			<div class="nav-body">
-				<% if(locals.user) { %>
-					<a href="profile"><%=user %></a> (<a href="logout">Logout</a>)
+			<% } %>
+</head>
+
+<body>
+	<canvas id="canvas"></canvas>
+	<nav>
+		<div class="nav-head"><a href="home">Home</a></div>
+		<div class="nav-body">
+			<% if(locals.user) { %>
+				<a href="profile">
+					<%=user %>
+				</a> (<a href="logout">Logout</a>)
 				<% }else{ %>
-					<a href="#" id="btn-login" >Login</a>
-					<form id="login" method="post" action="login">
+					<a href="#" id="btn-login">Login</a>
+					<form id="login" method="post" action="/login">
 						<input type="hidden" name="url" id="url" value="" />
-						<script>document.getElementById('url').value = window.location.pathname;</script> 
-						<input type="text" name="username" id="u" placeholder="Username" maxlength="15" required/>
-						<input type="password" name="password" id="p" placeholder="Password" required/>
-            <input type="submit" value="Enter" class="bt"/>
+						<script>document.getElementById('url').value = window.location.pathname;</script>
+						<input type="text" name="username" id="u" placeholder="Username" maxlength="15" required />
+						<input type="password" name="password" id="p" placeholder="Password" required />
+						<input type="submit" value="Enter" class="bt" />
 					</form>
-					<a href="#" id="btn-signup">Sign Up</a> 
-					<form id="signup" method="post" action="signup">
-						<input type="text" name="username" id="us" placeholder="Username" maxlength="15" required/>
-						<input type="email" name="email" placeholder="Email" required/>
-						<input type="password" name="password" placeholder="Password" required/>
-						<input type="submit" value="Enter" class="bt"/>
+					<a href="#" id="btn-signup">Sign Up</a>
+					<form id="signup" method="post" action="/signup">
+						<input type="text" name="username" id="us" placeholder="Username" maxlength="15" required />
+						<input type="email" name="email" placeholder="Email" required />
+						<input type="password" name="password" placeholder="Password" required />
+						<input type="submit" value="Enter" class="bt" />
 					</form>
+					<% } %>
+		</div>
+	</nav>
+
+	<% if(locals.msg){ %>
+		<div class='msg'>
+			<%=msg%>
+		</div>
+		<% } %>
+			<% if(locals.nav){ %>
+				<nav class="optional">
+					<% nav.forEach(function(link){ %>
+						<div><a href="<%= link %>">
+								<%= link %>
+							</a></div>
+						<% }); %>
+				</nav>
 				<% } %>
-			</div>
-		</nav>
-		
-		<% if(locals.msg){ %>
-			<div class='msg'> <%=msg%> </div>
-		<% } %>
-		<% if(locals.nav){ %>
-			<nav class="optional">
-				<% nav.forEach(function(link){ %>
-					<div><a href="<%= link %>" ><%= link %></a></div>
-				<% }); %>
-			</nav>
-		<% } %>
-		
-		

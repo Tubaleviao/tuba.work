@@ -1,13 +1,21 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+//Object.defineProperty(exports, "__esModule", { value: true });
 const usernames = [];
-const fs = require('fs');
-const mongo = require('./mongo.cjs');
-const moment = require('moment');
-const upio = require("up.io");
-const { connect } = require('./middle.cjs');
-const getSize = require('get-folder-size');
-const { sign, verify } = require("jsonwebtoken");
+import fs from 'fs'
+import mongo from './mongo.mjs'
+import moment from 'moment'
+import upio from "up.io"
+import { connect } from './middle.mjs'
+import getFolderSize from 'get-folder-size'
+const { verify } = import("jsonwebtoken")
+import { fileURLToPath } from 'url'
+import { dirname } from 'path'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+
+let exports = {}
+
 exports.money = async function (socket) {
     const db = await connect();
     socket.on('getMovements', function (data) {
@@ -272,7 +280,7 @@ exports.player = socket => {
         });
     });
     socket.on('up_started', async (event) => {
-        const size = () => new Promise((reso, reje) => getSize(`${__dirname}/public/${user_url}`, (err, folder_size) => {
+        const size = () => new Promise((reso, reje) => getFolderSize(`${__dirname}/public/${user_url}`, (err, folder_size) => {
             if (err) {
                 console.log(err);
             }
@@ -370,3 +378,5 @@ exports.shooter = socket => {
     socket.on('setPosition', data => { socket.broadcast.emit('setPosition', data); });
     socket.on('kill', data => { socket.broadcast.emit('kill', data); });
 };
+
+export default exports
