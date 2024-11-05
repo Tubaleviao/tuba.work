@@ -20,3 +20,4 @@ variable "ssh_pub_key" {}
 variable "email" {}
 variable "domain" {}
 variable "freedns_ip" {}
+variable "gihub_token" {}

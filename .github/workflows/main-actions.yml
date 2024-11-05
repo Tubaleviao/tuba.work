@@ -8,10 +8,15 @@ jobs:
       - run: echo "🎉 The job was triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 Running on a ${{ runner.os }} server hosted by GitHub!"
       - run: echo "🔎 Your branch is ${{ github.ref }} / repo ${{ github.repository }}"
-      - name: Check out repository code
-        uses: actions/checkout@v4
-      - run: cd ${{ github.workspace }}
+      # - name: Check out repository code
+      #   uses: actions/checkout@v4
+      # - run: cd ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
-      - run: echo $'PROD=\nPORT=3000\nSESSION_SECRET="some secret words"\nMONGO_HOST=void-wfsmn.mongodb.net\nMONGO_USER=alvro\nMONGO_PASS=thisissecret\nMONGO_DB=test\nMONGO_PROTOCOL="mongodb+srv"\nMONGO_OPTIONS="?retryWrites=true&w=majority"\nJWT_KEY="some other secret words"\n' > .env 
-      - run: npm install 
-      - run: npm test
+      # - run: echo $'PROD=\nPORT=3000\nSESSION_SECRET="some secret words"\nMONGO_HOST=void-wfsmn.mongodb.net\nMONGO_USER=alvro\nMONGO_PASS=thisissecret\nMONGO_DB=test\nMONGO_PROTOCOL="mongodb+srv"\nMONGO_OPTIONS="?retryWrites=true&w=majority"\nJWT_KEY="some other secret words"\n' > .env 
+      # - run: npm install 
+      # - run: npm test
+      
+      - run: ssh -p ${{ secrets.SSH_PORT }} -i ${{ secrets.SSH_PRIV_KEY }} ${{ secrets.SSH_USER }}@tuba.work
+      - run: podman stop schwifty-pod
+      - run: podman --cgroup-manager cgroupfs build . -t schwifty",
+      - run: podman run -ti --network shared -v ./public:/opt/app/public/ -d -p 80:80 --name schwifty-pod schwifty",
