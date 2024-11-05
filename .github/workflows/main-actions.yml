@@ -15,9 +15,9 @@ jobs:
       # - run: echo $'PROD=\nPORT=3000\nSESSION_SECRET="some secret words"\nMONGO_HOST=void-wfsmn.mongodb.net\nMONGO_USER=alvro\nMONGO_PASS=thisissecret\nMONGO_DB=test\nMONGO_PROTOCOL="mongodb+srv"\nMONGO_OPTIONS="?retryWrites=true&w=majority"\nJWT_KEY="some other secret words"\n' > .env 
       # - run: npm install 
       # - run: npm test
-      - run: pwd
-      - run: ls
-      - run: ssh -p ${{ secrets.SSH_PORT }} -i ${{ secrets.SSH_PRIV_KEY }} ${{ secrets.SSH_USER }}@tuba.work
+      # - run: pwd # /home/runner/work/tuba.work/tuba.work
+      - run: echo "${{ secrets.SSH_PRIV_KEY }}" >> ~/.ssh/id_rsa
+      - run: ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@tuba.work
       - run: podman stop schwifty-pod
       - run: podman --cgroup-manager cgroupfs build . -t schwifty"
       - run: podman run -ti --network shared -v ./public:/opt/app/public/ -d -p 80:80 --name schwifty-pod schwifty"
